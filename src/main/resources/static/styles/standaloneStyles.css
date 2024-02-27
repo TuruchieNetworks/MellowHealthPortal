@@ -1,0 +1,290 @@
+/*Headers*/
+.mellow-header {
+	margin-top:5px;
+	border-radius:5%;
+	color: brown;
+	font-size:26px;
+	font-family:fantasy;
+	background: rgba(0.21, 0.180, 25, 0.9);
+}
+.mellow-header a:hover{
+	color:greenyellow;
+}
+.alt-mellow-header {
+	margin-top:5px;
+	border-radius:5%;
+	color:brown;
+	font-size:28px;
+	font-family:fantasy;
+	background: rgba(0.21, 0.180, 25, 0.9);
+}
+.patient-column-card{
+	display:flex;
+	justify-content:space-between;
+	align-items:center;
+	text-align:center;
+	margin:5px;
+	padding: 5px;
+	width: 100%;
+	border-radius: 5%;
+	color: rgb(412, 580, 515);
+	background:rgba(1.33, 0.64, 30.60, 0.9);
+	background: rgba(21.3, 0.64, 60, 0.9);
+}
+.patient-column-card a:hover {
+	color:black;
+	font-weight: bold;
+}
+.mid-patient-column-card {
+	display:flex;
+	flex-wrap:wrap;
+	justify-content:space-between;
+	align-items:center;
+	text-align:center;
+	padding:5px;
+	border-radius: 5%;
+	color: rgb(412, 580, 515);
+	background:rgba(1.33, 0.64, 30.60, 0.9);
+	background: rgba(21.3, 0.64, 60, 0.9);
+}
+.mid-patient-column-card p a:hover {
+	color:greenyellow;
+}
+.alt-mellow-card {
+	margin-top:5px;
+	border-radius:5%;
+	color:brown;
+	font-size:28px;
+	font-family:fantasy;
+	background: rgba(0.21, 0.180, 25, 0.9);
+}
+.mid-patient-column-card a{
+	display: block;
+	width: 100%;
+	font-weight: bold;
+}
+.mid-patient-column-card a:hover {
+	color:black;
+	font-weight: bold;
+}
+.patient-inner-column-card {
+	display:flex;
+	flex-wrap:wrap;
+	justify-content:center;
+	align-items:center;
+	text-align:center;
+	margin:5px;
+	border-radius: 5%;
+	color: rgb(121, 80, 15);
+	background:rgba(133, 0.64, 30.60, 0.9);
+	background: rgba(13, 0.64, 0, 0.9);
+}
+.patient-inner-column-card p {
+	margin:5px;
+	border-radius: 5%;
+	padding: 5px 0;
+	background: rgba(1, 70.64, 210, 0.9);
+	background: rgba(13, 64, 60, 0.9);
+}
+.panel-patient-column-card{
+	display:flex;
+	justify-content:space-between;
+	align-items:center;
+	text-align:center;
+	padding:5px;
+	width: 100%;
+	border-radius: 5%;
+	color: rgb(412, 580, 515);
+	background:rgba(1.33, 0.64, 30.60, 0.9);
+	background: rgba(21.3, 0.64, 60, 0.9);
+}
+.panel-patient-column-card h1 {
+	width: 100%;
+	margin:5px;
+}
+.panel-patient-column-card a{
+	display: block;
+	width: 100%;
+	font-weight: bold;
+}
+.panel-patient-column-card p{
+	width: 100%;
+	font-weight: bold;
+}
+
+.cover-cards {
+	display:flex;
+	flex-wrap:wrap;
+	justify-content:space-between;
+	align-items:center;
+	text-align:center;
+	margin:5px;
+	border-radius: 5%;
+	color: rgb(121, 80, 15);
+	background:rgba(133, 0.64, 30.60, 0.9);
+	background: rgba(13, 0.64, 0, 0.9);
+}
+.cover-cards p {
+	margin:5px;
+	border-radius: 5%;
+	padding: 5px;
+	background: rgba(13, 64, 60, 0.9);
+}
+.alt-cover-cards{
+	display:flex;
+	justify-content:space-between;
+	align-items:center;
+	text-align:center;
+	padding:5px;
+	width: 100%;
+	border-radius: 5%;
+	color: rgb(412, 580, 515);
+	background:rgba(1.33, 0.64, 30.60, 0.9);
+	background: rgba(21.3, 0.64, 60, 0.9);
+}
+.cover-cards h1 {
+	width: 100%;
+	margin:5px;
+}
+.cover-cards a{
+	display: block;
+	width: 100%;
+	font-weight: bold;
+}
+.cover-cards p{
+	width: 100%;
+	font-weight: bold;
+}
+@media (max-width: 850px) {
+.patient-column-card{
+	display:flex;
+	flex-wrap:wrap;
+	justify-content:space-between;
+	align-items:center;
+	text-align:center;
+	margin:5px 0;
+	padding: 5px;
+	width: 100%;
+	border-radius: 5%;
+	color: rgb(412, 580, 515);
+	background:rgba(1.33, 0.64, 30.60, 0.9);
+	background: rgba(21.3, 0.64, 60, 0.9);
+}
+.patient-column-card a:hover {
+	color:black;
+	font-weight: bold;
+}
+.mid-patient-column-card{
+	display:flex;
+	flex-wrap:wrap;
+	justify-content:space-between;
+	align-items:center;
+	text-align:center;
+	padding:15px;
+	width: 100%;
+	border-radius: 5%;
+	color: rgb(412, 580, 515);
+	background:rgba(1.33, 0.64, 30.60, 0.9);
+	background: rgba(21.3, 0.64, 60, 0.9);
+}
+.mid-patient-column-card a{
+	display: block;
+	width: 100%;
+	font-weight: bold;
+}
+.mid-patient-column-card a:hover {
+	color:greenyellow;
+}
+.panel-patient-column-card{
+	display:flex;
+	flex-wrap:wrap;
+	justify-content:space-between;
+	align-items:center;
+	text-align:center;
+	padding:10px;
+	width: 100%;
+	border-radius: 5%;
+	color: rgb(412, 580, 515);
+	background:rgba(1.33, 0.64, 30.60, 0.9);
+	background: rgba(21.3, 0.64, 60, 0.9);
+}
+.patient-inner-column-card {
+	display:flex;
+	flex-wrap:wrap;
+	flex-direction: column;
+	justify-content:center;
+	align-items:center;
+	text-align:center;
+	margin:5px;
+	border-radius: 5%;
+	color: rgb(121, 80, 15);
+	background:rgba(133, 0.64, 30.60, 0.9);
+	background: rgba(13, 0.64, 0, 0.9);
+	width: 100%;
+}
+.panel-patient-column-card h1 {
+	width: 100%;
+	margin:5px;
+}
+.panel-patient-column-card a{
+	display: block;
+	width: 100%;
+	font-weight: bold;
+}
+.panel-patient-column-card p{
+	width: 100%;
+	font-weight: bold;
+}
+
+.cover-cards {
+	display:flex;
+	flex-wrap:wrap;
+	flex-direction: column;
+	justify-content:center;
+	align-items:center;
+	text-align:center;
+	margin:5px;
+	padding: 10px;
+	width: 100%;
+	border-radius: 5%;
+	color: rgb(121, 80, 15);
+	background:rgba(133, 0.64, 30.60, 0.9);
+	background: rgba(13, 0.64, 0, 0.9);
+}
+.cover-cards p {
+	border-radius: 5%;
+	padding: 5px;
+	width: 100%;
+	background: rgba(13, 64, 60, 0.9);
+}
+.cover-cards p a{
+	border-radius: 5%;
+	width: 100%;
+	background: rgba(13, 64, 60, 0.9);
+}
+.alt-cover-cards{
+	display:flex;
+	justify-content:space-between;
+	align-items:center;
+	text-align:center;
+	padding:5px;
+	width: 100%;
+	border-radius: 5%;
+	color: rgb(412, 580, 515);
+	background:rgba(1.33, 0.64, 30.60, 0.9);
+	background: rgba(21.3, 0.64, 60, 0.9);
+}
+.cover-cards h1 {
+	width: 100%;
+	margin:5px;
+}
+.cover-cards a{
+	display: block;
+	width: 100%;
+	font-weight: bold;
+}
+.cover-cards p{
+	width: 100%;
+	font-weight: bold;
+}
+}

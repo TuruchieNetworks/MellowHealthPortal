@@ -1,0 +1,578 @@
+@charset "ISO-8859-1";
+/* utility.css */
+a {
+	text-decoration: none;
+	width: 100%;
+}
+p {
+	width:100%;
+}
+/* main.css */
+.mellow-health-body {
+    background: khaki;
+    font-family: cursive;
+}
+.primary-mellow-health-body {
+	color: khaki;
+	background:aqua;
+	background:rgba(1.802, 0.4, 36.6, 0.9);
+}
+.secondary-mellow-health-body {
+	color: khaki;background:aqua;
+	background:rgba(1.802, 252.4, 191.6, 0.9);
+}
+.tertiary-mellow-health-body {
+	color: rgb(211, 180, 255);
+	background:rgba(1.2, 0.4, 6.6, 0.9);
+}
+
+.mellow-health-header {
+	text-align:center;
+	border-bottom: 2px solid chocolate;
+	border-radius:5%;
+	margin-top:5px;
+	font-size: 26px;
+	background:rgba(20.1, 0.4, 0.9, 0.9);
+}
+.mellow-health-header a {
+	width: 100%;
+	display:block;
+	padding: 5px;
+	text-decoration:none;
+	font-family:fantasy;
+	font-size:26px;
+}
+.mellow-health-header a:hover{
+	color:greenyellow;
+}
+.welcome-link {
+    width: 100%;
+    display: block;
+    padding: 0px;
+    color: brown;
+    text-decoration: none;
+}
+
+.welcome-message {
+    color: azure;
+    border-bottom: 2px solid aliceblue;
+    background: rgba(2.11, 24.5, 121, 0.9);
+    border-radius: 5%;
+    font-weight: bold;
+    font-size: 22px;
+    padding: 10px;
+    font-family: cursive;
+    text-align: center;
+}
+
+/* Table Data css*/
+.main-container-column{
+	display:flex;
+	flex-wrap:wrap;
+	justify-content:space-between;
+	align-items:center;
+	text-align:center;
+	margin:5px 0;
+	padding:5px;
+	color: rgb(412, 580, 515);
+	background:rgba(1.33, 0.64, 30.60, 0.9);
+	background: rgba(13, 64, 60, 0.9);
+}
+.main-container-column a {
+	width:100%;	
+}
+.column-card{
+	display:flex;
+	flex-wrap:wrap;
+	justify-content:space-between;
+	align-items:center;
+	text-align:center;
+	margin:5px 0;
+	padding:5px;
+	width: 100%;
+	border-radius: 5%;
+	color: rgb(412, 580, 515);
+	background:rgba(1.33, 0.64, 30.60, 0.9);
+	background: rgba(13, 64, 60, 0.9);
+}
+.column-card a:hover {
+	color:black;
+	font-weight: bold;
+}
+.inner-column-card {
+	display:flex;
+	flex-wrap:wrap;
+	justify-content:center;
+	align-items:center;
+	text-align:center;
+	margin:5px;
+	padding:5px;
+	color: rgb(12, 80, 15);
+	background:rgba(133, 0.64, 30.60, 0.9);
+	background: rgba(13, 64, 60, 0.9);
+}
+.primary-column-card{
+	color: rgb(412, 580, 515);
+	background: rgba(13, 64, 60, 0.9);	
+}
+.secondary-column-card{
+	color: rgb(12, 58, 51);
+	background: rgba(13, 114, 160, 0.9); 
+}
+.tertiary-column-card{
+	color: rgb(412, 580, 51);
+	background: rgba(133, 64, 60, 0.9);
+}
+.neutral-column-card{
+	color: rgb(121, 180, 255);
+	color:pink;
+	background: rgba(133, 64, 60, 0.9);
+}
+
+.main-column-card {
+	color:aqua;
+}
+.primary-main-column-card {
+	color:aquamarine;
+}
+
+.secondary-main-column-card {
+	color:aqua;
+}
+
+.tertiary-main-column-card {
+	color: rgb(211, 180, 255);
+	color:azure;
+}
+
+.alt-column-card {
+	color:khaki
+}
+.alt-primary-column-card {
+	color:pink;
+	color:orange;
+}
+.alt-secondary-column-card {
+	color: rgb(211, 180, 255);
+}
+.alt-tertiary-column-card {
+	color:khaki
+}
+.alt-neutral-column-card {
+	color:khaki
+}
+ /* Gender Colors*/
+.male-color-column {
+	color:silk;
+	color: rgb(21, 180, 255);
+}
+.female-color-column {
+	color: rgb(221, 10, 255);
+	color:silk
+}
+.other-color-column {
+	color: rgb(221, 180, 255);
+	color:silk
+}
+
+/* Birthday*/
+.date-column-card {
+	color: rgb(43, 580, 515);
+	color:pink;
+}
+.primary-date-column-card {
+	color: rgb(43, 580, 515);
+	color:pink;
+}
+.secondary-date-column-card {
+	color: rgb(212, 158, 115);
+}
+.tertiary-date-column-card {
+	color: rgb(132, 220, 215);
+}
+.neutral-date-column-card {
+	color: rgb(21, 180, 255);
+	color:aqua;
+}
+/*Main Display Container*/
+
+/*Display Containers*/
+.main-generic-display {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	padding: 5px;
+	border-radius: 5%;
+	margin: 5px 0;
+	align-items: center;
+	background: rgba(13, 0.64, 60, 0.9);
+}
+/*Inner Tabs*/
+.inner-generic-display-container {
+	display:flex;
+	justify-content: space-between;
+	text-align: center;
+	text-decoration:none;
+	color:aqua;
+	border-radius:5%;
+	margin:5px;
+	width: 100%;
+}
+
+.primary-inner-generic-display-container {
+	color: rgb(412, 580, 515);
+	background: rgba(17, 64, 130, 0.9); 	
+}
+.secondary-inner-generic-display-container {
+	color: rgb(412, 580, 515);
+	background: rgba(17, 64, 130, 0.9); 
+}
+.tertiary-inner-generic-display-container {
+	color: rgb(21, 180, 255); 
+	color:pink;
+	background: rgba(133, 64, 60, 0.9); 
+}
+.inner-generic-display-container {
+	display:flex;
+	justify-content: space-between;
+	text-align: center;
+	text-decoration:none;
+	color:aqua;
+	border-radius:5%;
+	margin:5px;
+	width: 100%;
+}
+.inner-generic-display-container form{
+	margin:5px;
+	width: 100%;
+	display:block;
+	padding: 10px;	
+}
+.inner-generic-display-container input:hover {
+	 color:yellow;
+}
+.inner-generic-display-container .deleteHover:hover {
+	 color:azure;
+}
+.inner-generic-display-container input{
+	margin:5px;
+	width: 100%;
+	display:block;
+	padding: 10px;	
+}
+.generic-display-wraps {
+	display:flex;
+	justify-content: space-between;
+	text-align: center;
+	text-decoration:none;
+	color:aqua;
+	border-radius:5%;
+	width: 100%;
+}
+
+.generic-action-wraps {
+	display:flex;
+	align-items: center;
+	justify-content: space-between;
+	text-align: center;
+	text-decoration:none;
+	color:aqua;
+	border-radius:5%;
+	width: 100%;
+	padding: 5px;
+}
+.generic-action-wraps a {
+	margin:10px;
+}
+.generic-action-wraps form {
+	margin:10px;
+}
+.second-generic-display-container {
+	display:flex;
+	justify-content: space-between;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	border-radius:5%;
+	padding:10px;
+	width: 100%;
+}
+.second-generic-display-container {
+	display:flex;
+	justify-content: space-between;
+	align-items: center;
+	text-align: center;
+	text-decoration:none;
+	color:aqua;
+	border-radius:5%;
+	margin:5px;
+	width: 100%;
+}
+.inner-generic-tab {
+	display:flex;
+	flex-wrap:wrap;
+	justify-content:center;
+	align-items:center;
+	text-align:center;
+	padding:5px;
+	width: 100%;
+	background:rgba(3.33, 0.64, 0.60, 0.9);
+}
+.alt-inner-generic-tab {
+	display:flex;
+	flex-direction: column;
+	justify-content:center;
+	align-items:center;
+	text-align:center;
+	width: 100%;
+	background:rgba(1.33, 0.64, 0.60, 0.9);
+}
+.alt-inner-generic-tab a{
+	display:flex;
+	justify-content:center;
+	align-items:center;
+	text-align:center;
+	width: 100%;
+	padding:10px;
+	margin:10px;
+	background:rgba(1.33, 0.64, 0.60, 0.9);
+}
+
+.generic-display-action-container {
+	display:flex;
+	justify-content: space-between;;
+	flex-direction: column;
+	text-align: center;
+	text-decoration:none;
+	color:aqua;
+	border-radius:5%;
+	width: 100%;
+}
+/* Inner Container Wrap 
+.generic-display-wraps {
+	display:flex;
+	justify-content: space-between;
+	text-align: center;
+	text-decoration:none;
+	color:aqua;
+	border-radius:5%;
+}*/
+.inner-generic-tab {
+	display:flex;
+	flex-wrap:wrap;
+	justify-content:center;
+	align-items:center;
+	text-align:center;
+	margin:3px;
+	padding:5px;
+	width: 100%;
+	background:rgba(3.33, 0.64, 0.60, 0.9);
+}
+.inner-generic-tab a{
+	display:flex;
+	flex-wrap:wrap;
+	justify-content:center;
+	align-items:center;
+	text-align:center;
+	margin:5px;
+	padding:5px;
+	width: 100%;
+	border-radius: 5%;
+	background:rgba(3.33, 0.64, 0.60, 0.9);
+}
+.alt-generic-tab-end {
+	display:flex;
+	flex-direction: column;
+	justify-content:center;
+	text-align: center;
+	color:aqua;
+	border-radius:5%;
+	width: 100%;
+	margin:5px;
+}
+alt-generic-tab-end a {
+	padding:10px;
+	width: 100%;
+}
+
+.alt-inner-generic-tab-end {
+	display:flex;
+	flex-wrap:wrap;
+	justify-content:center;
+	align-items:center;
+	text-align:center;
+	padding:10px;
+	width: 100%;
+	background:rgba(1.33, 0.64, 30.60, 0.9);
+}
+
+.alt-inner-generic-tab-end {
+	display:flex;
+	flex-wrap:wrap;
+	justify-content:center;
+	align-items:center;
+	text-align:center;
+	padding:10px;
+	width: 100%;
+	background:rgba(1.33, 0.64, 30.60, 0.9);
+}
+
+.alt-inner-generic-tab-end a {
+	display:flex;
+	flex-wrap:wrap;
+	justify-content:center;
+	align-items:center;
+	text-align:center;
+	padding:10px;
+	width: 100%;
+	background:rgba(1.33, 0.64, 30.60, 0.9);
+}
+/*Alt Action Col*/
+.alt-actions-column {
+	margin:10px 0;
+	width: 100%;
+	display:block;
+	padding: 5px; 
+	color:khaki
+}
+.alt-primary-actions-column {
+	color:pink;
+}
+.alt-secondary-actions-column {
+	color:pink;
+}
+.alt-tertiary-actions-column {
+	color: rgb(211, 180, 255);
+}
+/* Form Styles*/
+.patient-search-form {
+    margin: 10px;
+    text-align: center;
+}
+.panel-board {
+	display:flex;
+	justify-content:space-between;
+	padding: 10px;
+	border-radius:5%;
+	margin:5px 0;
+}
+/* Mobile tab transition */
+@media (max-width: 850px) {
+.table-row {
+	display: flex;
+	flex-direction: column;			
+}
+.table-row-header {
+	display: flex;
+	width: 100%;	
+}
+thead {
+	display: none;
+}
+tr{
+	display: flex;
+	flex-direction: column;
+}
+.mellow-health-header a {
+	font-size: 24px;
+}
+
+.generic-display-wraps {
+	display:flex;
+	flex-direction: column;
+	justify-content: space-between;
+	text-align: center;
+	text-decoration:none;
+	color:aqua;
+	border-radius:5%;
+	width: 100%;
+}
+
+.generic-action-wraps {
+	display:flex;
+	flex-direction: column;
+	justify-content: space-between;
+	text-align: center;
+	text-decoration:none;
+	color:aqua;
+	border-radius:5%;
+	width: 100%;
+}
+
+}
+* Label Styles */
+.search-label {
+    padding: 5px 10px;
+    font-weight: bold;
+}
+/* Styles for the search input */
+.search-input {
+    width: 60%;
+    padding: 8px;
+    border-radius: 5px;
+}
+
+/* Styles for the matched patient full name */
+.matched-patient-full-name {
+    font-weight: bold;
+    color: green;
+    margin-top: 10px;
+}
+.mellow-health-header {
+    color: azure;
+    border-bottom: 2px solid aliceblue;
+    font-weight: bold;
+    font-size: 32px;
+    background: chocolate;
+    padding: 10px;
+    font-family: cursive;
+    text-align: center;
+}
+
+/* Welcome Message Link */
+.welcome-link {
+    width: 100%;
+    display: block;
+    padding: 0;
+    color: brown;
+    text-decoration: none;
+}
+
+/* Welcome Message */
+.welcome-message {
+    color: azure;
+    border-bottom: 2px solid aliceblue;
+    background: rgba(2.11, 24.5, 121, 0.9);
+    border-radius: 5%;
+    font-weight: bold;
+    font-size: 22px;
+    padding: 10px;
+    font-family: cursive;
+    text-align: center;
+}
+
+/* Form Styles */
+.patient-search-form {
+    margin: 10px;
+    text-align: center;
+}
+
+/* Label Styles */
+.form-label {
+    padding: 10px 0;
+}
+
+/* Input Styles */
+.form-input {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+}
+
+/* Matched Patient Full Name Styles */
+.matched-patient-full-name {
+    font-weight: bold;
+    color: green;
+    margin-top: 10px;
+}
+
