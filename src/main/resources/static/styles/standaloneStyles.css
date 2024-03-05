@@ -130,7 +130,7 @@
 	padding: 5px;
 	background: rgba(13, 64, 60, 0.9);
 }
-.alt-cover-cards{
+.flex-cover-cards{
 	display:flex;
 	justify-content:space-between;
 	align-items:center;
@@ -262,7 +262,7 @@
 	width: 100%;
 	background: rgba(13, 64, 60, 0.9);
 }
-.alt-cover-cards{
+.flex-cover-cards{
 	display:flex;
 	justify-content:space-between;
 	align-items:center;

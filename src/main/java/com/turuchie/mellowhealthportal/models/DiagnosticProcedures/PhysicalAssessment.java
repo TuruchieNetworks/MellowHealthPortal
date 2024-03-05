@@ -18,6 +18,7 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
@@ -27,39 +28,48 @@ public class PhysicalAssessment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Oral Cavity Assessment
+    @NotBlank(message = "Please Enter Oral Assessment!")
+    @Size(min = 3, max = 255, message = "Invalid Entry, Enter Null If Unavailable!")
     private String oralCavityDescription;
 
-    // General Appearance Assessment
     @NotBlank(message = "Please Enter Any General Appearance Assessment!")
     @Size(min = 3, max = 255, message = "Invalid Entry, Enter Null If Unavailable!")
     private String generalAppearanceDescription;
 
-    // Skin Assessment
+    @NotBlank(message = "Please Describe Skin Condition!")
+    @Size(min = 3, max = 255, message = "Invalid Entry, Skin Conditions Must Be Between 1 and 255 Characters!")
     private String skinDescription;
 
-    // HEENT (Head, Eyes, Ears, Nose, Throat) Assessment
+    @NotBlank(message = "Please HEENT Oservations!")
+    @Size(min = 3, max = 255, message = "Invalid Entry, HEENT Observations Must Be Between 1 and 255 Characters!")
     private String heentDescription;
 
-    // Neck (including thyroid) Assessment
+    @NotBlank(message = "Please Enter Neck Assessment!")
+    @Size(min = 3, max = 255, message = "Invalid Entry, Neck Assessment Must Be Between 1 and 255 Characters!")
     private String neckDescription;
 
-    // Lungs Assessment
+    @NotBlank(message = "Please Enter Lungs Assessment!")
+    @Size(min = 3, max = 255, message = "Invalid Entry, Lungs Assessment Must Be Between 1 and 255 Characters!")
     private String lungsDescription;
 
-    // Heart Assessment
+    @NotBlank(message = "Please Enter Heart Assessment!")
+    @Size(min = 3, max = 255, message = "Invalid Entry, Heart Assessment Must Be Between 1 and 255 Characters!")
     private String heartDescription;
 
-    // Abdomen Assessment
+    @NotBlank(message = "Please Enter Abdomen Assessment!")
+    @Size(min = 3, max = 255, message = "Invalid Entry, Abdomen Assessment Must Be Between 1 and 255 Characters!")
     private String abdomenDescription;
 
-    // Extremities Assessment
+    @NotBlank(message = "Please Describe External Extremities!")
+    @Size(min = 3, max = 255, message = "Invalid Entry, Extremities Assessment Must Be Between 1 and 255 Characters!")
     private String extremitiesDescription;
 
-    // Neurologic Nervous System Assessment
+    @NotBlank(message = "Please Enter Neurologic Assessment!")
+    @Size(min = 3, max = 255, message = "Invalid Entry, Neurologic Assessment Must Be Between 1 and 255 Characters!")
     private String neurologicDescription;
 
-    // Lymph Nodes Assessment
+    @NotBlank(message = "Please Enter Lymph Nodes Assessment!")
+    @Size(min = 3, max = 255, message = "Invalid Entry, Lymph Nodes Assessment Must Be Between 1 and 255 Characters!")
     private String lymphNodesDescription;
 
     @Column(updatable = false)
@@ -76,10 +86,12 @@ public class PhysicalAssessment {
 
     @ManyToOne
     @JoinColumn(name = "patientCase_id")
+    @NotNull(message = "Please Select Case ID!")
     private PatientCase patientCase;
 
     @ManyToOne
     @JoinColumn(name = "physician_id")
+    @NotNull(message = "Please Select Physician ID!")
     private Physician physician;
 
     public PhysicalAssessment() {

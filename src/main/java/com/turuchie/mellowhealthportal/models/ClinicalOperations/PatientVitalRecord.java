@@ -2,9 +2,16 @@ package com.turuchie.mellowhealthportal.models.ClinicalOperations;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
+import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.AbdominalAssessment;
+import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.NauseaVomitAssessment;
+import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PediatricFeverAssessment;
+import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PediatricGIAssessment;
 import com.turuchie.mellowhealthportal.models.PatientOperations.Patient;
+import com.turuchie.mellowhealthportal.models.Physicians.Physician;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,6 +19,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -71,10 +79,30 @@ public class PatientVitalRecord {
     private Patient patient;
 
     @ManyToOne
+    @JoinColumn(name = "physician_id")
+    @NotNull(message = "Please Select Physician!")
+    private Physician physician;
+
+    @ManyToOne
     @JoinColumn(name = "patientCase_id")
     @NotNull(message = "Patient Case Is Required!")
     private PatientCase patientCase;
 
+    @OneToMany(mappedBy = "patientVital", cascade = CascadeType.ALL)
+    private List<AbdominalAssessment> abdominalPainAssessments;
+
+    @OneToMany(mappedBy = "patientVital", cascade = CascadeType.ALL)
+    private List<NauseaVomitAssessment> nauseaVomitAssessments;
+
+    @OneToMany(mappedBy = "patientVital", cascade = CascadeType.ALL)
+    private List<PediatricFeverAssessment> pediatricFeverAssessments;    
+
+    @OneToMany(mappedBy = "patientVital", cascade = CascadeType.ALL)
+    private List<PediatricGIAssessment> pediatricGIAssessments;   
+
+    @OneToMany(mappedBy = "patientVital", cascade = CascadeType.ALL)
+    private List<PatientVisitEvaluation> patientVisitEvaluations; 
+ 
     public PatientVitalRecord() {
     }
  
@@ -162,8 +190,56 @@ public class PatientVitalRecord {
 		return patientCase;
 	}
 
+	public Physician getPhysician() {
+		return physician;
+	}
+
+	public void setPhysician(Physician physician) {
+		this.physician = physician;
+	}
+
 	public void setPatientCase(PatientCase patientCase) {
 		this.patientCase = patientCase;
+	}
+
+	public List<AbdominalAssessment> getAbdominalPainAssessments() {
+		return abdominalPainAssessments;
+	}
+
+	public void setAbdominalPainAssessments(List<AbdominalAssessment> abdominalPainAssessments) {
+		this.abdominalPainAssessments = abdominalPainAssessments;
+	}
+
+	public List<NauseaVomitAssessment> getNauseaVomitAssessments() {
+		return nauseaVomitAssessments;
+	}
+
+	public List<PediatricFeverAssessment> getPediatricFeverAssessments() {
+		return pediatricFeverAssessments;
+	}
+
+	public void setPediatricFeverAssessments(List<PediatricFeverAssessment> pediatricFeverAssessments) {
+		this.pediatricFeverAssessments = pediatricFeverAssessments;
+	}
+
+	public List<PediatricGIAssessment> getPediatricGIAssessments() {
+		return pediatricGIAssessments;
+	}
+
+	public void setPediatricGIAssessments(List<PediatricGIAssessment> pediatricGIAssessments) {
+		this.pediatricGIAssessments = pediatricGIAssessments;
+	}
+
+	public void setNauseaVomitAssessments(List<NauseaVomitAssessment> nauseaVomitAssessments) {
+		this.nauseaVomitAssessments = nauseaVomitAssessments;
+	}
+
+	public List<PatientVisitEvaluation> getPatientVisitEvaluations() {
+		return patientVisitEvaluations;
+	}
+
+	public void setPatientVisitEvaluations(List<PatientVisitEvaluation> patientVisitEvaluations) {
+		this.patientVisitEvaluations = patientVisitEvaluations;
 	}
 
 	public LocalDateTime getCreatedAt() {

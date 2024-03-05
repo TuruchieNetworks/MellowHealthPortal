@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.turuchie.mellowhealthportal.models.PatientOperations.AdverseEffect;
-import com.turuchie.mellowhealthportal.models.PatientOperations.CurrentMedication;
 import com.turuchie.mellowhealthportal.models.PatientOperations.Patient;
+import com.turuchie.mellowhealthportal.models.Physicians.Physician;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -19,7 +19,9 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "dose_regimen")
@@ -28,20 +30,24 @@ public class DoseRegimen {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "Please enter the drug name!")
+    @NotBlank(message = "Please enter the drug name!")
+    @Size(min = 3, max = 150, message = "Drug Name Must Be Between 3 and 150 Characters!")
     private String drugName;
 
-    @NotNull(message = "Please enter the pharmaceutical form!")
+    @NotBlank(message = "Please enter the pharmaceutical form!")
+    @Size(min = 3, max = 150, message = "Pharmaceutical Form Must Be Between 3 and 150 Characters!")
     private String pharmaceuticalForm;
 
-    @NotNull(message = "Please enter the dose!")
+    @NotBlank(message = "Please enter the dose!")
+    @Size(min = 3, max = 150, message = "Dose Must Be Between 3 and 150 Characters!")
     private String dose;
 
-    @NotNull(message = "Please enter the frequency and/or regimen!")
+    @NotBlank(message = "Please enter the frequency and/or regimen!")
+    @Size(min = 3, max = 150, message = "Freqency Must Be Between 3 and 150 Characters!")
     private String frequencyAndRegimen;
 
     @NotNull(message = "Please select the capsule type!")
-    private boolean isOralCapsule;
+    private Boolean isOralCapsule;
 
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -54,8 +60,13 @@ public class DoseRegimen {
 
     @ManyToOne
     @JoinColumn(name = "patientCase_id")
-    @NotNull(message = "Please Select Case Id!")
+    @NotNull(message = "Please Select Case ID!")
     private PatientCase patientCase;
+
+    @ManyToOne
+    @JoinColumn(name = "physician_id")
+    @NotNull(message = "Please Select Physician ID!")
+    private Physician physician;
 
     @ManyToOne
     @JoinColumn(name = "currentMedication_id")
@@ -108,13 +119,13 @@ public class DoseRegimen {
         this.frequencyAndRegimen = frequencyAndRegimen;
     }
 
-    public boolean isOralCapsule() {
-        return isOralCapsule;
-    }
+	public Boolean getIsOralCapsule() {
+		return isOralCapsule;
+	}
 
-    public void setOralCapsule(boolean oralCapsule) {
-        isOralCapsule = oralCapsule;
-    }
+	public void setIsOralCapsule(Boolean isOralCapsule) {
+		this.isOralCapsule = isOralCapsule;
+	}
 
 	public CurrentMedication getCurrentMedication() {
 		return currentMedication;
@@ -138,6 +149,14 @@ public class DoseRegimen {
 
 	public void setPatientCase(PatientCase patientCase) {
 		this.patientCase = patientCase;
+	}
+
+	public Physician getPhysician() {
+		return physician;
+	}
+
+	public void setPhysician(Physician physician) {
+		this.physician = physician;
 	}
 
 	public List<AdverseEffect> getAdverseEffects() {

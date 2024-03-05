@@ -7,6 +7,7 @@ import java.util.List;
 import com.turuchie.mellowhealthportal.models.Administrations.InsuredPatients;
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.PatientCase;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -52,11 +53,12 @@ public class InsuranceInformation {
     @JoinColumn(name = "patient_id")
     private Patient patient;
 
-    @OneToMany(mappedBy = "insuranceInformation")
+    @OneToMany(mappedBy = "insuranceInformation", cascade = CascadeType.ALL)
     private List<PatientCase> patientCases;
 
-    @OneToMany(mappedBy = "insuranceInformation")
+    @OneToMany(mappedBy = "insuranceInformation", cascade = CascadeType.ALL)
     private List<InsuredPatients> insuredPatients;
+
 
     // Constructors, getters, setters, etc.
     public InsuranceInformation() {

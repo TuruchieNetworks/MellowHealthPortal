@@ -7,6 +7,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.turuchie.mellowhealthportal.models.MyRequestData;
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.PatientVitalRecord;
+import com.turuchie.mellowhealthportal.services.ClinicalOperationsServices.PatientVitalRecordService;
 
 @Component
 public class ApiIntegrationUtil {

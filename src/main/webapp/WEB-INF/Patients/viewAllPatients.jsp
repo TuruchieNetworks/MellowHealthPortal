@@ -15,17 +15,17 @@
 <title>Mellow Health!</title>
 </head>
 <body class="container-fluid p-8  mellow-health-body 
- 		    <c:choose>
-	             <c:when test="${loggedInPatient.hasTravelledOutsideTheUnitedStatesForMoreThan30Days == 'Yes' || loggedInPatient.patientCases.size() % 2 == 1}">
-			         primary-mellow-health-body
-	             </c:when>
-	             <c:when test="${loggedInPatient.hasTravelledOutsideTheUnitedStatesForMoreThan30Days == 'No' || loggedInPatient.patientCases.size() % 2 == 0}">
-			         secondary-mellow-health-body
-	             </c:when>
-	             <c:otherwise>
-                     tertiary-mellow-health-body
-                 </c:otherwise>
-        	</c:choose>">
+    <c:choose>
+        <c:when test="${loggedInPatient.hasTravelledOutsideTheUnitedStatesForMoreThan30Days == 'Yes' || loggedInPatient.patientCases.size() % 2 == 1}">
+	         primary-mellow-health-body
+        </c:when>
+        <c:when test="${loggedInPatient.hasTravelledOutsideTheUnitedStatesForMoreThan30Days == 'No' || loggedInPatient.patientCases.size() % 2 == 0}">
+	         secondary-mellow-health-body
+        </c:when>
+	    <c:otherwise>
+             tertiary-mellow-health-body
+        </c:otherwise>
+    </c:choose>">
 	<h1 class="mellow-health-header" style="background:rgba(20.1, 0.4, 0.9, 0.9);">
 		<a style=""  href="/mellowHealth/patientsPortal/patients/${loggedInPatient.id}">
 			<c:out value="Welcome To The Mellow Heath Patients Dashboard ${loggedInPatient.patientFirstName} ${loggedInPatient.patientLastName} ${currentDateTime}!"/>
@@ -63,10 +63,10 @@
 			                neutral-column-card 
 			             </c:otherwise>
 			         </c:choose>
-			         ">
+			         " style="background: rgba(17, 1, 30, 0.9);">
 			         <c:out value="Patient ID: ${loggedInPatient.id} Insurance Provider: ${oneInsuranceReport.providerName}"/>
 			      </div>
-				  <div class="inner-column-card ">
+				  <div class="inner-column-card " style="background: rgba(17, 1, 30, 0.9);border-radius:5%;">
 				  	 <a href="/mellowHealth/patientsPortal/patients/${loggedInPatient.id}" class="main-column-card  
 					  	<c:choose>
 		                    <c:when test="${loggedInPatient.gender == 'Male' || patient.race == 'Black'}">
@@ -84,7 +84,7 @@
 		              </a>
 		          </div>
 				  <div>
-				  <div class="column-card btn btn-outline-warning">
+				  <div class="column-card btn btn-outline-warning" style="background: rgba(17, 1, 30, 0.9);">
 				  	 <a href="/mellowHealth/patientsPortal/patients/${loggedInPatient.id}" class=" 
 				  		<c:choose>
 		                    <c:when test="${loggedInPatient.gender == 'Male' || patient.race == 'Black'}">
@@ -169,14 +169,20 @@
 				            </c:choose>
 				            ">
 				            <div class="d-flex justify-content-around inner-generic-display-container" >
-							<form action="/mellowHealth/patientsPortal/patients/edit/${loggedInPatient.id}" method="get" style="margin:5px; width:100%">
-								<input type="hidden" name="_method" value="edit">
-								<input class ="btn btn-outline-warning" type="submit" value="Update Patient Profile" style="background: rgba(13, 0.64, 0.60, 0.9);" >
-							</form>
-							<form action="/mellowHealth/patientsPortal/patients/delete/${loggedInPatient.id}" method="post" style=" margin:5px;width:100%">
-								<input type="hidden" name="_method" value="delete">
-								<input class ="btn btn-outline-danger deleteHover" type="submit" value="Delete Patient Profile" style="background: rgba(13, 0.64, 6, 0.9);">
-							</form>
+								<form action="/mellowHealth/patientsPortal/patients/edit/${loggedInPatient.id}" method="get" style="margin:5px; width:100%">
+									<input type="hidden" name="_method" value="edit">
+									<input class ="btn btn-outline-warning" type="submit" value="Update Patient Profile" style="background: rgba(13, 0.64, 0.60, 0.9);" >
+								</form>
+								<c:if test="${loggedInPatient.patientAddresses.size() < 1}">
+									<form action="/mellowHealth/patientAddresses/newPatientAddress" method="get" style="margin:5px; width:100%">
+										<input type="hidden" name="_method" value="edit">
+										<input class ="btn btn-outline-primary" type="submit" value="Update Contact Details" style="background: rgba(13, 0.64, 0.60, 0.9);" >
+									</form>
+								</c:if>
+								<form action="/mellowHealth/patientsPortal/patients/delete/${loggedInPatient.id}" method="post" style=" margin:5px;width:100%">
+									<input type="hidden" name="_method" value="delete">
+									<input class ="btn btn-outline-danger deleteHover" type="submit" value="Delete Patient Profile" style="background: rgba(13, 0.64, 6, 0.9);">
+								</form>
 							</div>
 						</div>
 		 			</c:when>

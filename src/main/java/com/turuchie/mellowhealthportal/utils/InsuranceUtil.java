@@ -15,24 +15,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 
+import com.turuchie.mellowhealthportal.models.ClinicalOperations.CurrentMedication;
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.PatientCase;
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.PatientVitalRecord;
-import com.turuchie.mellowhealthportal.models.PatientOperations.CurrentMedication;
 import com.turuchie.mellowhealthportal.models.PatientOperations.InsuranceInformation;
 import com.turuchie.mellowhealthportal.models.PatientOperations.Patient;
 import com.turuchie.mellowhealthportal.models.PatientOperations.RecentAdmission;
 import com.turuchie.mellowhealthportal.models.PatientOperations.RecentEmergency;
-import com.turuchie.mellowhealthportal.services.AdverseEffectService;
-import com.turuchie.mellowhealthportal.services.CurrentMedicationService;
-import com.turuchie.mellowhealthportal.services.IncidentReportService;
-import com.turuchie.mellowhealthportal.services.InsuranceInformationService;
-import com.turuchie.mellowhealthportal.services.PatientCaseService;
-import com.turuchie.mellowhealthportal.services.PatientService;
-import com.turuchie.mellowhealthportal.services.PatientVitalRecordService;
 import com.turuchie.mellowhealthportal.services.PhysicianService;
 import com.turuchie.mellowhealthportal.services.PhysiciansPatientService;
-import com.turuchie.mellowhealthportal.services.RecentAdmissionService;
-import com.turuchie.mellowhealthportal.services.RecentEmergencyService;
+import com.turuchie.mellowhealthportal.services.ClinicalOperationsServices.PatientCaseService;
+import com.turuchie.mellowhealthportal.services.ClinicalOperationsServices.PatientVitalRecordService;
+import com.turuchie.mellowhealthportal.services.DiagnosticProceduresServices.CurrentMedicationService;
+import com.turuchie.mellowhealthportal.services.PatientOperationsServices.AdverseEffectService;
+import com.turuchie.mellowhealthportal.services.PatientOperationsServices.IncidentReportService;
+import com.turuchie.mellowhealthportal.services.PatientOperationsServices.InsuranceInformationService;
+import com.turuchie.mellowhealthportal.services.PatientOperationsServices.PatientService;
+import com.turuchie.mellowhealthportal.services.PatientOperationsServices.RecentAdmissionService;
+import com.turuchie.mellowhealthportal.services.PatientOperationsServices.RecentEmergencyService;
 
 @Component
 public class InsuranceUtil {

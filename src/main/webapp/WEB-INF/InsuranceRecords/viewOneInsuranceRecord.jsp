@@ -322,7 +322,7 @@
 			</a>
 		</h1>
 		<h1 style="width:100%">
-			<a style="background:rgba(68, 8, 120, 0.9);margin:16px 0 0 0;width:100%; display:block; padding: 10px" href="/mellowHealth/patientsPortal/${loggedInPatient.id}" class="btn btn-success">
+			<a style="background:rgba(68, 8, 120, 0.9);margin:16px 0 0 0;width:100%; display:block; padding: 10px" href="/mellowHealth/patientsPortal/patients/${loggedInPatient.id}" class="btn btn-success">
 				<c:out value="${loggedInPatient.patientFirstName} Profile Access"/>
 			</a>
 		</h1>

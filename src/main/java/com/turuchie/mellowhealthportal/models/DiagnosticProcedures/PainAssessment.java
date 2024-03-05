@@ -31,7 +31,8 @@ public class PainAssessment {
     private Long id;
 
     @Column(name = "has_pain")
-    private boolean hasPain;
+    @NotNull(message = "Please Enter Pain Status!")
+    private Boolean hasPain;
 
     @Column(name = "duration")
     @NotBlank(message = "Please Enter Pain Duration!")
@@ -65,10 +66,10 @@ public class PainAssessment {
     private String characteristics;
 
     @Column(name = "pain_scale")
-    @NotBlank(message = "Please Tell Us How You Feel On A Scale Of 1 - 10")
+    @NotNull(message = "Please Tell Us How You Feel On A Scale Of 1 - 10")
     @Min(value = 0, message = "Pain Scale Must Be Greater Than or Equal to 0")
     @Max(value = 10, message = "Pain Scale Must Be Less Than or Equal to 10")
-    private int painScale;
+    private Integer painScale;
 
     @Column(name = "trigger_factor")
     @NotBlank(message = "Please Enter Any Pain Triggering Effect, Enter Null If Unavailable!")
@@ -87,7 +88,7 @@ public class PainAssessment {
 
     @Column(name = "previous_episode")
     @NotNull(message = "Please Verify Previous episode!")
-    private boolean previousEpisode;
+    private Boolean previousEpisode;
 
     @Column(name = "related_symptoms")
     @NotBlank(message = "Please Enter Any Related Symptoms, Enter Null If Unavailable!")
@@ -155,12 +156,20 @@ public class PainAssessment {
 		this.id = id;
 	}
 
-	public boolean isHasPain() {
+	public Boolean getHasPain() {
 		return hasPain;
 	}
 
-	public void setHasPain(boolean hasPain) {
+	public void setHasPain(Boolean hasPain) {
 		this.hasPain = hasPain;
+	}
+
+	public Boolean getPreviousEpisode() {
+		return previousEpisode;
+	}
+
+	public void setPreviousEpisode(Boolean previousEpisode) {
+		this.previousEpisode = previousEpisode;
 	}
 
 	public String getDuration() {
@@ -219,11 +228,11 @@ public class PainAssessment {
 		this.characteristics = characteristics;
 	}
 
-	public int getPainScale() {
+	public Integer getPainScale() {
 		return painScale;
 	}
 
-	public void setPainScale(int painScale) {
+	public void setPainScale(Integer painScale) {
 		this.painScale = painScale;
 	}
 

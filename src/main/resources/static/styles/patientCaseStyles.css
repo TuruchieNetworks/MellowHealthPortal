@@ -45,6 +45,9 @@ p {
 .mellow-health-header a:hover{
 	color:greenyellow;
 }
+.mellow-header a:hover{
+	color:greenyellow;
+}
 .welcome-link {
     width: 100%;
     display: block;
@@ -223,6 +226,48 @@ display:flex;flex-direction:column;flex-wrap:wrap;justify-content:center;align-i
 	color: rgb(12, 80, 15);
 	background:rgba(133, 0.64, 30.60, 0.9);
 	background: rgba(13, 64, 60, 0.9);
+}
+
+.unwrapped-inner-column-card {
+	display:flex;
+	justify-content:space-between;
+	align-items:center;
+	text-align:center;
+	margin:5px;
+	padding:5px;
+	color: rgb(12, 80, 15);
+	background:rgba(133, 0.64, 30.60, 0.9);
+	background: rgba(13, 64, 60, 0.9);
+}
+.unwrapped-inner-column-card form {
+	width: 100%;
+	margin:5px;
+}
+
+.unwrapped-inner-column-card form h1 {
+	width: 100%;
+	margin:5px;
+}
+.unwrapped-inner-column-card form h1 a{
+	width: 100%;
+}
+.unwrapped-inner-column-card a {
+	width: 100%;
+	margin:5px;
+}
+.unwrapped-inner-column-card a p{
+	width: 100%;
+}
+.unwrapped-inner-column-card p {
+	width: 100%;
+	margin:5px;
+}
+.unwrapped-inner-column-card p a{
+	width: 100%;
+}
+.unwrapped-inner-column-card a:hover {
+	color:yellow;
+	font-weight: bold;
 }
 .primary-column-card{
 	color: rgb(412, 580, 515);
@@ -405,7 +450,18 @@ display:flex;flex-direction:column;flex-wrap:wrap;justify-content:center;align-i
 	border-radius:5%;
 	width: 100%;
 }
-
+.generic-display-wraps h1 {
+	margin:5px;
+	width: 100%;
+}
+.generic-display-wraps h1 a{
+	padding:5px;
+	width: 100%;
+}
+.generic-display-wraps form h1 input{
+	padding:0.5rem;
+	width: 100%;
+}
 .generic-action-wraps {
 	display:flex;
 	align-items: center;
@@ -708,9 +764,42 @@ tr{
 	width: 100%;
 }
 
+.unwrapped-inner-column-card {
+	display:flex;
+	flex-direction: column;
+	justify-content:center;
+	align-items:center;
+	text-align:center;
+	margin:5px;
+	padding:10px;
+	color: rgb(12, 80, 15);
+	background:rgba(133, 0.64, 30.60, 0.9);
+	background: rgba(13, 64, 60, 0.9);
+}
+.unwrapped-inner-column-card form h1 input {
+	width: 100%;
+	padding: 10px;
+}
+.unwrapped-inner-column-card a:hover {
+	color:yellow;
+	font-weight: bold;
 }
 
 
+
+}
+
+/* Tablet Styles */
+@media (max-width: 1000px) {
+.main-container-column {
+	flex-direction: column;
+}
+.inner-column-card {
+	flex-direction: column;
+	
+}
+
+}
 /* Label Styles */
 .search-label {
     padding: 5px 10px;

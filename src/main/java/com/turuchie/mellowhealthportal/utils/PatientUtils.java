@@ -1,16 +1,17 @@
 package com.turuchie.mellowhealthportal.utils;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.Year;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,17 +21,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
-import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PhysicalAssessment;
 import com.turuchie.mellowhealthportal.models.PatientOperations.InsuranceInformation;
 import com.turuchie.mellowhealthportal.models.PatientOperations.PastMedicalHistory;
 import com.turuchie.mellowhealthportal.models.PatientOperations.Patient;
-import com.turuchie.mellowhealthportal.services.IncidentReportService;
-import com.turuchie.mellowhealthportal.services.PastMedicalHistoryService;
-import com.turuchie.mellowhealthportal.services.PatientCaseService;
-import com.turuchie.mellowhealthportal.services.PatientService;
-import com.turuchie.mellowhealthportal.services.PatientVitalRecordService;
 import com.turuchie.mellowhealthportal.services.PhysicianService;
 import com.turuchie.mellowhealthportal.services.PhysiciansPatientService;
+import com.turuchie.mellowhealthportal.services.ClinicalOperationsServices.PatientCaseService;
+import com.turuchie.mellowhealthportal.services.ClinicalOperationsServices.PatientVitalRecordService;
+import com.turuchie.mellowhealthportal.services.PatientOperationsServices.IncidentReportService;
+import com.turuchie.mellowhealthportal.services.PatientOperationsServices.PastMedicalHistoryService;
+import com.turuchie.mellowhealthportal.services.PatientOperationsServices.PatientService;
 
 @Component
 public class PatientUtils {
@@ -263,7 +263,7 @@ public class PatientUtils {
         }
 
         LocalDateTime currentDateTime = LocalDateTime.now();
-        return (int) ChronoUnit.YEARS.between(createdAt, currentDateTime);
+        return (int) ChronoUnit.DAYS.between(createdAt, currentDateTime);
     }
 
  // Helper method to set filtered patients
@@ -351,6 +351,7 @@ public class PatientUtils {
 
     // Method to add Searched Patients to One New Incident
     public void addMatchedPatientCommonAttributeLists(Model model, String trimmedSearchTerm) {
+        if (trimmedSearchTerm != null) {
         // If a non-empty search value is provided
         List<Patient> matchedPatients = Collections.singletonList(patientServ.getOnePatientByFullName(trimmedSearchTerm.toLowerCase()));
 
@@ -363,21 +364,26 @@ public class PatientUtils {
             model.addAttribute("isSingleMatch", true);
             model.addAttribute("matchedPatientSearchedList", Collections.emptyList());
         }
+        }
     }
  
     // Method to add Common Attributes to One New Incident
     public void addOneMatchedPatientCommonSearchAttribute(Model model, String trimmedSearchTerm) {
         // If a non-empty search value is provided
+        if (trimmedSearchTerm != null) {
         Patient matchedPatientFullName = patientServ.getOnePatientByFullName(trimmedSearchTerm.toLowerCase());
 
-        if (matchedPatientFullName != null) {
-            // Single match found, set the flag and add to the model
-            model.addAttribute("isSingleMatch", true);
-            model.addAttribute("matchedPatientFullName", matchedPatientFullName);
+	        if (matchedPatientFullName != null) {
+	            // Single match found, set the flag and add to the model
+	            model.addAttribute("isSingleMatch", true);
+	            model.addAttribute("matchedPatientFullName", matchedPatientFullName);
+	        } else {
+	            // No match found, set the flag and add an empty list to the model
+	            model.addAttribute("isSingleMatch", false);
+	            model.addAttribute("matchedPatientsList", Collections.emptyList());
+	        }
         } else {
-            // No match found, set the flag and add an empty list to the model
-            model.addAttribute("isSingleMatch", false);
-            model.addAttribute("matchedPatientsList", Collections.emptyList());
+        	return;
         }
     }
 
@@ -755,35 +761,52 @@ public class PatientUtils {
 	     return formattedCoverageLength;
 	 }
 
-    // Validate Regular Patients
-    public boolean isValidBirthDateRegularPatient(LocalDate birthDate) {
-        if (birthDate == null) {
-            return false; // Null birth date is invalid
-        }
+	    // Validate Regular Patients
+	    public boolean isValidBirthDateRegularPatient(LocalDate birthDate) {
+	        if (birthDate == null) {
+	            return false; // Null birth date is invalid
+	        }
 
-        LocalDate currentDate = LocalDate.now();
-        int minimumValidYear = currentDate.getYear() - 150;
+	        LocalDate currentDate = LocalDate.now();
+	        int minimumValidYear = currentDate.getYear() - 150;
 
-        // Check if birth date is in the past, not in the future
-        if (birthDate.isAfter(currentDate)) {
-            return false;
-        }
+	        // Check if birth date is in the past, not in the future
+	        if (birthDate.isAfter(currentDate)) {
+	            return false;
+	        }
 
-        // Check if the birth year is within the specified range
-        if (birthDate.getYear() < minimumValidYear) {
-            return false;
-        }
+	        // Check if the birth year is within the specified range
+	        if (birthDate.getYear() < minimumValidYear) {
+	            return false;
+	        }
 
-        // Check if the birth date is in the future month of the current year
-        if (birthDate.getYear() == currentDate.getYear() &&
-                (birthDate.getMonthValue() > currentDate.getMonthValue() ||
-                        (birthDate.getMonthValue() == currentDate.getMonthValue() &&
-                                birthDate.getDayOfMonth() > currentDate.getDayOfMonth()))) {
-            return false;
-        }
+	        // Check if the birth date is in the future month of the current year
+	        if (birthDate.getYear() == currentDate.getYear() &&
+	                (birthDate.getMonthValue() > currentDate.getMonthValue() ||
+	                        (birthDate.getMonthValue() == currentDate.getMonthValue() &&
+	                                birthDate.getDayOfMonth() > currentDate.getDayOfMonth()))) {
+	            return false;
+	        }
 
-        return true;
-    }
+	        return true;
+	    }
+
+	    // Validate Past Dates
+	    public boolean validatePastDates(LocalDate dateObj) {
+	        if (dateObj == null) {
+	            return false; // Null birth date is invalid
+	        }
+
+	        LocalDate currentDate = LocalDate.now();
+	        int minimumValidYear = currentDate.getYear() - 150;
+
+	        // Check if the birth year is within the specified range
+	        if (dateObj.getYear() < minimumValidYear) {
+	            return false;
+	        }
+
+	        return true;
+	    }
 
     // Validate ObyGyn Patients
     public boolean isValidBirthDateObstetricPatient(LocalDate birthDate) {
@@ -814,4 +837,27 @@ public class PatientUtils {
             throw new IllegalArgumentException("Birth date is null for the logged-in patient");
         }
     }
+
+    public LocalDate convertDateToLocalDate(Date date) {
+        Instant instantDateObj = date.toInstant();
+        return instantDateObj.atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    public LocalDateTime convertDateToLocalDateTime(Date date) {
+        Instant instantDateObj = date.toInstant();
+        return instantDateObj.atZone(ZoneId.systemDefault()).toLocalDateTime();
+    }
+
+    public String formatContactNumber(String rawContactNumber) {
+	    // Remove any non-digit characters
+	    String cleanedNumber = rawContactNumber.replaceAll("[^\\d]", "");
+
+	    // Format the number as "123-123-1234"
+	    if (cleanedNumber.length() == 10) {
+	        return cleanedNumber.replaceFirst("(\\d{3})(\\d{3})(\\d{4})", "$1-$2-$3");
+	    } else {
+	        // Handle invalid or unexpected number lengths
+	        return cleanedNumber;
+	    }
+	}
 }

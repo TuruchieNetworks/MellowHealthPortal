@@ -6,12 +6,14 @@ import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.AbdominalAssessment;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.DiagnosticRecord;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.FollowUpRecord;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PainAssessment;
+import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PediatricFeverAssessment;
+import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PediatricGIAssessment;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PhysicalAssessment;
 import com.turuchie.mellowhealthportal.models.PatientOperations.AdverseEffect;
-import com.turuchie.mellowhealthportal.models.PatientOperations.CurrentMedication;
 import com.turuchie.mellowhealthportal.models.PatientOperations.IncidentReport;
 import com.turuchie.mellowhealthportal.models.PatientOperations.InsuranceInformation;
 import com.turuchie.mellowhealthportal.models.PatientOperations.Patient;
@@ -113,6 +115,9 @@ public class PatientCase {
     private List<BioequivalenceAnalysis> bioequivalenceAnalysis;
 
     @OneToMany(mappedBy = "patientCase", cascade = CascadeType.ALL)
+    private List<CoagulationRecord> CoagulationRecord;
+
+    @OneToMany(mappedBy = "patientCase", cascade = CascadeType.ALL)
     private List<CurrentMedication> currentMedications;
 
     @OneToMany(mappedBy = "patientCase", cascade = CascadeType.ALL)
@@ -171,7 +176,18 @@ public class PatientCase {
 
     @OneToMany(mappedBy = "patientCase", cascade = CascadeType.ALL)
     private List<PediatricHistory> pediatricHistories;
-    
+
+    @OneToMany(mappedBy = "patientCase", cascade = CascadeType.ALL)
+    private List<AbdominalAssessment> abdominalPainAssessments;
+
+    @OneToMany(mappedBy = "patientCase", cascade = CascadeType.ALL)
+    private List<PediatricFeverAssessment> pediatricFeverAssessments;    
+
+    @OneToMany(mappedBy = "patientCase", cascade = CascadeType.ALL)
+    private List<PediatricGIAssessment> pediatricGIAssessments;   
+
+    @OneToMany(mappedBy = "patientCase", cascade = CascadeType.ALL)
+    private List<PatientVisitEvaluation> patientVisitEvaluations; 
 
     public PatientCase() {
     }
@@ -243,6 +259,14 @@ public class PatientCase {
 		this.painAssessments = painAssessments;
 	}
 
+	public List<PediatricGIAssessment> getPediatricGIAssessments() {
+		return pediatricGIAssessments;
+	}
+
+	public void setPediatricGIAssessments(List<PediatricGIAssessment> pediatricGIAssessments) {
+		this.pediatricGIAssessments = pediatricGIAssessments;
+	}
+
 	public List<DiagnosticRecord> getDiagnosticRecords() {
 		return diagnosticRecords;
 	}
@@ -269,6 +293,15 @@ public class PatientCase {
 
 	public void setPatientPastSurgicalHistory(String patientPastSurgicalHistory) {
 		this.patientPastSurgicalHistory = patientPastSurgicalHistory;
+	}
+
+
+	public List<PediatricFeverAssessment> getPediatricFeverAssessments() {
+		return pediatricFeverAssessments;
+	}
+
+	public void setPediatricFeverAssessments(List<PediatricFeverAssessment> pediatricFeverAssessments) {
+		this.pediatricFeverAssessments = pediatricFeverAssessments;
 	}
 
 	public List<PhysicalAssessment> getPhysicalAssessments() {
@@ -301,6 +334,14 @@ public class PatientCase {
 
 	public void setBioequivalenceAnalysis(List<BioequivalenceAnalysis> bioequivalenceAnalysis) {
 		this.bioequivalenceAnalysis = bioequivalenceAnalysis;
+	}
+
+	public List<CoagulationRecord> getCoagulationRecord() {
+		return CoagulationRecord;
+	}
+
+	public void setCoagulationRecord(List<CoagulationRecord> coagulationRecord) {
+		CoagulationRecord = coagulationRecord;
 	}
 
 	public List<CurrentMedication> getCurrentMedications() {
@@ -462,6 +503,22 @@ public class PatientCase {
 
 	public void setPediatricHistories(List<PediatricHistory> pediatricHistories) {
 		this.pediatricHistories = pediatricHistories;
+	}
+
+	public List<AbdominalAssessment> getAbdominalPainAssessments() {
+		return abdominalPainAssessments;
+	}
+
+	public void setAbdominalPainAssessments(List<AbdominalAssessment> abdominalPainAssessments) {
+		this.abdominalPainAssessments = abdominalPainAssessments;
+	}
+
+	public List<PatientVisitEvaluation> getPatientVisitEvaluations() {
+		return patientVisitEvaluations;
+	}
+
+	public void setPatientVisitEvaluations(List<PatientVisitEvaluation> patientVisitEvaluations) {
+		this.patientVisitEvaluations = patientVisitEvaluations;
 	}
 
 	public Patient getPatient() {

@@ -4,10 +4,18 @@ import java.util.Date;
 import java.util.List;
 
 import com.turuchie.mellowhealthportal.models.Administrations.PhysiciansPatient;
+import com.turuchie.mellowhealthportal.models.ClinicalOperations.CoagulationRecord;
+import com.turuchie.mellowhealthportal.models.ClinicalOperations.CurrentMedication;
+import com.turuchie.mellowhealthportal.models.ClinicalOperations.DoseRegimen;
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.PatientCase;
+import com.turuchie.mellowhealthportal.models.ClinicalOperations.PatientVisitEvaluation;
+import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.AbdominalAssessment;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.DiagnosticRecord;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.FollowUpRecord;
+import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.NauseaVomitAssessment;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PainAssessment;
+import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PediatricFeverAssessment;
+import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PediatricGIAssessment;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PhysicalAssessment;
 
 import jakarta.persistence.CascadeType;
@@ -92,42 +100,34 @@ public class Physician {
     private List<PainAssessment> painAssessments;
 
     @OneToMany(mappedBy = "physician", cascade = CascadeType.ALL)
+    private List<CoagulationRecord> coagulationRecords;
+
+    @OneToMany(mappedBy = "physician", cascade = CascadeType.ALL)
+    private List<DoseRegimen> doseRegimenRecords;
+
+    @OneToMany(mappedBy = "physician", cascade = CascadeType.ALL)
     private List<DiagnosticRecord> diagnosticRecords;
-    
+
+    @OneToMany(mappedBy = "physician", cascade = CascadeType.ALL)
+    private List<CurrentMedication> currentMedication;
+
+    @OneToMany(mappedBy = "physician", cascade = CascadeType.ALL)
+    private List<AbdominalAssessment> abdominalPainAssessments;
+
+    @OneToMany(mappedBy = "physician", cascade = CascadeType.ALL)
+    private List<NauseaVomitAssessment> nauseaVomitAssessments;
+
+    @OneToMany(mappedBy = "physician", cascade = CascadeType.ALL)
+    private List<PediatricFeverAssessment> pediatricFeverAssessments;     
+
+    @OneToMany(mappedBy = "physician", cascade = CascadeType.ALL)
+    private List<PediatricGIAssessment> pediatricGIAssessments;   
+
+    @OneToMany(mappedBy = "physician", cascade = CascadeType.ALL)
+    private List<PatientVisitEvaluation> patientVisitEvaluations;  
+
     public Physician() {
     }
-    
-	public List<PatientCase> getPatientCases() {
-		return patientCases;
-	}
-
-	public void setPatientCases(List<PatientCase> patientCases) {
-		this.patientCases = patientCases;
-	}
-
-	public List<PhysiciansPatient> getPhysiciansPatients() {
-		return physiciansPatients;
-	}
-
-	public void setPhysiciansPatients(List<PhysiciansPatient> physiciansPatients) {
-		this.physiciansPatients = physiciansPatients;
-	}
-
-	public List<PhysiciansAddresses> getPhysiciansAddresses() {
-		return physiciansAddresses;
-	}
-
-	public void setPhysiciansAddresses(List<PhysiciansAddresses> physiciansAddresses) {
-		this.physiciansAddresses = physiciansAddresses;
-	}
-
-	public List<PhysicianNetwork> getInsuranceNetworks() {
-		return InsuranceNetworks;
-	}
-
-	public void setInsuranceNetworks(List<PhysicianNetwork> insuranceNetworks) {
-		InsuranceNetworks = insuranceNetworks;
-	}
 
 	public Long getId() {
 		return id;
@@ -197,7 +197,135 @@ public class Physician {
         return confirm;
     }
 
-    public void setConfirm(String confirm) {
+	public List<PatientCase> getPatientCases() {
+		return patientCases;
+	}
+
+	public void setPatientCases(List<PatientCase> patientCases) {
+		this.patientCases = patientCases;
+	}
+
+	public List<PhysiciansPatient> getPhysiciansPatients() {
+		return physiciansPatients;
+	}
+
+	public void setPhysiciansPatients(List<PhysiciansPatient> physiciansPatients) {
+		this.physiciansPatients = physiciansPatients;
+	}
+
+	public List<PhysiciansAddresses> getPhysiciansAddresses() {
+		return physiciansAddresses;
+	}
+
+	public void setPhysiciansAddresses(List<PhysiciansAddresses> physiciansAddresses) {
+		this.physiciansAddresses = physiciansAddresses;
+	}
+
+	public List<PhysicianNetwork> getInsuranceNetworks() {
+		return InsuranceNetworks;
+	}
+
+	public void setInsuranceNetworks(List<PhysicianNetwork> insuranceNetworks) {
+		InsuranceNetworks = insuranceNetworks;
+	}
+
+	public List<PhysicalAssessment> getPhysicalAssessments() {
+		return physicalAssessments;
+	}
+
+	public void setPhysicalAssessments(List<PhysicalAssessment> physicalAssessments) {
+		this.physicalAssessments = physicalAssessments;
+	}
+
+	public List<FollowUpRecord> getFollowUpRecords() {
+		return followUpRecords;
+	}
+
+	public void setFollowUpRecords(List<FollowUpRecord> followUpRecords) {
+		this.followUpRecords = followUpRecords;
+	}
+
+	public List<PainAssessment> getPainAssessments() {
+		return painAssessments;
+	}
+
+	public void setPainAssessments(List<PainAssessment> painAssessments) {
+		this.painAssessments = painAssessments;
+	}
+
+	public List<DoseRegimen> getDoseRegimenRecords() {
+		return doseRegimenRecords;
+	}
+
+	public void setDoseRegimenRecords(List<DoseRegimen> doseRegimenRecords) {
+		this.doseRegimenRecords = doseRegimenRecords;
+	}
+
+	public List<DiagnosticRecord> getDiagnosticRecords() {
+		return diagnosticRecords;
+	}
+
+	public void setDiagnosticRecords(List<DiagnosticRecord> diagnosticRecords) {
+		this.diagnosticRecords = diagnosticRecords;
+	}
+
+	public List<CurrentMedication> getCurrentMedication() {
+		return currentMedication;
+	}
+
+	public void setCurrentMedication(List<CurrentMedication> currentMedication) {
+		this.currentMedication = currentMedication;
+	}
+
+    public List<CoagulationRecord> getCoagulationRecords() {
+		return coagulationRecords;
+	}
+
+	public void setCoagulationRecords(List<CoagulationRecord> coagulationRecords) {
+		this.coagulationRecords = coagulationRecords;
+	}
+
+	public List<AbdominalAssessment> getAbdominalPainAssessments() {
+		return abdominalPainAssessments;
+	}
+
+	public void setAbdominalPainAssessments(List<AbdominalAssessment> abdominalPainAssessments) {
+		this.abdominalPainAssessments = abdominalPainAssessments;
+	}
+
+	public List<NauseaVomitAssessment> getNauseaVomitAssessments() {
+		return nauseaVomitAssessments;
+	}
+
+	public void setNauseaVomitAssessments(List<NauseaVomitAssessment> nauseaVomitAssessments) {
+		this.nauseaVomitAssessments = nauseaVomitAssessments;
+	}
+
+	public List<PediatricFeverAssessment> getPediatricFeverAssessments() {
+		return pediatricFeverAssessments;
+	}
+
+	public void setPediatricFeverAssessments(List<PediatricFeverAssessment> pediatricFeverAssessments) {
+		this.pediatricFeverAssessments = pediatricFeverAssessments;
+	}
+
+	public List<PediatricGIAssessment> getPediatricGIAssessments() {
+		return pediatricGIAssessments;
+	}
+
+	public void setPediatricGIAssessments(List<PediatricGIAssessment> pediatricGIAssessments) {
+		this.pediatricGIAssessments = pediatricGIAssessments;
+	}
+
+	public List<PatientVisitEvaluation> getPatientVisitEvaluations() {
+		return patientVisitEvaluations;
+	}
+
+	public void setPatientVisitEvaluations(List<PatientVisitEvaluation> patientVisitEvaluations) {
+		this.patientVisitEvaluations = patientVisitEvaluations;
+	}
+
+	public void setConfirm(String confirm) {
         this.confirm = confirm;
     }
 

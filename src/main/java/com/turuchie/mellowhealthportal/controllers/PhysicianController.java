@@ -21,10 +21,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.turuchie.mellowhealthportal.models.Administrations.PhysiciansPatient;
 import com.turuchie.mellowhealthportal.models.Physicians.LoginPhysician;
 import com.turuchie.mellowhealthportal.models.Physicians.Physician;
-import com.turuchie.mellowhealthportal.services.PatientCaseService;
-import com.turuchie.mellowhealthportal.services.PatientService;
 import com.turuchie.mellowhealthportal.services.PhysicianService;
 import com.turuchie.mellowhealthportal.services.PhysiciansPatientService;
+import com.turuchie.mellowhealthportal.services.ClinicalOperationsServices.PatientCaseService;
+import com.turuchie.mellowhealthportal.services.PatientOperationsServices.PatientService;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;

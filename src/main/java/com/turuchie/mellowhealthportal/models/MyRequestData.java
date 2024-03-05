@@ -1,7 +1,7 @@
 package com.turuchie.mellowhealthportal.models;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.turuchie.mellowhealthportal.services.PatientVitalRecordService;
+import com.turuchie.mellowhealthportal.services.ClinicalOperationsServices.PatientVitalRecordService;
 
 public class MyRequestData {
     @Autowired

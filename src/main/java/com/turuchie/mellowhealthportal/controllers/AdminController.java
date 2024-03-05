@@ -17,11 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.PatientCase;
 import com.turuchie.mellowhealthportal.models.Physicians.Physician;
-import com.turuchie.mellowhealthportal.services.PatientCaseService;
-import com.turuchie.mellowhealthportal.services.PatientService;
 import com.turuchie.mellowhealthportal.services.PhysicianService;
 import com.turuchie.mellowhealthportal.services.PhysiciansPatientService;
-import com.turuchie.mellowhealthportal.utils.UtilInputConverter;
+import com.turuchie.mellowhealthportal.services.ClinicalOperationsServices.PatientCaseService;
+import com.turuchie.mellowhealthportal.services.PatientOperationsServices.PatientService;
+import com.turuchie.mellowhealthportal.utils.ListConverterUtil;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -45,7 +45,7 @@ public class AdminController {
 	public AdminController(PhysicianService physicianServ,
 			PatientService patientServ,
 			PatientCaseService patientCaseServ,
-			UtilInputConverter utilInputConverter,
+			ListConverterUtil utilInputConverter,
 			PhysiciansPatientService physiciansPatientServ) {
 		        this.physicianServ = physicianServ;
 		        this.physiciansPatientServ = physiciansPatientServ; 
@@ -135,7 +135,7 @@ public class AdminController {
 
 	
 	@PostMapping("/process/create")
-	public String processCreatePatientCase(@Valid @ModelAttribute("patientCase") PatientCase patientCase,@ModelAttribute("inputCollector") UtilInputConverter inputCollector, BindingResult result, Model model, HttpSession session) {
+	public String processCreatePatientCase(@Valid @ModelAttribute("patientCase") PatientCase patientCase,@ModelAttribute("inputCollector") ListConverterUtil inputCollector, BindingResult result, Model model, HttpSession session) {
 	    Long physicianId = (Long) session.getAttribute("physician_id");
 
 	    // Redirect to login if physicianId is null
@@ -162,7 +162,7 @@ public class AdminController {
 
 
 	@GetMapping("/patients/edit/{id}")
-	public String editPatientCase(@PathVariable("id") Long id, Model model,@ModelAttribute("inputCollector") UtilInputConverter inputCollector, HttpSession session) {
+	public String editPatientCase(@PathVariable("id") Long id, Model model,@ModelAttribute("inputCollector") ListConverterUtil inputCollector, HttpSession session) {
 	    Long physicianId = (Long) session.getAttribute("physician_id");
 	    if (physicianId == null) {
 	        return "redirect:/physicians/login";

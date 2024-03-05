@@ -187,16 +187,25 @@
 	      </c:choose>
 	    display:flex; justify-content:space-between;align-items:center; border-radius:5%;padding:10px;margin:10px 0;">
 	 	<h1 style="width: 100%">
-	 		<a style=" margin:10px 15px 0 0 ; width: 100%; display:block; padding: 12px;background: rgba(13, 0.123, 0.160, 0.9);"  href="/mellowHealth/insuranceRecords/${oneInsuranceReport.id}" class="btn btn-success">
- 		<c:choose>
-	        <c:when test="${mostRecentCoveragePeriod < 2}">
-	 			<c:out value="VIEW CURRENT ${mostRecentInsuranceReport.providerName} INSURANCE INFORMATION: Valid Through ${mostRecentRecordCreatedAt}- ${mostRecentCoveragePeriod} Month Remaining Coverage"/>
-	        </c:when>
-	        <c:otherwise>
-	 			<c:out value="VIEW CURRENT ${mostRecentInsuranceReport.providerName} INSURANCE INFORMATION: Valid Through ${mostRecentRecordCreatedAt}- ${mostRecentCoveragePeriod} Months Remaining Coverage"/>
-	        </c:otherwise>
-	    </c:choose>
-	 		</a>
+	 	<c:choose>
+	        <c:when test="${loggedInPatient.insuranceRecords.size() < 1}">
+		 		<a style=" margin:10px 15px 0 0 ; width: 100%; display:block; padding: 12px;background: rgba(13, 0.123, 0.160, 0.9);"  href="/mellowHealth/insuranceRecords/newInsuranceRecord" class="btn btn-success">
+				 	<c:out value="ADD INSURANCE INFORMATION"/>
+		 		</a>
+	 		</c:when>
+	 		<c:otherwise>
+	 		 	<a style=" margin:10px 15px 0 0 ; width: 100%; display:block; padding: 12px;background: rgba(13, 0.123, 0.160, 0.9);"  href="/mellowHealth/insuranceRecords/${oneInsuranceReport.id}" class="btn btn-success">
+			 		<c:choose>
+				        <c:when test="${mostRecentCoveragePeriod < 2}">
+				 			<c:out value="VIEW CURRENT ${mostRecentInsuranceReport.providerName} INSURANCE INFORMATION: Valid Through ${mostRecentRecordCreatedAt}- ${mostRecentCoveragePeriod} Month Remaining Coverage"/>
+				        </c:when>
+				        <c:otherwise>
+				 			<c:out value="VIEW CURRENT ${mostRecentInsuranceReport.providerName} INSURANCE INFORMATION: Valid Through ${mostRecentRecordCreatedAt}- ${mostRecentCoveragePeriod} Months Remaining Coverage"/>
+				        </c:otherwise>
+				    </c:choose>
+		 		</a>
+		 	</c:otherwise>
+		 </c:choose>
 	 	</h1>
 	</div>
 	<div class="form-group"style="
@@ -281,7 +290,7 @@
 	             </c:choose>
 	             display:flex; justify-content:space-between;align-items:center; border-radius:5%;padding:10px;margin:10px 0;">
 			 	<h1 style=" margin: 10px 15px 0 0; width: 100%"><a href="/mellowHealth/patientsPortal/logout" class="btn btn-danger" style=" margin: 0 15px 0 0; width: 100%; display:block; padding: 10px">LOGOUT HERE!</a></h1>
-		 		<h1 style="width:100%"><a style="background:rgba(68, 8, 120, 0.9);margin:16px 0 0 0;width:100%; display:block; padding: 10px" href="/mellowHealth/patientsPortal/${loggedInPatient.id}" class="btn btn-success">Access ${loggedInPatient.patientFirstName}'s Yoga Program!</a></h1>
+		 		<h1 style="width:100%"><a style="background:rgba(68, 8, 120, 0.9);margin:16px 0 0 0;width:100%; display:block; padding: 10px" href="/mellowHealth/patientsPortal/patients/${loggedInPatient.id}" class="btn btn-success">Access ${loggedInPatient.patientFirstName}'s Yoga Program!</a></h1>
 		</div>	
 </body>
 </html>

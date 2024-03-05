@@ -40,7 +40,14 @@
 					<input style="padding:5px;border-radius:7%;margin:0 5px" type="text" name="searchedPatientName"/>
 					<input class="btn btn-outline-primary" type="submit" value="Search Patient"/>
 				</form>
-				<p style="color:rgba(311, 31, 321, 0.9);">${matchedPatientFullName.patientFirstName} ${matchedPatientFullName.patientLastName} Date Of Birth: ${matchedPatientFullName.dateOfBirth}</p>	
+				<p style="color:rgba(311, 31, 321, 0.9);">
+					<c:out value="${matchedPatientFullName.patientFirstName} ${matchedPatientFullName.patientLastName} Date Of Birth: ${matchedPatientFullName.dateOfBirth}"/>
+				</p><c:forEach items="${matchedPatientFullName.patientAddresses}" var="address">
+					<c:out value="Contact: ${address.phoneNumber}"/>
+				</c:forEach>	
+				<div class="form-group" id="selectedPatientDiv" style="font-weight: bold; margin-top: 5px;">
+				
+				</div>
 			</div>
 		<div class="row">            
 			<div class="col">

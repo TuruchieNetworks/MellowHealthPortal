@@ -31,8 +31,16 @@ public class FollowUpRecord {
  	private String chiefComplaint;
 
     @NotBlank(message = "Please Enter Recommended Procedure!")
-    @Size(min = 1, max = 255, message = "Invalid Entry, Duration Must Be Between 1 and 255 Characters!")
+    @Size(min = 1, max = 255, message = "Invalid Entry, Recommended Procedure Must Be Between 1 and 255 Characters!")
  	private String recommendedProcedure;
+
+    @NotBlank(message = "Please Enter  Diagnostic WorkUp!")
+    @Size(min = 1, max = 255, message = "Invalid Entry, Diagnostic WorkUp Must Be Between 1 and 255 Characters!")
+ 	private String diagnosticWorkUp;
+
+    @NotBlank(message = "Please Enter Current Diagnosis!")
+    @Size(min = 1, max = 255, message = "Invalid Entry, Current Diagnosis Must Be Between 1 and 255 Characters!")
+ 	private String currentDiagnosis;
  	
 
     @Column(updatable = false)
@@ -63,6 +71,14 @@ public class FollowUpRecord {
 		this.id = id;
 	}
 
+	public String getCurrentDiagnosis() {
+		return currentDiagnosis;
+	}
+
+	public void setCurrentDiagnosis(String currentDiagnosis) {
+		this.currentDiagnosis = currentDiagnosis;
+	}
+
 	public String getChiefComplaint() {
 		return chiefComplaint;
 	}
@@ -77,6 +93,14 @@ public class FollowUpRecord {
 
 	public void setRecommendedProcedure(String recommendedProcedure) {
 		this.recommendedProcedure = recommendedProcedure;
+	}
+
+	public String getDiagnosticWorkUp() {
+		return diagnosticWorkUp;
+	}
+
+	public void setDiagnosticWorkUp(String diagnosticWorkUp) {
+		this.diagnosticWorkUp = diagnosticWorkUp;
 	}
 
 	public Patient getPatient() {

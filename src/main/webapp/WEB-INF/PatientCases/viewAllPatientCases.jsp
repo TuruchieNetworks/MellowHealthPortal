@@ -60,12 +60,12 @@
 		<div class="btn btn-primary" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:space-between;text-align:center;background:rgba(1.33, 0.64, 30.60, 0.9);border-radius:7%;padding:5px;margin:5px 0;width:100%;">
 		    <form action="/mellowHealth/hospitalDashboard/patientCases" class="btn btn-outline-primary" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;text-align:center; padding:5px;background:rgba(1.33, 0.64, 30.60, 0.9);border-radius:7%;margin:5px;width:100%;">
 		        <label  style="padding:10px">Search Patient Name</label>
-		        <input style="width:40%;padding:5px;border-radius:7%;margin:5px" type="text" name="searchedPatientName"/>
+		        <input style="width:40%;padding:5px;border-radius:7%;margin:5px" type="text" name="searchedPatientName" placeholder="Enter Registered Patient Name"/>
 		        <input class="btn btn-outline-primary" type="submit" value="Search Patient" style="margin:5px;width:25%;"/>
 		    </form>
 			<c:if test="${not empty searchedPatientCase}">
 			    <p class="btn btn-outline-primary form-control" style="color:rgba(311, 31, 321, 0.9);background:rgba(11, 0.31, 1, 0.9);">
-		   		  	<a class="btn btn-outline-primary" href="/mellowHealth/hospitalDashboard/patientCases/${patientCase.patient.id}" style="text-decoration:none;">
+		   		  	<a class="btn btn-outline-primary" href="/mellowHealth/hospitalDashboard/patientCases/${searchedPatientCase[0].id}" style="text-decoration:none;">
 					    <c:out value="${searchedPatientCase[0].patient.patientFirstName} ${searchedPatientCase[0].patient.patientLastName} Date Of Birth: ${searchedPatientCase[0].patient.dateOfBirth}"/>
 					</a>
 			    </p>
@@ -147,7 +147,17 @@
 						            color: rgb(21, 180, 255); color:pink;background: rgba(133, 64, 60, 0.9); 
 					            </c:otherwise>
 				            </c:choose>
-							"><c:out value="Day ${patientCaseAccountLengthDays}: ${patientCase.diagnosticRecords.size()} Diagnostic Records!" />
+							">
+							<c:out value="Day ${patientCaseAccountLengthDays}: ${patientCase.lipidPanels.size()} Lipid Panel Evaluations!" />
+						    <div class="btn btn-outline-primary unwrapped-inner-column-card" style="display:flex;justify-content:space-between;align-items:center;text-align:center;margin:5px; padding:10px;background:rgba(1.33, 0.64, 0.60, 0.9);background:rgba(13.33, 0.64, 0.60, 0.9);">
+						       	<p class="btn btn-outline-primary">
+						        	<c:out value="Dr. ${patientCase.physician.firstName} ${patientCase.physician.lastName}"/>
+						        </p>
+							    <form action="/mellowHealth/painAssessments/${patientCase.id}" method="get" style="width:100%;">
+									<input type="hidden" name="_method" value="edit">
+									<input class ="btn btn-outline-success" type="submit" value="Schedule Lipid Panel" style=" margin:5px; width: 100%;padding:7px;width:100%;" >
+								</form>
+						   </div>
 						</a>
 			            <a href="/mellowHealth/hospitalDashboard/patientCases/${patientCase.id}" style="text-decoration:none;background:rgba(1.33, 0.64, 0.60, 0.9);
 							<c:choose>
@@ -163,6 +173,15 @@
 				           	</c:choose>
 							">
 							<c:out value="${patientCase.physicalAssessments.size()} Physical Assessment Records"/>
+					       <div class="btn btn-outline-primary unwrapped-inner-column-card" style="display:flex;justify-content:space-between;align-items:center;text-align:center;margin:5px; padding:10px;background:rgba(1.33, 0.64, 0.60, 0.9);background:rgba(13.33, 0.64, 0.60, 0.9);">
+						       <p class="btn btn-outline-primary">
+						        	<c:out value="${patientCase.painAssessments.size()} Pain Assessments"/>
+						       </p>
+							   <form action="/mellowHealth/painAssessments/${patientCase.id}" method="get" style="width:100%;">
+									<input type="hidden" name="_method" value="edit">
+									<input class ="btn btn-outline-success" type="submit" value="Schedule Pain Exam" style=" margin:5px; width: 100%;padding:7px;width:100%;" >
+							   </form>
+					       </div>
 						</a>
 					</div>
 						<a class= "inner-generic-tab

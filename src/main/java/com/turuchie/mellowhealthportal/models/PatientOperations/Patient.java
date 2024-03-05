@@ -9,6 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import com.turuchie.mellowhealthportal.models.Administrations.InsuredPatients;
 import com.turuchie.mellowhealthportal.models.Administrations.PhysiciansPatient;
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.CoagulationRecord;
+import com.turuchie.mellowhealthportal.models.ClinicalOperations.CurrentMedication;
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.DoseRegimen;
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.DrugAlcoholCotinineScreenRecord;
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.ExclusionCriteria;
@@ -19,14 +20,19 @@ import com.turuchie.mellowhealthportal.models.ClinicalOperations.InclusionCriter
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.LipidPanel;
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.PatientCase;
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.PatientClinicalChemistry;
+import com.turuchie.mellowhealthportal.models.ClinicalOperations.PatientVisitEvaluation;
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.PatientVitalRecord;
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.PharmacoKineticParameter;
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.PregnancyFertilityAssessment;
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.ThyroidFunction;
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.UrineAnalysis;
+import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.AbdominalAssessment;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.DiagnosticRecord;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.FollowUpRecord;
+import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.NauseaVomitAssessment;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PainAssessment;
+import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PediatricFeverAssessment;
+import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PediatricGIAssessment;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PhysicalAssessment;
 
 import jakarta.persistence.CascadeType;
@@ -178,7 +184,7 @@ public class Patient {
     private List<PhysiciansPatient> physiciansPatients;
     
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
-    private List<PatientAddresses> patientAddresses;
+    private List<PatientAddress> patientAddresses;
     
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
     private List<IncidentReport> incidentReports;
@@ -200,8 +206,23 @@ public class Patient {
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
     private List<PediatricHistory> pediatricHistories;
-    
-	public Patient() {
+
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
+    private List<AbdominalAssessment> abdominalPainAssessments;
+
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
+    private List<NauseaVomitAssessment> nauseaVomitAssessments;    
+
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
+    private List<PediatricGIAssessment> pediatricGIAssessments;    
+
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
+    private List<PediatricFeverAssessment> pediatricFeverAssessments;   
+
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
+    private List<PatientVisitEvaluation> patientVisitEvaluations; 
+
+    public Patient() {
     }
 
 	public Long getId() {
@@ -357,11 +378,12 @@ public class Patient {
 		this.incidentReports = incidentReports;
 	}
 	
-	public List<PatientAddresses> getPatientAddresses() {
+
+	public List<PatientAddress> getPatientAddresses() {
 		return patientAddresses;
 	}
 
-	public void setPatientAddresses(List<PatientAddresses> patientAddresses) {
+	public void setPatientAddresses(List<PatientAddress> patientAddresses) {
 		this.patientAddresses = patientAddresses;
 	}
 
@@ -556,6 +578,54 @@ public class Patient {
 
 	public void setSexualHistories(List<SexualHistory> sexualHistories) {
 		this.sexualHistories = sexualHistories;
+	}
+
+	public List<PediatricHistory> getPediatricHistories() {
+		return pediatricHistories;
+	}
+
+	public void setPediatricHistories(List<PediatricHistory> pediatricHistories) {
+		this.pediatricHistories = pediatricHistories;
+	}
+
+	public List<PediatricGIAssessment> getPediatricGIAssessments() {
+		return pediatricGIAssessments;
+	}
+
+	public void setPediatricGIAssessments(List<PediatricGIAssessment> pediatricGIAssessments) {
+		this.pediatricGIAssessments = pediatricGIAssessments;
+	}
+
+	public List<PediatricFeverAssessment> getPediatricFeverAssessments() {
+		return pediatricFeverAssessments;
+	}
+
+	public void setPediatricFeverAssessments(List<PediatricFeverAssessment> pediatricFeverAssessments) {
+		this.pediatricFeverAssessments = pediatricFeverAssessments;
+	}
+
+	public List<AbdominalAssessment> getAbdominalPainAssessments() {
+		return abdominalPainAssessments;
+	}
+
+	public void setAbdominalPainAssessments(List<AbdominalAssessment> abdominalPainAssessments) {
+		this.abdominalPainAssessments = abdominalPainAssessments;
+	}
+
+	public List<NauseaVomitAssessment> getNauseaVomitAssessments() {
+		return nauseaVomitAssessments;
+	}
+
+	public void setNauseaVomitAssessments(List<NauseaVomitAssessment> nauseaVomitAssessments) {
+		this.nauseaVomitAssessments = nauseaVomitAssessments;
+	}
+
+	public List<PatientVisitEvaluation> getPatientVisitEvaluations() {
+		return patientVisitEvaluations;
+	}
+
+	public void setPatientVisitEvaluations(List<PatientVisitEvaluation> patientVisitEvaluations) {
+		this.patientVisitEvaluations = patientVisitEvaluations;
 	}
 
 	public LocalDateTime getCreatedAt() {

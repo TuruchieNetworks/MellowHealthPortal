@@ -27,11 +27,11 @@ public class DiagnosticRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Please Describe Your Current Symptoms!")
+    @NotBlank(message = "Please Describe Patients Current Symptoms!")
     @Size(min = 3, max = 500, message = "Subjective Symptoms Must Be Between 3 and 500 Characters!")
     private String subjectiveSymptoms;
 
-    @NotBlank(message = "Please Describe Your Current Symptoms!")
+    @NotBlank(message = "Please Describe Observed Symptoms!")
     @Size(min = 3, max = 500, message = "Subjective Symptoms Must Be Between 3 and 500 Characters!")
     private String objectiveFindings;
 
@@ -46,14 +46,14 @@ public class DiagnosticRecord {
     private String physicalExamFindings;
 
     @Column(name = "differential_diagnosis")
-    @NotBlank(message = "Please Enter Differential Diagnosis!")
+    @NotBlank(message = "Please Differential Diagnosis!")
     @Size(min = 1, max = 1000, message = "Invalid Entry, Differential Diagnosis Must Be Between 1 and 1000 Characters!")
     private String differentialDiagnosis;
 
     @Column(name = "diagnostic_workup")
     @NotBlank(message = "Please Enter Diagnostic Workup!")
     @Size(min = 1, max = 1000, message = "Invalid Entry, Diagnostic Workup Must Be Between 1 and 1000 Characters!")
-    private String diagnosticWorkup;
+    private String diagnosticWorkUp;
 
     @Column(name = "patient_note")
     @NotBlank(message = "Please Enter Patient Note!")
@@ -149,12 +149,12 @@ public class DiagnosticRecord {
 		this.differentialDiagnosis = differentialDiagnosis;
 	}
 
-	public String getDiagnosticWorkup() {
-		return diagnosticWorkup;
+	public String getDiagnosticWorkUp() {
+		return diagnosticWorkUp;
 	}
 
-	public void setDiagnosticWorkup(String diagnosticWorkup) {
-		this.diagnosticWorkup = diagnosticWorkup;
+	public void setDiagnosticWorkUp(String diagnosticWorkUp) {
+		this.diagnosticWorkUp = diagnosticWorkUp;
 	}
 
 	public String getPatientNote() {

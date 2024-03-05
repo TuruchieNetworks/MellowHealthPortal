@@ -8,7 +8,8 @@
 <!-- for Bootstrap CSS -->
 <link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css" />
 <!-- YOUR own local CSS -->
-<link rel="stylesheet" href="/css/styles.css"/>
+<link rel="stylesheet" href="/styles/styles.css"/>
+<link rel="stylesheet" href="/styles/standaloneStyles.css"/>
 <!-- Local JavaScript section -->
 <script src="<c:url value='/scripts.js'/>"></script>
 <!-- For any Bootstrap that uses JS -->
@@ -51,7 +52,7 @@
 			<div class ="btn btn-primary"  style="width:100%;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;text-align:center; background:rgba(1.33, 0.64, 30.60, 0.9);border-radius:7%;padding:5px;">
 				<form action="/mellowHealth/diagnosis/physicalAssessments/newPhysicalAssessment" class ="btn btn-primary"  style="width:100%;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;text-align:center; padding:5px;background:rgba(1.33, 0.64, 30.60, 0.9);border-radius:7%;">
 				    <label style="padding:5px 10px">Search Patient Name</label>
-					<input style="width: 40%;padding:5px;border-radius:7%;margin:0 5px" type="text" name="searchedPatientName"/>
+					<input style="width: 40%;padding:5px;border-radius:7%;margin:0 5px" type="text" name="searchedPatientName" placeholder="Please Enter Patient's Name"/>
 					<input style="width:25%;" class="btn btn-outline-primary" type="submit" value="Search Patient"/>
 				</form>
 			</div>   
@@ -60,13 +61,11 @@
 			<div class="col">
 				<form:form action="/mellowHealth/diagnosis/process/physicalAssessments/createNewPhysicalAssessment" method="POST" modelAttribute="physicalAssessment">
 				<!-- Add this block to display global errors -->
-				<!--form:errors path="*" cssClass="text-danger"/!-->
-			
+				<!-- form:errors path="*" cssClass="text-danger"/-->
 			    	<c:choose>
-				        <c:when test="${not empty searchedPatientCase}">
+				        <c:when test="${empty searchedPatientCase}">
 							<div class="form-group" id="selectedPatientDiv" style="font-weight:bold; margin-top: 5px;">
-						    	<label style="padding:10px 0">Registered Patient</label>
-							
+						    	<label style="padding:10px 0">Registered Patient</label>	
 				                <form:select path="patient.id" class="form-control" style="cursor:pointer" id="patientSelect" onchange="updateSelectedPatient('patientSelect', 'patientName', 'selectedPatientDiv')">
 								    <c:forEach items="${allPatientCasesWithFilter}" var="matchedPatientCase">  
 										<form:option value="${matchedPatientCase.patient.id}" label="Patient Name: ${matchedPatientCase.patient.patientFirstName} ${matchedPatientCase.patient.patientLastName} Date Of Birth- ${matchedPatientCase.patient.dateOfBirth}: ${searchedPatientAge} Yr Old ${matchedPatientCase.patient.race} ${matchedPatientCase.patient.gender}"/>
@@ -75,7 +74,16 @@
 				            </div>
 				            
 							<div class="form-group" id="selectedPatientDiv" style="font-weight:bold; margin-top: 5px;"></div>
-		
+				            
+					     	<div class="form-group">
+						        <label style="padding:5px 0">Treating Physician</label>
+				                <form:select path="physician.id" class="form-control" style="cursor:pointer" id="patientSelect">
+								    <c:forEach items="${allPatientCasesWithFilter}" var="matchedPatientCase">  
+				                   		<form:option value="${matchedPatientCase.physician.id}" label="${searchedPatientCaseCreatedAt} Treating Physician: Dr. ${matchedPatientCase.physician.firstName} ${matchedPatientCase.physician.lastName} Contact Details: ${matchedPatientCase.physician.email}"/>
+				                    </c:forEach>
+				                </form:select>
+				            </div>
+
 					     	<div class="form-group">
 						        <label style="padding:5px 0">Patient Case</label>
 				                <form:select path="patientCase.id" class="form-control" style="cursor:pointer" id="patientSelect">
@@ -85,21 +93,29 @@
 				                </form:select>
 				            </div>
 				        </c:when>
+	        
 				        <c:otherwise>
 							<div class="form-group" id="selectedPatientDiv" style="font-weight:bold; margin-top: 5px;">
-						    	<label style="padding:10px 0">Registered Patient</label>
-							
+						    	<label style="padding:10px 0">Registered Patient</label>						
 				                <form:select path="patient.id" class="form-control" style="cursor:pointer" id="patientSelect" onchange="updateSelectedPatient('patientSelect', 'patientName', 'selectedPatientDiv')">
-									<form:option value="${oneSearchedPatientCase.patient.id}" label="Patient Name: ${oneSearchedPatientCase.patient.patientFirstName} ${oneSearchedPatientCase.patient.patientLastName} Date Of Birth- ${oneSearchedPatientCase.patient.dateOfBirth}: ${oneSearchedPatientAge} Yr Old ${oneSearchedPatientCase.patient.race} ${searchedPatientCase.patient.gender}"/>
+									<form:option value="${searchedPatientCase[0].patient.id}" label="Patient Name: ${searchedPatientCase[0].patient.patientFirstName} ${searchedPatientCase[0].patient.patientLastName} Date Of Birth- ${searchedPatientCase[0].patient.dateOfBirth}: ${searchedPatientAge} Yr Old ${searchedPatientCase[0].patient.race} ${searchedPatientCase[0].patient.gender}"/>
 				                </form:select>
 				            </div>
 
-							<div class="form-group" id="selectedPatientDiv" style="font-weight:bold; margin-top: 5px;"></div>
+							<div class="form-group" id="selectedPatientDiv" style="font-weight:bold; margin-top: 5px;"></div>            
+					     	<div class="form-group">
+						        <label style="padding:5px 0">Treating Physician</label>
+				                <form:select path="physician.id" class="form-control" style="cursor:pointer" id="patientSelect">
+								    <c:forEach items="${allPatientCasesWithFilter}" var="matchedPatientCase">  
+				                   		<form:option value="${matchedPatientCase.physician.id}" label="${searchedPatientCaseCreatedAt} Treating Physician: Dr. ${matchedPatientCase.physician.firstName} ${matchedPatientCase.physician.lastName} Contact Details: ${matchedPatientCase.physician.email}"/>
+				                    </c:forEach>
+				                </form:select>
+				            </div>
 		
 					     	<div class="form-group">
 						        <label style="padding:5px 0">Patient Case</label>
 				                <form:select path="patientCase.id" class="form-control" style="cursor:pointer" id="patientSelect">
-			                   		<form:option value="${oneSearchedPatientCase.id}" label="Chief Complaint: ${oneSearchedPatientCase.chiefComplaint} ${oneSearchedPatientCase.onset} Incident. Treating Physician: Dr. ${oneSearchedPatientCase.physician.firstName} ${oneSearchedPatientCase.physician.lastName}, ${oneSearchedPatientCaseCreatedAt} Visit"/>
+			                   		<form:option value="${searchedPatientCase[0].id}" label="Chief Complaint: ${searchedPatientCase[0].chiefComplaint} ${searchedPatientCase[0].onset} Incident. Treating Physician: Dr. ${searchedPatientCase[0].physician.firstName} ${searchedPatientCase[0].physician.lastName}, ${searchedPatientCaseCreatedAt} Visit"/>
 				                </form:select>
 				            </div>
 			            </c:otherwise>
@@ -109,7 +125,15 @@
 					    <div class="form-group">
 				        	<form:errors path="generalAppearanceDescription" class="text-danger" />
 					    </div>
-				        <form:textarea path="generalAppearanceDescription" class="form-control" placeholder="Please enter the chief complaint for this visit!"></form:textarea>
+				        <form:textarea path="generalAppearanceDescription" class="form-control" placeholder="Please Describe General Appearance!"></form:textarea>
+				    </div>
+
+					<div class="form-group">
+				        <label style="padding:5px 0">General Appearance</label>
+					    <div class="form-group">
+				        	<form:errors path="oralCavityDescription" class="text-danger" />
+					    </div>
+				        <form:textarea path="oralCavityDescription" class="form-control" placeholder="Please Describe Oral Cavity!"></form:textarea>
 				    </div>
 
 					<div class="form-group">
@@ -117,7 +141,7 @@
 					    <div class="form-group">
 				        	<form:errors path="extremitiesDescription" class="text-danger" />
 					    </div>
-				        <form:textarea path="extremitiesDescription" class="form-control" placeholder="Please enter the chief complaint for this visit!"></form:textarea>
+				        <form:textarea path="extremitiesDescription" class="form-control" placeholder="Please Describe General Extrimities During This Visit!"></form:textarea>
 				    </div>
 
 					<div class="form-group">
@@ -125,7 +149,7 @@
 					    <div class="form-group">
 				        	<form:errors path="heentDescription" class="text-danger" />
 					    </div>
-				        <form:textarea path="heentDescription" class="form-control" placeholder="Please enter the chief complaint for this visit!"></form:textarea>
+				        <form:textarea path="heentDescription" class="form-control" placeholder="Please enter HEENT Findings During This Visit!"></form:textarea>
 				    </div>
 					
 					<div class="form-group">
@@ -133,7 +157,7 @@
 					    <div class="form-group">
 					        <form:errors path="neurologicDescription" class="text-danger" />
 					    </div>
-					    <form:textarea path="neurologicDescription" class="form-control" placeholder="Please enter the neurologic description for this visit!"></form:textarea>
+					    <form:textarea path="neurologicDescription" class="form-control" placeholder="Please Enter Neurologic Description During This Visit!"></form:textarea>
 					</div>
 
 					<div class="form-group">
@@ -141,7 +165,7 @@
 					    <div class="form-group">
 				        	<form:errors path="neckDescription" class="text-danger" />
 					    </div>
-				        <form:textarea path="neckDescription" class="form-control" placeholder="Please enter the chief complaint for this visit!"></form:textarea>
+				        <form:textarea path="neckDescription" class="form-control" placeholder="Please Enter Neck Description During This Visit!"></form:textarea>
 				    </div>
 
 					<div class="form-group">
@@ -149,7 +173,7 @@
 					    <div class="form-group">
 				        	<form:errors path="lymphNodesDescription" class="text-danger" />
 					    </div>
-				        <form:textarea path="lymphNodesDescription" class="form-control" placeholder="Please enter the chief complaint for this visit!"></form:textarea>
+				        <form:textarea path="lymphNodesDescription" class="form-control" placeholder="Please Describe Lymph Node Examination During This Visit!"></form:textarea>
 				    </div>
 
 					<div class="form-group">
@@ -157,7 +181,7 @@
 					    <div class="form-group">
 					        <form:errors path="skinDescription" class="text-danger" />
 					    </div>
-					    <form:textarea path="skinDescription" class="form-control" placeholder="Please enter the skin description for this visit!"></form:textarea>
+					    <form:textarea path="skinDescription" class="form-control" placeholder="Please Enter Skin Description During This Visit!"></form:textarea>
 					</div>
 					
 					<div class="form-group">
@@ -165,7 +189,7 @@
 					    <div class="form-group">
 					        <form:errors path="lungsDescription" class="text-danger" />
 					    </div>
-					    <form:textarea path="lungsDescription" class="form-control" placeholder="Please enter the lungs description for this visit!"></form:textarea>
+					    <form:textarea path="lungsDescription" class="form-control" placeholder="Please Enter lungs Descriptions During This Visit!"></form:textarea>
 					</div>
 					
 					<div class="form-group">
@@ -173,7 +197,7 @@
 					    <div class="form-group">
 					        <form:errors path="heartDescription" class="text-danger" />
 					    </div>
-					    <form:textarea path="heartDescription" class="form-control" placeholder="Please enter the heart description for this visit!"></form:textarea>
+					    <form:textarea path="heartDescription" class="form-control" placeholder="Please Enter Heart Descriptions During This Visit!"></form:textarea>
 					</div>
 					
 					<div class="form-group">
@@ -181,12 +205,22 @@
 					    <div class="form-group">
 					        <form:errors path="abdomenDescription" class="text-danger" />
 					    </div>
-					    <form:textarea path="abdomenDescription" class="form-control" placeholder="Please enter the abdomen description for this visit!"></form:textarea>
+					    <form:textarea path="abdomenDescription" class="form-control" placeholder="Please Enter Abdominal Descriptions During This Visit!"></form:textarea>
 					</div>
 
-					<input type="submit" value="Add Physical Assessment Record" class="btn btn-success" style="margin: 10px 0; width: 100%; padding: 10px;"/>
+				<div class="unwrapped-inner-column-card btn btn-outline-primary" style="align-items:center;text-align:center;margin:10px 0; padding:5px;background:rgba(1.33, 0.64, 0.60, 0.9);">
+					<p class="unwrapped-inner-column-card btn btn-outline-primary">
+						<input type="submit" value="Add New Physical Assessment Record" class="btn btn-outline-success" style=" width: 100%; padding: 10px;background:rgba(1.33, 0.64, 0.60, 0.9)"/>
+					</p>
+				</div>
 				</form:form>
-				<h1 style="width:100%;"><a style=" margin:10px 0;width:100%;display:block; padding:10px" href="/mellowHealth/patientsPortal/patients/${loggedInPatient.id}" class="btn btn-warning">CANCEL!</a></h1>
+				<div class="unwrapped-inner-column-card btn btn-outline-warning" style="align-items:center;text-align:center;margin:5px 0;background:rgba(1.33, 0.64, 0.60, 0.9);">
+					<p class="unwrapped-inner-column-card btn btn-outline-warning" style="">
+						<a style="width:100%;display:block; padding:10px;background:rgba(1.33, 0.64, 0.60, 0.9);" href="/mellowHealth/patientsPortal/patients/${loggedInPatient.id}" class="btn btn-outline-warning">
+							<c:out value="CANCEL!"/>
+						</a>
+					</p>
+				</div>
 			</div>
 		</div>
 	</div>

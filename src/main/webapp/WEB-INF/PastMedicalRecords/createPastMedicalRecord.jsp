@@ -42,7 +42,11 @@
 					<input style="padding:5px;border-radius:7%;margin:0 5px" type="text" name="searchedPatientName"/>
 					<input class="btn btn-outline-primary" type="submit" value="Search Patient"/>
 				</form>
-				<p style="color:rgba(311, 31, 321, 0.9);">${matchedPatientFullName.patientFirstName} ${matchedPatientFullName.patientLastName} Date Of Birth: ${matchedPatientFullName.dateOfBirth}</p>	
+		       <c:forEach items="${matchedPatientCharacterList}" var="matchedPatientFullName">
+					<p style="color:rgba(311, 31, 321, 0.9);">
+						<c:out value="${matchedPatientFullName.patientFirstName} ${matchedPatientFullName.patientLastName} Date Of Birth: ${matchedPatientFullName.dateOfBirth}"/>
+					</p>
+				</c:forEach>
 			</div>
 		<div class="row">
 							            
@@ -55,7 +59,9 @@
 		                <form:select path="patient.id" class="form-control" style="cursor:pointer" id="patientSelect" onchange="updateSelectedPatient('patientSelect', 'patientName', 'selectedPatientDiv')">
 		                    <c:choose>
 		                        <c:when test="${matchedPatientFullName != null && matchedPatientFullName.patientFirstName.length() > 1}">
-		                            <form:option value="${loggedInPatient.id}" label="${loggedInPatient.patientFirstName} ${loggedInPatient.patientLastName}"/>
+		       						<c:forEach items="${matchedPatientCharacterList}" var="matchedPatientFullName">
+		                            	<form:option value="${loggedInPatient.id}" label="${matchedPatientFullName.patientFirstName} ${matchedPatientFullName.patientLastName}"/>
+		                            </c:forEach>
 		                        </c:when>
 		                        <c:otherwise>
 		                            <form:option value="${loggedInPatient.id}" label="${loggedInPatient.patientFirstName} ${loggedInPatient.patientLastName}"/>
@@ -106,7 +112,7 @@
 					    <form:input type="date" path="endDate" class="form-control" placeholder="Please Enter Date Of Diagnosis!" style="width:100%; padding:8px; border-radius:5%;" />
 					</div>
 
-					<input type="submit" value="Add Insurance Record" class="btn btn-success" style="margin: 10px 0; width: 100%; padding: 10px;"/>
+					<input type="submit" value="Add Medical Record" class="btn btn-success" style="margin: 10px 0; width: 100%; padding: 10px;"/>
 				</form:form>
 				<h1 style="width:100%;"><a style=" margin:10px 0;width:100%;display:block; padding:10px" href="/mellowHealth/patientsPortal/patients/${loggedInPatient.id}" class="btn btn-warning">CANCEL!</a></h1>
 			</div>
