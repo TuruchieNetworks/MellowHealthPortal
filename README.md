@@ -80,7 +80,7 @@ Mellow Health Portal Boasts of a many to many relationship involing physicans, p
 These functionalities, coupled with dynamic display options, authentication mechanisms, and full CRUD operations, make the application a powerful tool for healthcare professionals.
 
 ## Here Are Basic Highlights Of Our Database Structure
--Physicians Table: A database table dedicated to storing information about physicians, facilitating efficient management and retrieval of data related to medical practitioners.
+- Physicians Table: A database table dedicated to storing information about physicians, facilitating efficient management and retrieval of data related to medical practitioners.
 
 - Patients Management: Robust functionality for managing patient records, ensuring secure storage and easy access to vital patient information.
 
