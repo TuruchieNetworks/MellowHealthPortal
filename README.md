@@ -4,7 +4,7 @@ Greetings recruiters and tech enthusiasts! Mellow Health Portal stands as a test
 ## Comprehensive Healthcare Solution
 Mellow Health Portal is more than just a healthcare application; it's a comprehensive solution designed to seamlessly integrate EHR and EDC capabilities for efficient patient care and clinical research.
 
-### -File Structure
+### File Structure
 #### Controllers
 Admin Controller: /src/main/java/com/turuchie/mellowhealthportal/controllers/AdminController.java
 Physician Controller: /src/main/java/com/turuchie/mellowhealthportal/controllers/PhysicianController.java
