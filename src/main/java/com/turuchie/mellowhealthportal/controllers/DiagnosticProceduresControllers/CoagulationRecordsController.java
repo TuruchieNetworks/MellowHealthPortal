@@ -47,7 +47,7 @@ public class CoagulationRecordsController {
 	@Autowired
 	private PatientService patientServ;
 
-	
+
 	@Autowired
 	private PatientUtils patientUtil;
 	

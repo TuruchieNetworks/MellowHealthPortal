@@ -115,6 +115,29 @@ p {
 	color:yellow;
 	font-weight: bold;
 }
+
+.column-card a:hover {
+	color:yellow;
+	font-weight: bold;
+}
+.column-card p:hover {
+	color:yellow;
+	font-weight: bold;
+}
+
+.column-card p a:hover {
+	color:yellow;
+	font-weight: bold;
+}
+
+.column-card a p:hover {
+	color:yellow;
+	font-weight: bold;
+}
+.inner-column-card a:hover {
+	color:yellow;
+	font-weight: bold;
+}
 .column-card form:hover {
 	color:yellow;
 	font-weight: bold;
@@ -632,6 +655,26 @@ tr{
 	color: rgb(12, 80, 15);
 	background:rgba(133, 0.64, 30.60, 0.9);
 	background: rgba(13, 64, 60, 0.9);
+}
+
+.column-card a:hover {
+	color:yellow;
+	font-weight: bold;
+}
+
+.column-card p:hover {
+	color:yellow;
+	font-weight: bold;
+}
+
+.column-card p a:hover {
+	color:yellow;
+	font-weight: bold;
+}
+
+.column-card a p:hover {
+	color:yellow;
+	font-weight: bold;
 }
 .inner-column-card a:hover {
 	color:yellow;

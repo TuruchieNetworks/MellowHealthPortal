@@ -330,13 +330,13 @@ public class SearchUtil {
 	                    String formattedPatientCaseCreatedAtDate = createdAt.format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy"));
 
 	                    long searchedPatientAge = calculateDateDifference(searchedPatientBirthDay, LocalDate.now(), ChronoUnit.YEARS);
-	                    long accountLengthYears = calculateDateDifference(createdAt, LocalDate.now(), ChronoUnit.YEARS);
 	                    long accountLengthDays = calculateDateDifference(createdAt, LocalDate.now(), ChronoUnit.DAYS);
 	                    long accountLengthMonths = calculateDateDifference(createdAt, LocalDate.now(), ChronoUnit.MONTHS);
+	                    long accountLengthYears = calculateDateDifference(createdAt, LocalDate.now(), ChronoUnit.YEARS);
 
-	                    long conditionLengthYears = calculateDateDifference(onset, LocalDate.now(), ChronoUnit.YEARS);
 	                    long conditionLengthDays = calculateDateDifference(onset, LocalDate.now(), ChronoUnit.DAYS);
 	                    long conditionLengthMonths = calculateDateDifference(onset, LocalDate.now(), ChronoUnit.MONTHS);
+	                    long conditionLengthYears = calculateDateDifference(onset, LocalDate.now(), ChronoUnit.YEARS);
 
 	                    filterUtil.addPhysicalAssessmentInfoToModel(model, patient.getId());
 
@@ -356,10 +356,9 @@ public class SearchUtil {
 		                model.addAttribute("searchedPatientAge", searchedPatientAge);
 		                model.addAttribute("searchedPatientCasePhysiciansList", patientCasePhysician);
                         model.addAttribute("searchedMostRecentPastMedicalRecord", mostRecentPastMedicalRecord);
+                        model.addAttribute("searchedPatientCaseDayCreatedAt",formattedDayPatientCaseCreatedAtDate);
 		                model.addAttribute("searchedPatientCaseInsurance", onePatientCase.getInsuranceInformation());
                         model.addAttribute("searchedPatientLengthOfMedicalCondition", searchedPatientLengthOfMedicalCondition);
-                        model.addAttribute("searchedPatientCaseDayCreatedAt",formattedDayPatientCaseCreatedAtDate);
-                        model.addAttribute("searchedPatientCaseCreatedAt", formattedPatientCaseCreatedAtDate);
 	                    model.addAttribute("searchedMostRecentPastMedicalRecordDayCreatedAt", mostRecentPastMedicalRecord.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, yyyy")));
 	                    model.addAttribute("searchedMostRecentPastMedicalRecordCreatedAt", mostRecentPastMedicalRecord.getCreatedAt());
 	                    addDateAttributesToModel(model, onePatientCase.getCreatedAt().toLocalDate(), "patientCaseAccountLength");
@@ -375,7 +374,8 @@ public class SearchUtil {
 	                    model.addAttribute("lengthOfPatientConditionDays", conditionLengthDays);
 	                    model.addAttribute("lengthOfPatientConditionMonths", conditionLengthMonths);
 		                model.addAttribute("searchedPatientCasePhysiciansList", patientCasePhysician);
-                        model.addAttribute("matchedPatientCaseCreatedAt", formattedPatientCaseCreatedAtDate);
+                        model.addAttribute("searchedPatientCaseCreatedAt", formattedPatientCaseCreatedAtDate);
+                        model.addAttribute("searchedPatientCaseDayCreatedAt",formattedDayPatientCaseCreatedAtDate);
                         model.addAttribute("patientCaseCreatedAt", onePatientCase.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy")));
                         model.addAttribute("matchedPatientCaseDayCreatedAt", formattedDayPatientCaseCreatedAtDate);
 		                model.addAttribute("searchedPatientCaseInsurance", onePatientCase.getInsuranceInformation());

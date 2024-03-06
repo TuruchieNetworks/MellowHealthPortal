@@ -107,13 +107,15 @@ public class PatientCaseController {
 	    String trimmedSearchTerm = searchedPatientName != null ? searchedPatientName.trim() : null;
 	    if (trimmedSearchTerm != null && !trimmedSearchTerm.isEmpty()) {
 	        // If a non-empty search value is provided
+	        searchUtil.setSearchUtilMethods(model, trimmedSearchTerm);
 	        diagnosticUtil.setAllSearchTrimmedMethods(model, trimmedSearchTerm);
 	        model.addAttribute("searchedPatientCase", searchUtil.returnFirstPatientCaseByCharacter(trimmedSearchTerm));
 	        model.addAttribute("allPatientCasesWithFilter", searchUtil.returnSearchPatientCaseByCharacter(trimmedSearchTerm));
 	    } else {
 	        // If the search bar is empty, do not display patient cases
+	        searchUtil.setSearchUtilMethods(model, patientName);
 	        diagnosticUtil.setAllSearchTrimmedMethods(model, patientName);
-	        model.addAttribute("allPatientCasesWithFilter", Collections.emptyList());
+	        //model.addAttribute("allPatientCasesWithFilter", Collections.emptyList());
 	    }
 
 	    patientUtil.setPatientAttributes(model);

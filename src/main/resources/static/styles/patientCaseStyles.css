@@ -786,6 +786,27 @@ tr{
 }
 
 
+.column-card a:hover {
+	color:yellow;
+	font-weight: bold;
+}
+
+.column-card p:hover {
+	color:yellow;
+	font-weight: bold;
+}
+
+.column-card p a:hover {
+	color:yellow;
+	font-weight: bold;
+}
+
+.column-card a p:hover {
+	color:yellow;
+	font-weight: bold;
+}
+
+
 
 }
 
