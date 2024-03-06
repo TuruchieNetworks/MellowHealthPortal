@@ -47,7 +47,6 @@ Static Resources: /src/main/resources/static
 HTML Templates: /src/main/resources/templates
 Configuration Properties: /src/main/resources/application.properties
 
-
 ## Mellow Health Portal - Getting Started Guide.
 To make the most of our application, follow these steps to set up initial data and explore various functionalities:
 
@@ -75,6 +74,39 @@ Explore other diagnostic procedures available in the Diagnostic Procedures Contr
 #### Step 4: Testing and Further Exploration
 Now that you have set up essential records, feel free to test various functionalities. Create patient vital records, insurance information, and explore incident reporting. The robust codebase and utilities are designed to handle complex healthcare scenarios.
 Remember to check the logs for any error messages, and feel free to refer to the comprehensive utils package (/src/main/java/com/turuchie/mellowhealthportal/utils) for additional support during testing.
+
+## Installing Necessary SQL Driver Dependencies
+
+### Installing SQL Driver
+Before you delve into exploring Mellow Health Portal's comprehensive functionalities, it's crucial to ensure that you have the necessary dependencies installed, including the SQL driver. Follow these steps to set up the SQL driver for seamless integration:
+
+#### Step 1: Download SQL Driver
+Visit the official website of the SQL database you intend to use (e.g., MySQL, PostgreSQL) and download the JDBC driver for the specific database version.
+
+#### Step 2: Place the Driver in the Project
+Once downloaded, place the JDBC driver JAR file in a designated folder within your project. A common convention is to create a "lib" or "drivers" folder in your project root directory.
+
+#### Step 3: Update Project Configuration
+Modify your project configuration or build file (e.g., pom.xml for Maven, build.gradle for Gradle) to include the SQL driver JAR as a dependency. Ensure the path to the driver is correctly specified.
+
+#### For Maven, add the following dependency:
+<dependency>
+    <groupId>your.group.id</groupId>
+    <artifactId>your-driver-artifact-id</artifactId>
+    <version>driver-version</version>
+    <scope>system</scope>
+    <systemPath>${project.basedir}/path/to/driver.jar</systemPath>
+</dependency>
+For Gradle, add the following in the dependencies block:
+
+#### For Gradle
+implementation files('path/to/driver.jar')
+Replace placeholders (e.g., your.group.id, your-driver-artifact-id, driver-version, path/to/driver.jar) with the actual values based on your SQL driver.
+
+#### Step 4: Rebuild the Project
+Rebuild your project to apply the changes and make the SQL driver available for use within Mellow Health Portal.
+
+With the SQL driver successfully integrated, you're now ready to explore the functionalities of Mellow Health Portal seamlessly integrated with Electronic Health Records (EHR) and Electronic Data Capture (EDC) capabilities.
 
 Mellow Health Portal Boasts of a many to many relationship involing physicans, patients, patient_cases, physicians_patients, insurance_information, physicians_address, patients_address, admin and none-entity classes- loginPatient, loginPhysician and AdminLogin!
 These functionalities, coupled with dynamic display options, authentication mechanisms, and full CRUD operations, make the application a powerful tool for healthcare professionals.
