@@ -1,9 +1,84 @@
 # Introduction
-Greetings recruiters and tech enthusiasts! Mellow Health Portal stands as a testament to our commitment to organized code, robust functionalities, and the seamless integration of Electronic Health Records (EHR) and Electronic Data Capture (EDC) capabilities. We invite you to explore our codebase, witness the power of our utilities, and envision the transformative impact of our comprehensive healthcare solution.
 
-## Comprehensive Healthcare Solution
-Mellow Health Portal is more than just a healthcare application; it's a comprehensive solution designed to seamlessly integrate EHR and EDC capabilities for efficient patient care and clinical research.
+Greetings recruiters and tech enthusiasts! As a graduate Doctor and a full-stack engineer, I embarked on a journey to create Mellow Health Portal — a project that marries my extensive medical background with my passion for technology. This platform serves as a testament to our commitment to organized code, robust functionalities, and the seamless integration of Electronic Health Records (EHR) and Electronic Data Capture (EDC) capabilities.
 
+## Bridging Medical Expertise with Cutting-edge Technology
+
+Mellow Health Portal goes beyond the conventional healthcare applications. Drawing inspiration from my experiences during internships using EHRs like Epic, Practice Fusion, and engaging with web services like WebMD API, I envisioned a solution that not only captures the essence of patient care but also mirrors the meticulous guidelines observed in Electronic Data Capture (EDC) systems used in clinical research.
+
+## The Fusion of EHR and EDC
+
+At its core, Mellow Health Portal is a comprehensive healthcare solution. It's an ambitious endeavor that seamlessly integrates EHR and EDC capabilities, combining the flexibility of EHRs with the strict inclusion criteria and protocol adherence essential for clinical research. This unique fusion allows for efficient patient care in a hospital setting while maintaining the stringent standards required for robust clinical studies.
+
+## Transformative Impact on Healthcare
+
+We extend an invitation to explore our codebase, where you'll witness the synergy between medical insights and technological innovation. Our utilities are crafted with precision, offering a transformative impact on healthcare practices. Whether you are a healthcare professional, a researcher, or a tech enthusiast, we believe that Mellow Health Portal holds the potential to redefine the intersection of medicine and technology.
+
+Feel free to delve into the intricacies of our code, and envision the possibilities that arise from a comprehensive healthcare solution designed to empower both practitioners and researchers alike.
+
+Happy exploring!
+
+
+## Installing Necessary SQL Driver Dependencies
+
+### Installing SQL Driver
+Before you delve into exploring Mellow Health Portal's comprehensive functionalities, it's crucial to ensure that you have the necessary dependencies installed, including the SQL driver. Follow these steps to set up the SQL driver for seamless integration:
+
+#### Step 1: Download SQL Driver
+Visit the official website of the SQL database you intend to use (e.g., MySQL, PostgreSQL) and download the JDBC driver for the specific database version.
+
+#### Step 2: Place the Driver in the Project
+Once downloaded, place the JDBC driver JAR file in a designated folder within your project. A common convention is to create a "lib" or "drivers" folder in your project root directory.
+
+#### Step 3: Update Project Configuration
+Modify your project configuration or build file (e.g., pom.xml for Maven, build.gradle for Gradle) to include the SQL driver JAR as a dependency. Ensure the path to the driver is correctly specified.
+
+#### For Maven, add the following dependency:
+<dependency>
+    <groupId>your.group.id</groupId>
+    <artifactId>your-driver-artifact-id</artifactId>
+    <version>driver-version</version>
+    <scope>system</scope>
+    <systemPath>${project.basedir}/path/to/driver.jar</systemPath>
+</dependency>
+For Gradle, add the following in the dependencies block:
+
+#### For Gradle
+implementation files('path/to/driver.jar')
+Replace placeholders (e.g., your.group.id, your-driver-artifact-id, driver-version, path/to/driver.jar) with the actual values based on your SQL driver.
+
+#### Step 4: Rebuild the Project
+Rebuild your project to apply the changes and make the SQL driver available for use within Mellow Health Portal.
+
+With the SQL driver successfully integrated, you're now ready to explore the functionalities of Mellow Health Portal seamlessly integrated with Electronic Health Records (EHR) and Electronic Data Capture (EDC) capabilities.
+
+Mellow Health Portal Boasts of a many to many relationship involing physicans, patients, patient_cases, physicians_patients, insurance_information, physicians_address, patients_address, admin and none-entity classes- loginPatient, loginPhysician and AdminLogin!
+These functionalities, coupled with dynamic display options, authentication mechanisms, and full CRUD operations, make the application a powerful tool for healthcare professionals.
+
+## Here Are Basic Highlights Of Our Database Structure
+- Physicians Table: A database table dedicated to storing information about physicians, facilitating efficient management and retrieval of data related to medical practitioners.
+
+- Patients Management: Robust functionality for managing patient records, ensuring secure storage and easy access to vital patient information.
+
+- Admin Panel: An intuitive admin panel equipped with tools for overseeing and managing various aspects of the application, ensuring smooth operation and compliance with regulatory requirements- For instance and admin can delete a user!
+
+- Physicians-Patients Relationship: A feature that establishes and manages relationships between physicians and their patients, streamlining communication and enhancing care coordination.
+
+- Patients Cases And Diagnostic Operations: Dedicated functionality for documenting and tracking patient cases, enabling thorough analysis and informed decision-making by healthcare providers.
+
+- Incident Reporting: A robust incident reporting system that allows patients to report and address new medical incidents promptly and effectively, promoting patient safety and quality improvement.
+
+- Insurance Information Management: Tools for managing insurance information, simplifying the process of verifying coverage and processing claims.
+
+- Dynamic Display: Flexible display options that adapt to user preferences and device specifications, ensuring an optimal user experience across different platforms.
+
+- Filtered Display: To provide focused access to information Authentication and Validation: Robust authentication mechanisms and data validation processes to safeguard sensitive information and maintain data integrity.
+
+- Full CRUD Operations: Comprehensive support for Create, Read, Update, and Delete operations, empowering users to manage data efficiently and effectively.
+
+- Profile Edits with Re-Encryption: Secure profile editing capabilities with built-in re-encryption functionality, ensuring that sensitive data remains protected at all times.
+
+- Physicians-Patients Relationship Enforcement: Measures to enforce one patient per physician relationship, promoting adherence to healthcare protocols and standards.
 ### File Structure
 #### Controllers
 Admin Controller: /src/main/java/com/turuchie/mellowhealthportal/controllers/AdminController.java
@@ -74,66 +149,5 @@ Explore other diagnostic procedures available in the Diagnostic Procedures Contr
 #### Step 4: Testing and Further Exploration
 Now that you have set up essential records, feel free to test various functionalities. Create patient vital records, insurance information, and explore incident reporting. The robust codebase and utilities are designed to handle complex healthcare scenarios.
 Remember to check the logs for any error messages, and feel free to refer to the comprehensive utils package (/src/main/java/com/turuchie/mellowhealthportal/utils) for additional support during testing.
-
-## Installing Necessary SQL Driver Dependencies
-
-### Installing SQL Driver
-Before you delve into exploring Mellow Health Portal's comprehensive functionalities, it's crucial to ensure that you have the necessary dependencies installed, including the SQL driver. Follow these steps to set up the SQL driver for seamless integration:
-
-#### Step 1: Download SQL Driver
-Visit the official website of the SQL database you intend to use (e.g., MySQL, PostgreSQL) and download the JDBC driver for the specific database version.
-
-#### Step 2: Place the Driver in the Project
-Once downloaded, place the JDBC driver JAR file in a designated folder within your project. A common convention is to create a "lib" or "drivers" folder in your project root directory.
-
-#### Step 3: Update Project Configuration
-Modify your project configuration or build file (e.g., pom.xml for Maven, build.gradle for Gradle) to include the SQL driver JAR as a dependency. Ensure the path to the driver is correctly specified.
-
-#### For Maven, add the following dependency:
-<dependency>
-    <groupId>your.group.id</groupId>
-    <artifactId>your-driver-artifact-id</artifactId>
-    <version>driver-version</version>
-    <scope>system</scope>
-    <systemPath>${project.basedir}/path/to/driver.jar</systemPath>
-</dependency>
-For Gradle, add the following in the dependencies block:
-
-#### For Gradle
-implementation files('path/to/driver.jar')
-Replace placeholders (e.g., your.group.id, your-driver-artifact-id, driver-version, path/to/driver.jar) with the actual values based on your SQL driver.
-
-#### Step 4: Rebuild the Project
-Rebuild your project to apply the changes and make the SQL driver available for use within Mellow Health Portal.
-
-With the SQL driver successfully integrated, you're now ready to explore the functionalities of Mellow Health Portal seamlessly integrated with Electronic Health Records (EHR) and Electronic Data Capture (EDC) capabilities.
-
-Mellow Health Portal Boasts of a many to many relationship involing physicans, patients, patient_cases, physicians_patients, insurance_information, physicians_address, patients_address, admin and none-entity classes- loginPatient, loginPhysician and AdminLogin!
-These functionalities, coupled with dynamic display options, authentication mechanisms, and full CRUD operations, make the application a powerful tool for healthcare professionals.
-
-## Here Are Basic Highlights Of Our Database Structure
-- Physicians Table: A database table dedicated to storing information about physicians, facilitating efficient management and retrieval of data related to medical practitioners.
-
-- Patients Management: Robust functionality for managing patient records, ensuring secure storage and easy access to vital patient information.
-
-- Admin Panel: An intuitive admin panel equipped with tools for overseeing and managing various aspects of the application, ensuring smooth operation and compliance with regulatory requirements- For instance and admin can delete a user!
-
-- Physicians-Patients Relationship: A feature that establishes and manages relationships between physicians and their patients, streamlining communication and enhancing care coordination.
-
-- Patients Cases And Diagnostic Operations: Dedicated functionality for documenting and tracking patient cases, enabling thorough analysis and informed decision-making by healthcare providers.
-
-- Incident Reporting: A robust incident reporting system that allows patients to report and address new medical incidents promptly and effectively, promoting patient safety and quality improvement.
-
-- Insurance Information Management: Tools for managing insurance information, simplifying the process of verifying coverage and processing claims.
-
-- Dynamic Display: Flexible display options that adapt to user preferences and device specifications, ensuring an optimal user experience across different platforms.
-
-- Filtered Display: To provide focused access to information Authentication and Validation: Robust authentication mechanisms and data validation processes to safeguard sensitive information and maintain data integrity.
-
-- Full CRUD Operations: Comprehensive support for Create, Read, Update, and Delete operations, empowering users to manage data efficiently and effectively.
-
-- Profile Edits with Re-Encryption: Secure profile editing capabilities with built-in re-encryption functionality, ensuring that sensitive data remains protected at all times.
-
-- Physicians-Patients Relationship Enforcement: Measures to enforce one patient per physician relationship, promoting adherence to healthcare protocols and standards.
   
 Happy exploring, and we appreciate your engagement with Mellow Health Portal! If you have any questions or need assistance, don't hesitate to reach out.
