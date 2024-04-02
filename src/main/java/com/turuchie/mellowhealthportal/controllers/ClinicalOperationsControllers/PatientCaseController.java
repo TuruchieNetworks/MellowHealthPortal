@@ -144,24 +144,17 @@ public class PatientCaseController {
 
 	    if (loggedInPatient == null || onePatientCase == null) {
 	        return "redirect:" + PATIENT_LOGIN_PATH;
-	    }	
-
-		// Add formatted dates to the model
-		patientUtil.setPatientAttributes(model);
-	    patientUtil.sortLoggedPatientAttributes(model, patientId);
+	    } 
+	    
+	    if ( patientId != id) {
 
         // Date Ranges
         int onsetHistory = filterUtil.calculateDaysLocalDateDifference(onePatientCase.getOnset(), LocalDate.now());
         long visitHistory = searchUtil.calculateDateTimeDifference(onePatientCase.getCreatedAt(), LocalDateTime.now(), ChronoUnit.DAYS);
 
-
 	    if (loggedInPatient == null || onePatientCase == null) {
 	        return "redirect:" + PATIENT_LOGIN_PATH;
 	    }	
-
-		// Add formatted dates to the model
-		patientUtil.setPatientAttributes(model);;
-	    patientUtil.sortLoggedPatientAttributes(model, patientId);
 
 	    String trimmedSearchTerm = searchedPatientName != null ? searchedPatientName.trim() : null;
 	    if (trimmedSearchTerm != null && !trimmedSearchTerm.isEmpty()) {
@@ -172,20 +165,25 @@ public class PatientCaseController {
 	        model.addAttribute("allPatientCasesWithFilter", searchUtil.returnSearchPatientCaseByCharacter(trimmedSearchTerm));
 	    } else {
 	        // If the search bar is empty, do not display physical oneCurrentMedicationHistory. one of the JSP is looping over filtered patient case cases
-	        //model.addAttribute("allCurrentMedicationsWithFilter", Collections.emptyList());
 	        diagnosticUtil.searchDiagnosticRecordByCharacter(model, patientName);
-	        diagnosticUtil.searchSingleDiagnosticRecordByCharacter(model, patientName);
-	        diagnosticUtil.searchSinglePatientCaseDiagnosticRecordByCharacter(model, patientName);
+	        //model.addAttribute("allCurrentMedicationsWithFilter", Collections.emptyList());
+	        //diagnosticUtil.searchSingleDiagnosticRecordByCharacter(model, patientName);
+	        //diagnosticUtil.searchSinglePatientCaseDiagnosticRecordByCharacter(model, patientName);
 	        model.addAttribute("allPatientCasesWithFilter",searchUtil.returnSearchPatientCaseByCharacter(patientName));
 	    }
 
+		// Add formatted dates to the model
+		//patientUtil.setPatientAttributes(model);
+	    patientUtil.sortLoggedPatientAttributes(model, patientId);
+
         // Date Formatting
+		model.addAttribute("patientCase", onePatientCase);
         model.addAttribute("oneOnsetHistory", onsetHistory);
         model.addAttribute("onePatientVisitHistory", visitHistory);
-		model.addAttribute("patientCase", patientCaseServ.getOne(id));
 		model.addAttribute("createdAt",onePatientCaseCreatedAtDate);	
 		model.addAttribute("dayCreatedAt", onePatientCaseDayCreatedAtDate);
         diagnosticUtil.searchSinglePatientCaseDiagnosticRecordByCharacter(model, patientName);
+	    }	
 		return "PatientCases/viewOnePatientCase.jsp";
 	}
 
@@ -250,7 +248,7 @@ public class PatientCaseController {
 	        return "redirect:" + PATIENT_LOGIN_PATH;
 	    }
 
-	    // Validate Insurance Start Date
+	    // Validate PatientCase Start Date
 	    if (!patientUtil.validatePastDates(onset)) {
 	        result.rejectValue("onset", "error.onset", "Invalid Date Of Onset!");
 	    }
@@ -311,7 +309,7 @@ public class PatientCaseController {
 
 	    model.addAttribute("timeFormat", generateTimeFormatList());
 		model.addAttribute("loggedInPatient", loggedInPatient);
-	    searchUtil.searchByCharacterMethod(model, patientCaseServ.getOne(patientId).getPatient().getPatientFirstName());
+	    searchUtil.searchByCharacterMethod(model, loggedInPatient.getPatientFirstName());
 	    searchUtil.searchPatientInsuranceByCharacter(model, patientCaseToEdit.getPatient().getPatientFirstName());
 
 	    // Check if the logged-in physician is associated with the patientCase

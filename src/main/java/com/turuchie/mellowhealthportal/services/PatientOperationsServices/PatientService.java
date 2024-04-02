@@ -61,6 +61,7 @@ public class PatientService {
 
 	    return filteredPatients;
 	}
+
 	public List<Patient> getPatientsByFilteredLetters(String letters) {
 	    Iterable<Patient> allPatients = patientRepo.findAll();
 	    

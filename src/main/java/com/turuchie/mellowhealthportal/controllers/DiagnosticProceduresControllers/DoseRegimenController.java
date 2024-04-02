@@ -118,22 +118,22 @@ public class DoseRegimenController {
 	        return "redirect:" + PATIENT_LOGIN_PATH;
 	    }
 
-	    model.addAttribute("searchedPatientDoseRegimenRecords", doseRegimenServ.getAll());
 	    String trimmedSearchTerm = searchedPatientName != null ? searchedPatientName.trim() : null;
 	    if (trimmedSearchTerm != null && !trimmedSearchTerm.isEmpty()) {
 	        // If a non-empty search value is provided
 		    searchUtil.searchPatientCaseByCharacter(model, trimmedSearchTerm);
 	        diagnosticUtil.searchDoseRegimenRecordByCharacter(model,trimmedSearchTerm);
 	        diagnosticUtil.searchSingleDoseRegimenRecordByCharacter(model, trimmedSearchTerm);
+	        model.addAttribute("searchedPatientCase", searchUtil.returnFirstPatientCaseByCharacter(trimmedSearchTerm));
 	        model.addAttribute("searchedDoseRegimen", diagnosticUtil.searchFirstDoseRegimenByCharacter(trimmedSearchTerm));
 	    } else {
 	        // If the search bar is empty, do not display patient cases
 	        model.addAttribute("searchedPatientDoseRegimenRecords", Collections.emptyList());
+	        diagnosticUtil.searchDoseRegimenRecordByCharacter(model,loggedInPatient.getPatientFirstName());
 	    }
 
 	    patientUtil.setPatientAttributes(model);
 	    patientUtil.sortLoggedPatientAttributes(model, patientId);
-        diagnosticUtil.searchDoseRegimenRecordByCharacter(model,loggedInPatient.getPatientFirstName());
 	    return "DoseRegimenRecords/viewAllDoseRegimenRecords.jsp";
 	}
 

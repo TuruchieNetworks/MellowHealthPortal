@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.AbdominalAssessment;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.NauseaVomitAssessment;
+import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PatientVisitEvaluation;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PediatricFeverAssessment;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PediatricGIAssessment;
 import com.turuchie.mellowhealthportal.models.PatientOperations.Patient;

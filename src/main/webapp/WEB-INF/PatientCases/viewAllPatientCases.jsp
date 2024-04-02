@@ -65,13 +65,23 @@
 		    </form>
 			<c:if test="${not empty searchedPatientCase}">
 			    <p class="btn btn-outline-primary form-control" style="color:rgba(311, 31, 321, 0.9);background:rgba(11, 0.31, 1, 0.9);">
-		   		  	<a class="btn btn-outline-primary" href="/mellowHealth/hospitalDashboard/patientCases/${searchedPatientCase[0].id}" style="text-decoration:none;">
-					    <c:out value="${searchedPatientCase[0].patient.patientFirstName} ${searchedPatientCase[0].patient.patientLastName} Date Of Birth: ${searchedPatientCase[0].patient.dateOfBirth}"/>
-					</a>
+			    <c:choose>
+					<c:when test="${searchedPatientCase[0].patient.id == loggedInPatient.id}">
+			   		  	<a class="btn btn-outline-primary" href="/mellowHealth/hospitalDashboard/patientCases/${searchedPatientCase[0].id}" style="text-decoration:none;">
+						    <c:out value="${searchedPatientCase[0].patient.patientFirstName} ${searchedPatientCase[0].patient.patientLastName} Date Of Birth: ${searchedPatientCase[0].patient.dateOfBirth}"/>
+						</a>
+					</c:when>
+					<c:otherwise>
+			   		  	<a class="btn btn-outline-primary" href="/mellowHealth/hospitalDashboard/patientCases/${searchedPatientCase[0].id}" style="text-decoration:none;">
+						    <c:out value="Logged Patient Details: ${loggedInPatient.patientFirstName} ${loggedInPatient.patientLastName} Date Of Birth: ${loggedInPatient.dateOfBirth} ${patientAge} yrs Old ${loggedInPatient.race}- ${loggedInPatient.gender}"/>
+						</a>
+					</c:otherwise>
+				</c:choose>
 			    </p>
 			</c:if>
 		</div>
 		<c:forEach items="${allPatientCasesWithFilter}" var="patientCase">
+		<c:if test="${loggedInPatient.id == patientCase.patient.id}">
 		    <div class="column-card" style="text-decoration:none; color:aqua;background: rgba(13, 0.64, 0.1, 0.9);">
 		        <div class="inner-column-card btn btn-outline-success" style="">
 		        	<a href="/mellowHealth/hospitalDashboard/patientCases/${patientCase.id}" style="background: rgba(13, 78.64, 60, 0.9); color:aliceblue; margin:5px;">
@@ -251,6 +261,7 @@
 							    </p>
 				             </c:otherwise>
 			             </c:choose>
+			            </c:if>
 				</c:forEach>
 
 				<c:choose>
@@ -331,6 +342,7 @@
 	    </thead>
 		<tbody>  
 		<c:forEach items="${allPatientCasesWithFilter}" var="patientCase">
+		<c:if test="${loggedInPatient.id == patientCase.patient.id}">
 			<div class="btn btn-primary" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:space-between;text-align:center;background:rgba(1.33, 0.64, 30.60, 0.9);border-radius:7%;padding:5px;margin:5px 0;">
 			    <form action="/mellowHealth/hospitalDashboard/patientCases" class="btn btn-outline-primary" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;text-align:center; padding:5px;background:rgba(1.33, 0.64, 30.60, 0.9);border-radius:7%;margin:5px; ">
 			        <label  style="padding:10px">Search Patient Name</label>
@@ -557,6 +569,7 @@
 							    </p>
 				             </c:otherwise>
 			             </c:choose> 
+				</c:if>
     		</c:forEach>
     	</tbody>
     	</table>

@@ -23,6 +23,7 @@ import com.turuchie.mellowhealthportal.models.PatientOperations.Patient;
 import com.turuchie.mellowhealthportal.services.PhysiciansPatientService;
 import com.turuchie.mellowhealthportal.services.PatientOperationsServices.PatientService;
 import com.turuchie.mellowhealthportal.utils.PatientUtils;
+import com.turuchie.mellowhealthportal.utils.SearchUtil;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -30,15 +31,17 @@ import jakarta.validation.Valid;
 @Controller
 @RequestMapping("/mellowHealth/patientsPortal")
 public class PatientsController {
-
 		@Autowired
 		private PatientService patientServ;
 
 		@Autowired
 		private PhysiciansPatientService physiciansPatientServ;
-		
+
 		@Autowired
 		private PatientUtils patientUtil;
+
+		@Autowired
+		private SearchUtil searchUtil;
 	
 		public PatientsController() {
 		}
@@ -50,17 +53,23 @@ public class PatientsController {
 	    	return "redirect:/mellowHealth/patientsPortal/login";
 	    } 
 	    
-		Patient loggedInPatient = patientServ.getOne(patientId);
 		Patient onePatient = patientServ.getOne(id);
+		Patient loggedInPatient = patientServ.getOne(patientId);
+	    String patientName = loggedInPatient.getPatientFirstName();
 
 		if (onePatient == null || loggedInPatient == null) {
 	        return "redirect:/mellowHealth/patientsPortal/login";
 	    }
 
+		if (patientName == null) {
+		}
+
 		// Add formatted dates to the model
-		patientUtil.setPatientAttributes(model);
+		patientUtil.addSearchedMethods(model, patientName);
 	    patientUtil.sortLoggedPatientAttributes(model, patientId);
 		patientUtil.setPatientDateAttributes(model, loggedInPatient, onePatient);
+        model.addAttribute("searchedPatientCase", searchUtil.returnFirstPatientCaseByCharacter(patientName));
+        model.addAttribute("allPatientCasesWithFilter", searchUtil.returnSearchPatientCaseByCharacter(patientName));
 		return "/Patients/viewOnePatient.jsp";
 		}
 
@@ -68,23 +77,27 @@ public class PatientsController {
 		public String showAllPatients(@ModelAttribute("physiciansPatient") PhysiciansPatient physiciansPatient,
 		Model model, HttpSession session) {
 		Long patientId = (Long) session.getAttribute("patient_id");
-		Patient loggedInPatient = patientServ.getOne(patientId);
-		if (patientId == null){
-	    	return "redirect:/mellowHealth/patientsPortal/login";
-	    }
+		    if (patientId == null) {
+		        return "redirect:/mellowHealth/patientsPortal/login";
+		    }
 
-		patientUtil.setPatientAttributes(model);
-	    patientUtil.sortLoggedPatientAttributes(model, patientId);
-	    patientUtil.setLoggedPatientCommonAttributes(model, loggedInPatient, null);
-		model.addAttribute("physiciansPatient", new PhysiciansPatient());
-		return "Patients/viewAllPatients.jsp";
+		    Patient loggedInPatient = patientServ.getOne(patientId);
+		    patientUtil.setPatientAttributes(model);
+		    patientUtil.sortLoggedPatientAttributes(model, patientId);
+		    patientUtil.setLoggedPatientCommonAttributes(model, loggedInPatient, null);
+		    model.addAttribute("physiciansPatient", new PhysiciansPatient());
+		    return "Patients/viewAllPatients.jsp";
 		}
 
 		@PostMapping("/hospitalDashboard/process/physiciansPatients/newPhysiciansPatient")
 		public String followPhysician(@ModelAttribute("physiciansPatient")
 			PhysiciansPatient newPhysiciansPatient, Model model, HttpSession session) {
-		    // Get patient ID from the session
+			// Get patient ID from the session
 		    Long patientId = (Long) session.getAttribute("patient_id");
+
+		    if (patientId == null) {
+		        return "redirect:/mellowHealth/patientsPortal/login";
+		    }
 
 		    // Get physician ID from the newPhysiciansPatient
 		    Long physicianId = newPhysiciansPatient.getPhysician().getId();
@@ -100,7 +113,7 @@ public class PatientsController {
 
 		    // If the relationship doesn't exist, create it
 		    physiciansPatientServ.create(newPhysiciansPatient);
-	        return "redirect:/mellowHealth/patientsPortal/patients?alreadyFollowing=true";
+		    return "redirect:/mellowHealth/patientsPortal/patients?alreadyFollowing=true";
 		}
 
 		@GetMapping("/login")

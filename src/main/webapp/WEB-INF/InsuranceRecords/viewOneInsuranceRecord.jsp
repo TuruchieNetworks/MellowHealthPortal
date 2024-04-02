@@ -188,12 +188,12 @@
 	    display:flex; justify-content:space-between;align-items:center; border-radius:5%;padding:10px;margin:10px 0;">
 		<h1 style=" margin: 5px; width: 100%">
 			<a href="/mellowHealth/insuranceRecords" class="btn btn-outline-success" style=" margin:5px; width: 100%; display:block; padding: 10px;background: rgba(2, 10.13, 0.160, 0.9);">
-		        <c:out value="Valid Period: ${lengthOfCoverageDays} Days Remaining"/>
+		        <c:out value="Valid Period: ${dayCoverageLength} Days Remaining"/>
 			</a>
 		</h1>
 	 	<h1 style="margin: 5px;width: 100%">
 	 		<a style=" margin:5px; width: 100%; display:block; padding: 10px;background: rgba(13, 0.123, 0.160, 0.9);"  href="/mellowHealth/insuranceRecords" class="btn btn-outline-primary">
-		        <c:out value="Remaining Coverage: ${oneCoveragePeriod} Months"/>
+		        <c:out value="Remaining Coverage: ${lengthOfCoverageMonths} Months"/>
 	 		</a>
 	 	</h1>
 	 	<h1 style="margin: 5px;width: 100%">

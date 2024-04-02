@@ -23,11 +23,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.PatientCase;
-import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.DiagnosticRecord;
+import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.FollowUpRecord;
 import com.turuchie.mellowhealthportal.models.PatientOperations.Patient;
 import com.turuchie.mellowhealthportal.services.PhysicianService;
 import com.turuchie.mellowhealthportal.services.ClinicalOperationsServices.PatientCaseService;
-import com.turuchie.mellowhealthportal.services.DiagnosticProceduresServices.DiagnosticRecordService;
+import com.turuchie.mellowhealthportal.services.DiagnosticProceduresServices.FollowUpRecordService;
 import com.turuchie.mellowhealthportal.services.PatientOperationsServices.PatientService;
 import com.turuchie.mellowhealthportal.utils.DiagnosticUtils;
 import com.turuchie.mellowhealthportal.utils.ListConverterUtil;
@@ -40,12 +40,12 @@ import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/mellowHealth")
-public class DiagnosticRecordController {
+public class FollowUpRecordController {
 	private static final String PATIENT_LOGIN_PATH = "/mellowHealth/patientsPortal/login";
-	private static final String HOSPITAL_DASHBOARD_PATH = "/mellowHealth/hospitalDashboard";
+	private static final String HOSPITAL_DASHBOARD_PATH = "/mellowHealth";
 	private static final String PATIENT_PATH = "/mellowHealth/patientsPortal/patients";
 	@Autowired
-	private DiagnosticRecordService diagnosticRecordServ;
+	private FollowUpRecordService followUpRecordServ;
 
 	@Autowired
 	private PatientService patientServ;
@@ -66,17 +66,18 @@ public class DiagnosticRecordController {
 	private PatientFilterUtil filterUtil;
 
 	@Autowired
-	public DiagnosticRecordController(DiagnosticRecordService diagnosticRecordServ,
+	public FollowUpRecordController(FollowUpRecordService followUpRecordServ,
 		PatientService patientServ, DiagnosticUtils diagnosticUtil, PatientCaseService patientCaseServ,
 		PatientUtils patientUtil,PhysicianService physicianServ, SearchUtil searchUtil) {
    	        this.patientUtil = patientUtil;
 	        this.searchUtil = searchUtil;
 	        this.patientServ = patientServ;
 	        this.patientCaseServ = patientCaseServ;
-	        this.diagnosticRecordServ = diagnosticRecordServ;
+	        this.diagnosticUtil = diagnosticUtil;
+	        this.followUpRecordServ = followUpRecordServ;
     }
 	
-	public DiagnosticRecordController() {}
+	public FollowUpRecordController() {}
 
 	private List<Integer> generateTimeFormatList() {
 	    List<Integer> timeFormat = new ArrayList<>();
@@ -86,8 +87,8 @@ public class DiagnosticRecordController {
 	    return timeFormat;
 	}
 
-	@GetMapping("/diagnosticRecords")
-	public String diagnosticRecordIndexPage(@RequestParam(value = "searchedPatientName", required = false) String searchedPatientName,
+	@GetMapping("/followUpRecords")
+	public String followUpRecordIndexPage(@RequestParam(value = "searchedPatientName", required = false) String searchedPatientName,
 	        Model model, HttpSession session) {
 	    Long patientId = (Long) session.getAttribute("patient_id");
 
@@ -97,7 +98,6 @@ public class DiagnosticRecordController {
 	    }
 
 	    Patient loggedInPatient = patientServ.getOne(patientId);
-	    String loggedInPatientName = patientServ.getOne(patientId).getPatientFirstName();
 
 	    if (loggedInPatient == null) {
 	        return "redirect:" + PATIENT_LOGIN_PATH;
@@ -108,26 +108,24 @@ public class DiagnosticRecordController {
 	    if (trimmedSearchTerm != null && !trimmedSearchTerm.isEmpty()) {
 	        // If a non-empty search value is provided
 	    	searchUtil.searchPatientCaseByCharacter(model, trimmedSearchTerm);
-	        diagnosticUtil.searchDiagnosticRecordByCharacter(model,trimmedSearchTerm);
-	        diagnosticUtil.searchSingleDiagnosticRecordByCharacter(model, trimmedSearchTerm);
+	        diagnosticUtil.searchFollowUpRecordByCharacter(model,trimmedSearchTerm);
+	        diagnosticUtil.searchSingleFollowUpRecordByCharacter(model, trimmedSearchTerm);
 
 	        model.addAttribute("searchedPatientCase", searchUtil.returnFirstPatientCaseByCharacter(trimmedSearchTerm));
 	        model.addAttribute("allPatientCasesWithFilter", searchUtil.returnSearchPatientCaseByCharacter(trimmedSearchTerm));
-	        model.addAttribute("searchedDiagnosticRecord", diagnosticUtil.returnFirstDiagnosticRecordByCharacter(trimmedSearchTerm));
-	        model.addAttribute("allDiagnosticRecordsWithFilter", diagnosticUtil.returnSearchDiagnosticRecordByCharacter(loggedInPatientName));
 	    } else {
 	        // If the search bar is empty, do not display patient cases
-	        model.addAttribute("allPatientCasesWithFilter", Collections.emptyList());
-	        model.addAttribute("allDiagnosticRecordsWithFilter", diagnosticUtil.returnSearchDiagnosticRecordByCharacter(loggedInPatientName));
+	        model.addAttribute("allFollowUpRecordsWithFilter", Collections.emptyList());
+	        model.addAttribute("allFollowUpRecordsWithFilter", Collections.emptyList());
 	    }
 
-	    //patientUtil.setPatientAttributes(model);
+	    patientUtil.setPatientAttributes(model);
 	    patientUtil.sortLoggedPatientAttributes(model, patientId);
-	    return "DiagnosticRecords/viewAllDiagnosticRecords.jsp";
+	    return "FollowUpRecords/viewAllFollowUpRecords.jsp";
 	}
 
-	@GetMapping("/diagnosticRecords/{id}")
-	public String showOneDiagnosticRecord(
+	@GetMapping("/followUpRecords/{id}")
+	public String showOneFollowUpRecord(
 	        @RequestParam(value = "searchedPatientName", required = false) String searchedPatientName,
 	        @PathVariable("id") Long id, Model model, HttpSession session) {
 	    
@@ -137,42 +135,26 @@ public class DiagnosticRecordController {
 	    }
 
 	    Patient loggedInPatient = patientServ.getOne(patientId);
-	    PatientCase oneDiagnosticRecordPatientCase = diagnosticRecordServ.getOne(id).getPatientCase();
-	    DiagnosticRecord oneDiagnosticRecord = diagnosticRecordServ.getOne(id);
-	    String loggedInPatientName = patientServ.getOne(patientId).getPatientFirstName();
+	    FollowUpRecord oneFollowUpRecord = followUpRecordServ.getOne(id);
 
-	    if (loggedInPatient == null || oneDiagnosticRecord == null) {
+	    if (loggedInPatient == null || oneFollowUpRecord == null) {
 	        return "redirect:" + PATIENT_LOGIN_PATH;
 	    }   
 
+	    model.addAttribute("oneFollowUpRecord", oneFollowUpRecord);
 	    String trimmedSearchTerm = searchedPatientName != null ? searchedPatientName.trim() : null;
 	    if (trimmedSearchTerm != null && !trimmedSearchTerm.isEmpty()) {
 	        // If a non-empty search value is provided
-	    	diagnosticUtil.searchDiagnosticRecordByCharacter(model, trimmedSearchTerm);
-	        List<DiagnosticRecord> searchedRecords = diagnosticUtil.returnSearchDiagnosticRecordByCharacter(loggedInPatientName);
-	    	searchUtil.searchPatientCaseByCharacter(model, trimmedSearchTerm);
-	        diagnosticUtil.searchDiagnosticRecordByCharacter(model,trimmedSearchTerm);
-	        diagnosticUtil.searchSingleDiagnosticRecordByCharacter(model, trimmedSearchTerm);
+	    	diagnosticUtil.setAllSearchTrimmedMethods(model, trimmedSearchTerm);
+	        diagnosticUtil.searchFollowUpRecordByCharacter(model,trimmedSearchTerm);
+	        diagnosticUtil.searchSingleFollowUpRecordByCharacter(model, trimmedSearchTerm);
 
-	        if (!searchedRecords.isEmpty()) {
-	            // Get the first searched record
-	            DiagnosticRecord firstSearchedRecord = searchedRecords.get(0);
-	            
-	            // Add necessary attributes to the model
-		        model.addAttribute("searchedPatientCase", oneDiagnosticRecordPatientCase);
-	            model.addAttribute("oneSearchedDiagnosticRecord", firstSearchedRecord);
-	            model.addAttribute("allDiagnosticRecordsWithFilter", searchedRecords);
-	        } else {
-	            // If no matching records found, add an empty list to the model
-	           // model.addAttribute("allDiagnosticRecordsWithFilter", Collections.emptyList());
-	            //model.addAttribute("allDiagnosticRecordsWithFilter", searchedRecords);
-		        //model.addAttribute("searchedDiagnosticRecord", diagnosticUtil.returnFirstDiagnosticRecordByCharacter(loggedInPatientName));
-		        model.addAttribute("allDiagnosticRecordsWithFilter", diagnosticUtil.returnSearchDiagnosticRecordByCharacter(loggedInPatientName));
-	        }
+	        model.addAttribute("searchedPatientCase", searchUtil.returnFirstPatientCaseByCharacter(trimmedSearchTerm));
+	        model.addAttribute("allPatientCasesWithFilter", searchUtil.returnSearchPatientCaseByCharacter(trimmedSearchTerm));
 	    } else {
-	        // If the search bar is empty, do not display patient cases
-	        model.addAttribute("allPatientCasesWithFilter", searchUtil.returnSearchPatientCaseByCharacter(loggedInPatientName));
-	        //model.addAttribute("allDiagnosticRecordsWithFilter", Collections.emptyList());
+	        // If the search bar is empty, do not display physical oneCoagulationRecordHistory. one of the JSP is looping over filtered patient case cases
+	        model.addAttribute("allPatientCasesWithFilter", Collections.emptyList());
+	    	model.addAttribute("searchedPatientCase", searchUtil.returnFirstPatientCaseByCharacter(loggedInPatient.getPatientFirstName()));
 	    }
 
 	    // Add formatted dates to the model
@@ -180,22 +162,20 @@ public class DiagnosticRecordController {
 	    filterUtil.addPhysicalAssessmentInfoToModel(model, id);
 	    patientUtil.sortLoggedPatientAttributes(model, patientId);
 
-	    model.addAttribute("oneDiagnosticRecord", oneDiagnosticRecord);
-
 	    // Date Ranges
-	    int recordHistory = filterUtil.calculateDaysLocaleDateTimeDiffference(oneDiagnosticRecord.getCreatedAt(), LocalDateTime.now());
+	    int recordHistory = filterUtil.calculateDaysLocaleDateTimeDiffference(oneFollowUpRecord.getCreatedAt().atStartOfDay(), LocalDateTime.now());
 
 	    // Date Formatting
-	    model.addAttribute("oneDiagnosticRecordHistory", recordHistory);
-	    model.addAttribute("dayCreatedAt", oneDiagnosticRecord.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, yyyy")));
-	    model.addAttribute("createdAt", oneDiagnosticRecord.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy")));    
-	    return "DiagnosticRecords/viewOneDiagnosticRecord.jsp";
+	    model.addAttribute("oneFollowUpRecordHistory", recordHistory);
+	    model.addAttribute("dayCreatedAt", oneFollowUpRecord.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, yyyy")));
+	    model.addAttribute("createdAt", oneFollowUpRecord.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy")));    
+	    return "FollowUpRecords/viewOneFollowUpRecord.jsp";
 	}
 
 
-	@GetMapping("/diagnosticRecords/newDiagnosticRecord")
-	public String createDiagnosticRecord(
-	   @ModelAttribute("diagnosticRecord") DiagnosticRecord diagnosticRecord,
+	@GetMapping("/followUpRecords/newFollowUpRecord")
+	public String createFollowUpRecord(
+	   @ModelAttribute("followUpRecord") FollowUpRecord followUpRecord,
 	   @RequestParam(value = "searchedPatientName", required = false) String searchedPatientName,
 	   @RequestParam(value = "patientCaseId", required = false) Long patientCaseId,
 	   Model model, HttpSession session) {
@@ -230,15 +210,15 @@ public class DiagnosticRecordController {
 	    model.addAttribute("loggedInPatient", loggedInPatient);
 	    model.addAttribute("timeFormat", generateTimeFormatList());
 
-	    return "/DiagnosticRecords/createDiagnosticRecord.jsp";
+	    return "/FollowUpRecords/createFollowUpRecord.jsp";
 	}
 
 
-	@PostMapping("/process/diagnosticRecords/createNewDiagnosticRecord")
-	public String processCreateDiagnosticRecord(
+	@PostMapping("/process/followUpRecords/createNewFollowUpRecord")
+	public String processCreateFollowUpRecord(
 		@RequestParam(value = "searchedPatientName", required = false) String searchedPatientName, 
 		@RequestParam(value = "patientCase", required = false) Long patientCaseId, 
-		@Valid @ModelAttribute("diagnosticRecord") DiagnosticRecord newDiagnosticRecord,	    
+		@Valid @ModelAttribute("followUpRecord") FollowUpRecord newFollowUpRecord,	    
 	    BindingResult result, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
 		Long physicianId = (Long) session.getAttribute("physician_id");
 		Long patientId = (Long) session.getAttribute("patient_id");
@@ -255,7 +235,7 @@ public class DiagnosticRecordController {
 	    } 
 
 	    Patient loggedInPatient = patientServ.getOne(patientId);
-	    PatientCase searchedPatientCase = patientCaseServ.getOne(newDiagnosticRecord.getPatientCase().getId());
+	    PatientCase searchedPatientCase = patientCaseServ.getOne(newFollowUpRecord.getPatientCase().getId());
 
 	    // Add necessary model attributes for rendering the form with validation errors
 	    if (result.hasErrors()) {
@@ -264,23 +244,23 @@ public class DiagnosticRecordController {
 		    model.addAttribute("timeFormat", generateTimeFormatList());
             model.addAttribute("loggedInPatient", loggedInPatient);
             model.addAttribute("oneSearchedPatientCase",  searchedPatientCase);
+            model.addAttribute("oneSearchedPatientCaseCreatedAt",  searchedPatientCase.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy")));
             model.addAttribute("allPatientCasesWithFilter", searchUtil.returnSearchPatientCaseByCharacter(searchedPatientCase.getPatient().getPatientFirstName()));
             model.addAttribute("oneSearchedPatientAge", patientUtil.calculateDateDifference(searchedPatientCase.getPatient().getDateOfBirth(), LocalDate.now(), ChronoUnit.YEARS));
-            model.addAttribute("oneSearchedPatientCaseCreatedAt",  searchedPatientCase.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy")));
 
 		    redirectAttributes.addFlashAttribute("failureMessage", "Validation Failed While Creating Patient's Case!");
-	        return "/DiagnosticRecords/createDiagnosticRecord.jsp";
+	        return "/FollowUpRecords/createFollowUpRecord.jsp";
 	    }
 
-	    diagnosticRecordServ.create(newDiagnosticRecord);
+	    followUpRecordServ.create(newFollowUpRecord);
 
 	    // Flash attribute for success message
 	    redirectAttributes.addFlashAttribute("successMessage", "Patient case created successfully!");
 	    return "redirect:" + PATIENT_PATH +"/"+ patientId;
 	}
 
-	@GetMapping("/diagnosticRecords/editDiagnosticRecord/{id}")
-	public String editDiagnosticRecord(@PathVariable("id") Long id,
+	@GetMapping("/followUpRecords/editFollowUpRecord/{id}")
+	public String editFollowUpRecord(@PathVariable("id") Long id,
 		@ModelAttribute("inputCollector") ListConverterUtil inputCollector,
 		Model model, HttpSession session) {
 		Long physicianId = (Long) session.getAttribute("physician_id");
@@ -291,70 +271,68 @@ public class DiagnosticRecordController {
 	    	return "redirect:" + PATIENT_LOGIN_PATH;
 	    } 
 
-	    if (physicianId == null){
+		if (physicianId == null){
 	    } 
 
-	    patientUtil.setPatientAttributes(model);
-	    Patient loggedInPatient = patientServ.getOne(patientId);
-	    DiagnosticRecord diagnosticRecordToEdit = diagnosticRecordServ.getOne(id);
-	    PatientCase loggedInPatientCase = diagnosticRecordToEdit.getPatientCase();
-	    String loggedInPatientName = diagnosticRecordToEdit.getPatient().getPatientFirstName();
+	    FollowUpRecord followUpRecordToEdit = followUpRecordServ.getOne(id);
+		// Check if the logged-in physician is associated with the followUpRecord
+	    if (followUpRecordToEdit.getPatient().getId().equals(patientId)) {
+		    patientUtil.setPatientAttributes(model);
+		    PatientCase searchedPatientCase = patientCaseServ.getOne(followUpRecordServ.getOne(id).getPatientCase().getId());
+	
+		    Patient loggedInPatient = patientServ.getOne(patientId);
+		    model.addAttribute("timeFormat", generateTimeFormatList());
+			model.addAttribute("loggedInPatient", loggedInPatient);
+	        model.addAttribute("oneSearchedPatientCase",  searchedPatientCase);
+	        model.addAttribute("allPatientCasesWithFilter", searchUtil.returnSearchPatientCaseByCharacter(searchedPatientCase.getPatient().getPatientFirstName()));
+	        model.addAttribute("oneSearchedPatientAge", patientUtil.calculateDateDifference(searchedPatientCase.getPatient().getDateOfBirth(), LocalDate.now(), ChronoUnit.YEARS));
+	        model.addAttribute("oneSearchedPatientCaseCreatedAt",  searchedPatientCase.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy")));
 
-		model.addAttribute("loggedInPatient", loggedInPatient);
-	    model.addAttribute("timeFormat", generateTimeFormatList());
-        model.addAttribute("oneSearchedPatientCase", searchUtil.returnFirstPatientCaseByCharacter(loggedInPatientName));
-        model.addAttribute("allPatientCasesWithFilter", searchUtil.returnSearchPatientCaseByCharacter(loggedInPatientName));
-        model.addAttribute("oneSearchedPatientAge", patientUtil.calculateDateDifference(loggedInPatientCase.getPatient().getDateOfBirth(), LocalDate.now(), ChronoUnit.YEARS));
-
-	    // Check if the logged-in physician is associated with the diagnosticRecord
-	    if (diagnosticRecordToEdit.getPatient().getId().equals(patientId)) {
 			patientUtil.setPatientAttributes(model);
-	        model.addAttribute("diagnosticRecord", diagnosticRecordToEdit);
-	        return "DiagnosticRecords/editOneDiagnosticRecord.jsp";
+	        model.addAttribute("followUpRecord", followUpRecordToEdit);
+	        return "FollowUpRecords/editOneFollowUpRecord.jsp";
 	    } else {
-	        return "redirect:" + HOSPITAL_DASHBOARD_PATH + "/diagnosticRecords";
+	        return "redirect:" + HOSPITAL_DASHBOARD_PATH + "/followUpRecords";
 	    }
 	}
 
-
-	@PatchMapping("/process/diagnosticRecords/editDiagnosticRecord/{id}")
-	public String processEditDiagnosticRecord(@Valid @ModelAttribute("diagnosticRecord") DiagnosticRecord diagnosticRecord,
+	@PatchMapping("/process/followUpRecords/editFollowUpRecord/{id}")
+	public String processEditFollowUpRecord(@Valid @ModelAttribute("followUpRecord") FollowUpRecord followUpRecord,
 		BindingResult result,Model model, HttpSession session) {
 	        // Add necessary model attributes for rendering the form with validation errors
 	        Long patientId = (Long) session.getAttribute("patient_id");
+		    PatientCase searchedPatientCase = patientCaseServ.getOne(followUpRecord.getPatientCase().getId());
 
-		    PatientCase searchedPatientCase = patientCaseServ.getOne(diagnosticRecord.getPatientCase().getId());
-		    String loggedInPatientName = searchedPatientCase.getPatient().getPatientFirstName();
-		    LocalDate loggedInPatientBirthDay = searchedPatientCase.getPatient().getDateOfBirth();
+	        if (searchedPatientCase == null) {	        	
+	        }
 		    
-	        if (searchedPatientCase != null || loggedInPatientName != null) {}
-	        
-	        model.addAttribute("oneSearchedPatientCase", searchUtil.returnFirstPatientCaseByCharacter(loggedInPatientName));
-	        model.addAttribute("allPatientCasesWithFilter", searchUtil.returnSearchPatientCaseByCharacter(loggedInPatientName));
-	        model.addAttribute("oneSearchedPatientAge", patientUtil.calculateDateDifference(loggedInPatientBirthDay, LocalDate.now(), ChronoUnit.YEARS));
-	        
-	        if (result.hasErrors()) {
+	        model.addAttribute("oneSearchedPatientAge", patientUtil.calculateDateDifference(searchedPatientCase.getPatient().getDateOfBirth(), LocalDate.now(), ChronoUnit.YEARS));
+	    if (result.hasErrors()) {
 	        // Model Attributes
-		        if (patientId != null) {
-		    		patientUtil.setPatientAttributes(model);
-				    model.addAttribute("timeFormat", generateTimeFormatList());
-		            model.addAttribute("loggedInPatient", patientServ.getOne(patientId));
+	        if (patientId != null) {
+	    		patientUtil.setPatientAttributes(model);
+			    model.addAttribute("timeFormat", generateTimeFormatList());
+	            model.addAttribute("loggedInPatient", patientServ.getOne(patientId));
+	            model.addAttribute("oneSearchedPatientCase",  searchedPatientCase);
+	            model.addAttribute("oneSearchedPatientCase",  searchedPatientCase);
+	            model.addAttribute("oneSearchedPatientCaseCreatedAt",  searchedPatientCase.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy")));
+	            model.addAttribute("allPatientCasesWithFilter", searchUtil.returnSearchPatientCaseByCharacter(searchedPatientCase.getPatient().getPatientFirstName()));
+	            model.addAttribute("oneSearchedPatientAge", patientUtil.calculateDateDifference(searchedPatientCase.getPatient().getDateOfBirth(), LocalDate.now(), ChronoUnit.YEARS));
+	            // Return the view with the model attributes
+	            return "FollowUpRecords/editOneFollowUpRecord.jsp";
+	        } else {
+	            // Handle the case where physicianId is null (redirect to login, show an error, etc.)
+	            return "redirect:" + PATIENT_LOGIN_PATH;
+	        }
+	    } else {
+	        // Validation passed, update the followUpRecord
+	        followUpRecordServ.update(followUpRecord);
+	        return "redirect:/mellowHealth/followUpRecords/{id}";
+	    }
+	}
 	
-		            // Return the view with the model attributes
-		            return "DiagnosticRecords/editOneDiagnosticRecord.jsp";
-		        } else {
-		            // Handle the case where physicianId is null (redirect to login, show an error, etc.)
-		            return "redirect:" + PATIENT_LOGIN_PATH;
-		        }
-		    } else {
-		        // Validation passed, update the diagnosticRecord
-		        diagnosticRecordServ.update(diagnosticRecord);
-		        return "redirect:/mellowHealth/diagnosticRecords/{id}";
-		    }
-		}
-	
-	@DeleteMapping("/diagnosticRecords/delete/{id}")
-	public String deleteDiagnosticRecord(@PathVariable("id") Long id, HttpSession session) {
+	@DeleteMapping("/followUpRecords/delete/{id}")
+	public String deleteFollowUpRecord(@PathVariable("id") Long id, HttpSession session) {
 		Long physicianId = (Long) session.getAttribute("physician_id");
 		Long patientId = (Long) session.getAttribute("patient_id");
 
@@ -366,10 +344,10 @@ public class DiagnosticRecordController {
 	    if (physicianId == null){
 	    } 
 
-	    DiagnosticRecord diagnosticRecordToDelete = diagnosticRecordServ.getOne(id);
-	    // Check if the logged-in physician is the owner of the diagnosticRecord
-	    if (diagnosticRecordToDelete != null && diagnosticRecordToDelete.getPatient().getId().equals(patientId)) {
-	        diagnosticRecordServ.delete(id);
+	    FollowUpRecord followUpRecordToDelete = followUpRecordServ.getOne(id);
+	    // Check if the logged-in physician is the owner of the followUpRecord
+	    if (followUpRecordToDelete != null && followUpRecordToDelete.getPatient().getId().equals(patientId)) {
+	        followUpRecordServ.delete(id);
 	    } else {
 	        // Redirect to the pmellowHealth/hysician'spage if the physician is not the owner
 	        return "redirect:/mellowHealth/patientsPortal";

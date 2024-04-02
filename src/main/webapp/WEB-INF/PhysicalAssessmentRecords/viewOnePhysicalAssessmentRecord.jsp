@@ -46,19 +46,37 @@
 		<tbody>
 		</tbody>
 	</table>
-		<div class="btn btn-primary" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:space-between;text-align:center;background:rgba(1.33, 0.64, 30.60, 0.9);border-radius:7%;padding:5px;margin:5px 0;width:100%;">
-		    <form action="/mellowHealth/diagnosis/physicalAssessments/${onePhysicalAssessment.id}" class="btn btn-outline-primary" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;text-align:center; padding:5px;background:rgba(1.33, 0.64, 30.60, 0.9);border-radius:7%;margin:5px;width:100%;">
+		<div class="btn btn-primary generic-display-container" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:space-between;text-align:center;background:rgba(1.33, 0.64, 30.60, 0.9);border-radius:7%;padding:5px;width:100%;">
+		    <form action="/mellowHealth/diagnosis/physicalAssessments/${onePhysicalAssessment.id }" class="btn btn-outline-primary" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;text-align:center; padding:5px;background:rgba(1.33, 0.64, 30.60, 0.9);border-radius:7%;margin:5px;width:100%;">
 		        <label  style="padding:10px">Search Patient Name</label>
-		        <input style="width:40%;padding:5px;border-radius:7%;margin:5px" type="text" name="searchedPatientName"/>
-		        <input class="btn btn-outline-primary" type="submit" value="Search Patient" style="margin:5px;width:25%;"/>
+		        <input style="width:40%;padding:5px;border-radius:7%;margin:5px" type="text" name="searchedPatientName" placeHolder ="Please Enter Patient Name"/>
+		        <input class="btn btn-outline-primary" type="submit" value="Search Patient" style="margin:5px;width:30%;"/>
 		    </form>
-			<c:if test="${not empty searchedPatientCase}">
+		    <c:choose>
+			<c:when test="${empty searchedPatientCase}">
 			    <p class="btn btn-outline-primary form-control" style="color:rgba(311, 31, 321, 0.9);background:rgba(11, 0.31, 1, 0.9);">
-		   		  	<a class="btn btn-outline-primary" href="/mellowHealth/hospitalDashboard/patientCases/${patientCase.patient.id}" style="text-decoration:none;">
-					    <c:out value="${searchedPatientCase[0].patient.patientFirstName} ${searchedPatientCase[0].patient.patientLastName} Date Of Birth: ${searchedPatientCase[0].patient.dateOfBirth}"/>
+			   		  	<a class="btn btn-outline-primary" href="/mellowHealth/patientsPortal/patients/${loggedInPatient.id}" style="text-decoration:none;">
+					    <c:out value="${dayCurrentDateTime} Enter Logged In Patient Details: ${loggedInPatient.patientFirstName} ${loggedInPatient.patientLastName}"/>
 					</a>
 			    </p>
-			</c:if>
+			</c:when>
+			<c:otherwise>
+			   <p class="btn btn-outline-primary form-control" style="color:rgba(311, 31, 321, 0.9);background:rgba(11, 0.31, 1, 0.9);">
+		   		<c:choose>
+					<c:when test="${searchedPatientCase[0].patient.id == loggedInPatient.id}">
+			   		  	<a class="btn btn-outline-primary" href="/mellowHealth/hospitalDashboard/patientCases/${searchedPatientCase[0].id}" style="text-decoration:none;">
+						    <c:out value="Searched Patient Details: ${searchedPatientCase[0].patient.patientFirstName} ${searchedPatientCase[0].patient.patientLastName} Date Of Birth: ${searchedPatientCase[0].patient.dateOfBirth} ${patientAge} yrs Old ${searchedPatientCase[0].patient.race}- ${searchedPatientCase[0].patient.gender} Contact Details: ${searchedPatientCase[0].patient.patientAddresses[0].phoneNumber} ${searchedPatientCase[0].physicalAssessments.size()} Physical Assessments"/>
+						</a>
+					</c:when>
+					<c:otherwise>
+			   		  	<a class="btn btn-outline-primary" href="/mellowHealth/hospitalDashboard/patientCases/${searchedPatientCase[0].id}" style="text-decoration:none;">
+					    	<c:out value="${dayCurrentDateTime} Enter Logged In Patient Details: ${loggedInPatient.patientFirstName} ${loggedInPatient.patientLastName}"/>
+						</a>
+					</c:otherwise>
+				</c:choose>
+			    </p>
+			</c:otherwise>
+			</c:choose>
 		</div>
 		    <div class="column-card" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:space-between;text-align:center;background:rgba(1.33, 0.64, 30.60, 0.9);border-radius:7%;padding:5px;margin:5px 0;width:100%;text-decoration:none; color:aqua;background: rgba(13, 0.64, 0.1, 0.9);">
 		            <div style="text-decoration:none; color:aqua"class="table-dark column-card">
@@ -193,14 +211,14 @@
 				   </c:choose>
 				   display:flex; justify-content:space-between;align-items:center; border-radius:5%;padding:10px;margin:5px 0;">	
 			        <div class="btn btn-outline-warning column-card" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;text-align:center;margin:5px; padding:10px;background:rgba(1.33, 0.64, 0.60, 0.9);">
-						<form action="/mellowHealth/insuranceRecords/${patientCase.insuranceInformation.id}" method="get" style="width:100%;">
+						<form action="/mellowHealth/insuranceRecords/${onePhysicalAssessment.patientCase.insuranceInformation.id}" method="get" style="width:100%;">
 							<input type="hidden" name="_method" value="get">
 							<input class ="btn btn-outline-warning" type="submit" value="View Insurance Record" style="padding: 10px;width:100%;" >
 						</form>
 					</div>
 			        <div class="btn btn-outline-warning inner-column-card" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;text-align:center;margin:5px; padding:2px;background:rgba(1.33, 0.64, 0.60, 0.9);">
 						<h1 style="width:100%;margin:5px;">
-						 	<a style="background:rgba(8, 8, 10, 0.9);margin:5px;width:100%;" href="/mellowHealth/patientsPortal/${loggedInPatient.id}" class="btn btn-outline-success">
+						 	<a style="background:rgba(8, 8, 10, 0.9);margin:5px;width:100%;" href="/mellowHealth/patientsPortal/patients/${loggedInPatient.id}" class="btn btn-outline-success">
 						 		<c:out value="Mellow Patient Since ${loggedInPatientCreatedAt}"/>
 							</a>
 					 	</h1>
@@ -224,34 +242,51 @@
 				   display:flex; justify-content:space-between;align-items:center; border-radius:5%;padding:10px;margin:5px 0;">
 			        <div class="btn btn-outline-warning inner-column-card" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;text-align:center;margin:5px; padding:2px;background:rgba(1.33, 0.64, 0.60, 0.9);">
 						<h1 style="width:100%;margin:5px;">
-						 	<a style="background:rgba(8, 8, 10, 0.9);margin:5px;width:100%;" href="/mellowHealth/patientsPortal/${loggedInPatient.id}" class="btn btn-outline-success">
+						 	<a style="background:rgba(8, 8, 10, 0.9);margin:5px;width:100%;" href="/mellowHealth/diagnosticRecords/${mostRecentDiagnosticReport.id}" class="btn btn-outline-success">
 						 		<c:out value="View Diagnostic Record for ${createdAt}'s Visit"/>
 							</a>
 					 	</h1>
 				 	</div>	
 
-			        <div class="btn btn-outline-danger inner-column-card" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;text-align:center;margin:5px; padding:2px;background:rgba(1.33, 0.64, 0.60, 0.9);">
-				   	    <h1 style="margin:5px; width: 100%">
-						 	<a href="/mellowHealth/patientsPortal/logout" class="btn btn-danger" style=" margin:5px; width: 100%; display:block; padding: 5px; color:azure;">
+			        <div class="btn btn-outline-danger inner-column-card" style="background:rgba(1.33, 0.64, 0.60, 0.9);">
+				   	    <h1 style=" width: 100%">
+						 	<a href="/mellowHealth/patientsPortal/logout" class="btn btn-danger" style=" width: 100%; display:block; padding: 5px; color:azure;">
 						 		<c:out value="LOGOUT HERE ${currentDateTime}"/>
 							</a>
 					 	</h1>
 			    	</div>
 				</div>
-
-		<div class="btn btn-primary" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:space-between;text-align:center;background:rgba(1.33, 0.64, 30.60, 0.9);border-radius:7%;padding:5px;margin:5px 0;width:100%;">
-		    <form action="/mellowHealth/diagnosis/physicalAssessments/${onePhysicalAssessment.id}" class="btn btn-outline-primary" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;text-align:center; padding:5px;background:rgba(1.33, 0.64, 30.60, 0.9);border-radius:7%;margin:5px;width:100%;">
+		<div class="btn btn-primary generic-display-container" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:space-between;text-align:center;background:rgba(1.33, 0.64, 30.60, 0.9);border-radius:7%;padding:5px;width:100%;">
+		    <form action="/mellowHealth/diagnosis/physicalAssessments/${onePhysicalAssessment.id }" class="btn btn-outline-primary" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;text-align:center; padding:5px;background:rgba(1.33, 0.64, 30.60, 0.9);border-radius:7%;margin:5px;width:100%;">
 		        <label  style="padding:10px">Search Patient Name</label>
-		        <input style="width:40%;padding:5px;border-radius:7%;margin:5px" type="text" name="searchedPatientName"/>
-		        <input class="btn btn-outline-primary" type="submit" value="Search Patient" style="margin:5px;width:25%;"/>
+		        <input style="width:40%;padding:5px;border-radius:7%;margin:5px" type="text" name="searchedPatientName" placeHolder ="Please Enter Patient Name"/>
+		        <input class="btn btn-outline-primary" type="submit" value="Search Patient" style="margin:5px;width:30%;"/>
 		    </form>
-			<c:if test="${not empty searchedPatientCase}">
+		    <c:choose>
+			<c:when test="${empty searchedPatientCase}">
 			    <p class="btn btn-outline-primary form-control" style="color:rgba(311, 31, 321, 0.9);background:rgba(11, 0.31, 1, 0.9);">
-		   		  	<a class="btn btn-outline-primary" href="/mellowHealth/hospitalDashboard/patientCases/${patientCase.patient.id}" style="text-decoration:none;">
-					    <c:out value="${searchedPatientCase[0].patient.patientFirstName} ${searchedPatientCase[0].patient.patientLastName} Date Of Birth: ${searchedPatientCase[0].patient.dateOfBirth}"/>
+			   		  	<a class="btn btn-outline-primary" href="/mellowHealth/patientsPortal/patients/${loggedInPatient.id}" style="text-decoration:none;">
+					    <c:out value="${dayCurrentDateTime} Enter Logged In Patient Details: ${loggedInPatient.patientFirstName} ${loggedInPatient.patientLastName}"/>
 					</a>
 			    </p>
-			</c:if>
+			</c:when>
+			<c:otherwise>
+			   <p class="btn btn-outline-primary form-control" style="color:rgba(311, 31, 321, 0.9);background:rgba(11, 0.31, 1, 0.9);">
+		   		<c:choose>
+					<c:when test="${searchedPatientCase[0].patient.id == loggedInPatient.id}">
+			   		  	<a class="btn btn-outline-primary" href="/mellowHealth/hospitalDashboard/patientCases/${searchedPatientCase[0].id}" style="text-decoration:none;">
+						    <c:out value="Searched Patient Details: ${searchedPatientCase[0].patient.patientFirstName} ${searchedPatientCase[0].patient.patientLastName} Date Of Birth: ${searchedPatientCase[0].patient.dateOfBirth} ${patientAge} yrs Old ${searchedPatientCase[0].patient.race}- ${searchedPatientCase[0].patient.gender} Contact Details: ${searchedPatientCase[0].patient.patientAddresses[0].phoneNumber} ${searchedPatientCase[0].physicalAssessments.size()} Physical Assessments"/>
+						</a>
+					</c:when>
+					<c:otherwise>
+			   		  	<a class="btn btn-outline-primary" href="/mellowHealth/hospitalDashboard/patientCases/${searchedPatientCase[0].id}" style="text-decoration:none;">
+					    	<c:out value="${dayCurrentDateTime} Enter Logged In Patient Details: ${loggedInPatient.patientFirstName} ${loggedInPatient.patientLastName}"/>
+						</a>
+					</c:otherwise>
+				</c:choose>
+			    </p>
+			</c:otherwise>
+			</c:choose>
 		</div>
 		<c:forEach items="${allPatientCasesWithFilter}" var="patientCase">
 		    <div class="column-card" style="text-decoration:none; color:aqua;background: rgba(13, 0.64, 0.1, 0.9);">
@@ -389,8 +424,7 @@
 			           	</a>
 	       			</div>
 					</div>
-			    		<c:choose>
-				            <c:when test="${searchedPatientCase[0].patient.id == loggedInPatient.id}">
+				            <c:if test="${searchedPatientCase[0].patient.id == loggedInPatient.id}">
 			           			<div class="btn btn-outline-danger column-card" style="display:flex;justify-content:space-between;align-items:center;text-align:center;margin:5px; padding:10px;background:rgba(1.33, 0.64, 0.60, 0.9);">
 				           			<div class="btn btn-outline-warning column-card" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;text-align:center;margin:5px; padding:10px;background:rgba(1.33, 0.64, 0.60, 0.9);">
 										<form action="/mellowHealth/hospitalDashboard/patientCases/edit/${patientCase.id}" method="get" style="margin:5px;width:100%;">
@@ -405,15 +439,39 @@
 										</form>
 									</div>
 								</div>
-							</c:when>
-				            <c:otherwise>
-					             <p class="btn btn-outline-primary form-control" style="color:rgba(311, 31, 321, 0.9);background:rgba(11, 0.31, 1, 0.9);">
-						   		  	<a class="btn btn-outline-primary" href="/mellowHealth/hospitalDashboard/patientCases/${patientCase.patient.id}" style="text-decoration:none;">
-									    <c:out value="${searchedPatientCase[0].patient.patientFirstName} ${searchedPatientCase[0].patient.patientLastName} Date Of Birth: ${searchedPatientCase[0].patient.dateOfBirth}"/>
-									</a>
-							    </p>
-				             </c:otherwise>
-			             </c:choose>
+							</c:if> 
+		<div class="btn btn-primary generic-display-container" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:space-between;text-align:center;background:rgba(1.33, 0.64, 30.60, 0.9);border-radius:7%;padding:5px;width:100%;">
+		    <form action="/mellowHealth/diagnosis/physicalAssessments/${onePhysicalAssessment.id }" class="btn btn-outline-primary" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;text-align:center; padding:5px;background:rgba(1.33, 0.64, 30.60, 0.9);border-radius:7%;margin:5px;width:100%;">
+		        <label  style="padding:10px">Search Patient Name</label>
+		        <input style="width:40%;padding:5px;border-radius:7%;margin:5px" type="text" name="searchedPatientName" placeHolder ="Please Enter Patient Name"/>
+		        <input class="btn btn-outline-primary" type="submit" value="Search Patient" style="margin:5px;width:30%;"/>
+		    </form>
+		    <c:choose>
+			<c:when test="${empty searchedPatientCase}">
+			    <p class="btn btn-outline-primary form-control" style="color:rgba(311, 31, 321, 0.9);background:rgba(11, 0.31, 1, 0.9);">
+			   		  	<a class="btn btn-outline-primary" href="/mellowHealth/patientsPortal/patients/${loggedInPatient.id}" style="text-decoration:none;">
+					    <c:out value="${dayCurrentDateTime} Enter Logged In Patient Details: ${loggedInPatient.patientFirstName} ${loggedInPatient.patientLastName}"/>
+					</a>
+			    </p>
+			</c:when>
+			<c:otherwise>
+			   <p class="btn btn-outline-primary form-control" style="color:rgba(311, 31, 321, 0.9);background:rgba(11, 0.31, 1, 0.9);">
+		   		<c:choose>
+					<c:when test="${searchedPatientCase[0].patient.id == loggedInPatient.id}">
+			   		  	<a class="btn btn-outline-primary" href="/mellowHealth/hospitalDashboard/patientCases/${searchedPatientCase[0].id}" style="text-decoration:none;">
+						    <c:out value="Searched Patient Details: ${searchedPatientCase[0].patient.patientFirstName} ${searchedPatientCase[0].patient.patientLastName} Date Of Birth: ${searchedPatientCase[0].patient.dateOfBirth} ${patientAge} yrs Old ${searchedPatientCase[0].patient.race}- ${searchedPatientCase[0].patient.gender} Contact Details: ${searchedPatientCase[0].patient.patientAddresses[0].phoneNumber} ${searchedPatientCase[0].physicalAssessments.size()} Physical Assessments"/>
+						</a>
+					</c:when>
+					<c:otherwise>
+			   		  	<a class="btn btn-outline-primary" href="/mellowHealth/hospitalDashboard/patientCases/${searchedPatientCase[0].id}" style="text-decoration:none;">
+					    	<c:out value="${dayCurrentDateTime} Enter Logged In Patient Details: ${loggedInPatient.patientFirstName} ${loggedInPatient.patientLastName}"/>
+						</a>
+					</c:otherwise>
+				</c:choose>
+			    </p>
+			</c:otherwise>
+			</c:choose>
+		</div>  
 				</c:forEach>
 	<div class="form-group"style="
 	    <c:choose>

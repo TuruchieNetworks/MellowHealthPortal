@@ -37,7 +37,7 @@
 			</h1>
 		</a>
 			<div class ="btn btn-primary"  style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;text-align:center; background:rgba(1.33, 0.64, 30.60, 0.9);border-radius:7%;padding:5px;">
-				<form action="/mellowHealth/patientVitals/patients/newPatientVitals" class ="btn btn-primary"  style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;text-align:center; padding:5px;background:rgba(1.33, 0.64, 30.60, 0.9);border-radius:7%;">
+				<form action="/mellowHealth/patientVitalRecords/newPatientVitalRecord" class ="btn btn-primary"  style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;text-align:center; padding:5px;background:rgba(1.33, 0.64, 30.60, 0.9);border-radius:7%;">
 				    <label style="padding:5px 10px">Search Patient Name</label>
 					<input style="padding:5px;border-radius:7%;margin:0 5px" type="text" name="searchedPatientName"/>
 					<input class="btn btn-outline-primary" type="submit" value="Search Patient"/>
@@ -47,18 +47,18 @@
 		<div class="row">
 							            
 			<div class="col">
-				<form:form action="/mellowHealth/patientVitals/process/patients/createNewPatientVitals" method="POST" modelAttribute="patientVitals">
+				<form:form action="/mellowHealth/process/patientVitalRecords/createNewPatientVitalRecord" method="POST" modelAttribute="patientVitalRecord">
 				<!-- Add this block to display global errors -->
 				<!--form:errors path="*" cssClass="text-danger"/!-->
 			       <div class="form-group">
 		                <label style="padding:10px 0">Select Registered Patients</label>
 		                <form:select path="patient.id" class="form-control" style="cursor:pointer" id="patientSelect" onchange="updateSelectedPatient('patientSelect', 'patientName', 'selectedPatientDiv')">
 		                    <c:choose>
-		                        <c:when test="${matchedPatientFullName != null && matchedPatientFullName.patientFirstName.length() > 1}">
-		                            <form:option value="${loggedInPatient.id}" label="${loggedInPatient.patientFirstName} ${loggedInPatient.patientLastName}"/>
+		                        <c:when test="${searchedPatientCase != null && searchedPatientCase[0].patient.patientFirstName.length() > 1}">
+		                            <form:option value="${searchedPatientCase[0].patient.id}" label="Searched Mellow Patient: ${searchedPatientCase[0].patient.patientFirstName} ${searchedPatientCase[0].patient.patientLastName} Date Of Birth: ${searchedPatientCase[0].patient.dateOfBirth} ${searchedPatientAge} yr Old ${searchedPatientCase[0].patient.race}: ${searchedPatientCase[0].patient.gender} Contact Details: ${searchedPatientCase[0].patient.patientAddresses[0].phoneNumber} ${searchedPatientCase[0].patientVitalRecords.size()} Patient Vital Records Today, ${currentDateTime}"/>
 		                        </c:when>
 		                        <c:otherwise>
-		                            <form:option value="${loggedInPatient.id}" label="${loggedInPatient.patientFirstName} ${loggedInPatient.patientLastName}"/>
+		                            <form:option value="${mostRecentPatientCase.patient.id}" label="${mostRecentPatientCase.patient.patientFirstName} ${mostRecentPatientCase.patient.patientLastName} Date Of Birth: ${mostRecentPatientCase.patient.dateOfBirth} ${searchedPatientAge} yr Old ${mostRecentPatientCase.patient.race}: ${mostRecentPatientCase.patient.gender} Contact Details: ${mostRecentPatientCase.patient.patientAddresses[0].phoneNumber} ${mostRecentPatientCase.patientVitalRecords.size()} Patient Vital Records Today, ${currentDateTime}"/>
 		                        </c:otherwise>
 		                    </c:choose>
 		                </form:select>
@@ -66,11 +66,32 @@
 
 			       <div class="form-group">
 		                <label style="padding:10px 0">Select Registered Patients</label>
+		                	<form:select path="physician.id" class="form-control" style="cursor:pointer" id="patientSelect" onchange="updateSelectedPatient('patientCaseSelect', 'patientName', 'selectedPatientDiv')">
+		                	<c:choose>
+		                        <c:when test="${searchedMostRecentPatientCase != null && searchedMostRecentPatientCase.patient.patientFirstName.length() > 1}">
+		                            <form:option value="${searchedMostRecentPatientCase.physician.id}" label="Treating Physician: Dr ${searchedMostRecentPatientCase.physician.firstName} ${searchedMostRecentPatientCase.physician.lastName} Contact Details: ${searchedMostRecentPatientCase.physician.email} Specialty: ${mostRecentPatientCase.physician.certificationSpecialty}"/>
+		                        </c:when>
+		                        <c:otherwise>
+		                            <form:option value="${mostRecentPatientCase.physician.id}" label="Treating Physician: Dr ${mostRecentPatientCase.physician.firstName} ${mostRecentPatientCase.physician.lastName} Contact Details: ${mostRecentPatientCase.physician.email} Specialty: ${mostRecentPatientCase.physician.certificationSpecialty}"/>
+		                       </c:otherwise>
+		                    </c:choose>
+		                </form:select>
+		            </div>
+
+	       			<div class="form-group">
+					    <div class="form-group">
+				        	<form:errors path="patientCase" class="text-danger" />
+					    </div>
+		                <label style="padding:10px 0">Select Registered Patients</label>
 		                	<form:select path="patientCase.id" class="form-control" style="cursor:pointer" id="patientSelect" onchange="updateSelectedPatient('patientCaseSelect', 'patientName', 'selectedPatientDiv')">
-		                		<form:option value="" label="-- Select Patient Case--"/>
-						    	<c:forEach items="${loggedInPatient.patientCases}" var="patientCase">
-		                       		<form:option value="${patientCase.id}" label="${patientCase.chiefComplaint} ${patientCase.createdAt} Visit!"/>
-		                       	</c:forEach>
+		                	<c:choose>
+		                        <c:when test="${searchedPatientCase != null && searchedPatientCase[0].patient.patientFirstName.length() > 1}">
+		                            <form:option value="${searchedPatientCase[0].id}" label="${searchedPatientCase[0].onset} Cheif Complaint: ${searchedPatientCase[0].chiefComplaint} ${oneSearchedPatientCaseCreatedAt} visit"/>
+		                        </c:when>
+		                        <c:otherwise>
+		                            <form:option value="${mostRecentPatientCase.id}" label="${mostRecentPatientCase.onset} Cheif Complaint: ${mostRecentPatientCase.chiefComplaint} ${mostRecentPatientCaseCreatedAt} Visit!"/>
+		                       </c:otherwise>
+		                    </c:choose>
 		                </form:select>
 		            </div>
 
@@ -80,7 +101,7 @@
 					        <form:errors path="systolicBloodPressure" class="text-danger" />
 					    </div>
 					    <div class="form-group" id="selectedPatientDiv" style="font-weight:bold; margin-top: 5px;"></div>
-					    <form:input type="number" path="systolicBloodPressure" placeholder="Please Enter Systolic BloodPressure Value!" style="width:100%; padding:8px; border-radius:5%;" />
+					    <form:input type="number" path="systolicBloodPressure" class="form-control" placeholder="Please Enter Systolic BloodPressure Value!" style="width:100%; padding:8px; border-radius:5%;" />
 					</div>
 
 					<div class="form-group">
@@ -89,7 +110,7 @@
 					        <form:errors path="diastolicBloodPressure" class="text-danger" />
 					    </div>
 					    <div class="form-group" id="selectedPatientDiv" style="font-weight:bold; margin-top: 5px;"></div>
-					    <form:input type="number" path="diastolicBloodPressure" placeholder="Please Enter Systolic BloodPressure Value!" style="width:100%; padding:8px; border-radius:5%;" />
+					    <form:input type="number" path="diastolicBloodPressure" class="form-control" placeholder="Please Enter Systolic BloodPressure Value!" style="width:100%; padding:8px; border-radius:5%;" />
 					</div>
 
 				    <div class="form-group">
@@ -138,9 +159,14 @@
 				        	<form:errors path="weight" class="text-danger" />
 					    </div>
 				        <form:input type="number" path="weight" class="form-control" placeholder="Please Enter Measured Body Weight!"/>
-				    </div><input type="submit" value="Add Patient Vitals" class="btn btn-success" style="margin: 10px 0; width: 100%; padding: 10px;"/>
+				    </div>
+				    <input type="submit" value="Create New Patient Vital Record Today ${currentDateTime} " class="btn btn-outline-success" style="margin: 10px 0; width: 100%; padding: 10px;"/>
 				</form:form>
-				<h1 style="width:100%;"><a style=" margin:10px 0;width:100%;display:block; padding:10px" href="/mellowHealth/patientsPortal/patients/${loggedInPatient.id}" class="btn btn-warning">CANCEL!</a></h1>
+				<h1 style="width:100%;">
+					<a style=" margin:10px 0;width:100%;display:block; padding:10px" href="/mellowHealth/patientsPortal/patients/${loggedInPatient.id}" class="btn btn-outline-warning">
+						<c:out value="GO BACK"/>
+					</a>
+				</h1>
 			</div>
 		</div>
 	</div>

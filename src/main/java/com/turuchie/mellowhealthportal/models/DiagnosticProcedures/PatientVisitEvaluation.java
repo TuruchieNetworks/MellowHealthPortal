@@ -1,7 +1,9 @@
-package com.turuchie.mellowhealthportal.models.ClinicalOperations;
+package com.turuchie.mellowhealthportal.models.DiagnosticProcedures;
 
 import java.time.LocalDate;
 
+import com.turuchie.mellowhealthportal.models.ClinicalOperations.PatientCase;
+import com.turuchie.mellowhealthportal.models.ClinicalOperations.PatientVitalRecord;
 import com.turuchie.mellowhealthportal.models.PatientOperations.Patient;
 import com.turuchie.mellowhealthportal.models.Physicians.Physician;
 

@@ -179,6 +179,22 @@ p {
 	color:black;
 	font-weight: bold;
 }
+.column-card h1 a:hover {
+	color: chartreuse;
+	font-weight: bold;
+}
+.column-card p a:hover {
+	color: chartreuse;
+	font-weight: bold;
+}
+.column-card p h1 a:hover {
+	color: chartreuse;
+	font-weight: bold;
+}
+.column-card p a h1:hover {
+	color: chartreuse;
+	font-weight: bold;
+}
 .column-card div a:hover {
 	color:black;
 	color: chartreuse;
@@ -708,6 +724,10 @@ tr{
 }
 .column-card a:hover {
 	color:black;
+	font-weight: bold;
+}
+.column-card h1 a:hover {
+	color:yellow;
 	font-weight: bold;
 }
 .column-card div a:hover {

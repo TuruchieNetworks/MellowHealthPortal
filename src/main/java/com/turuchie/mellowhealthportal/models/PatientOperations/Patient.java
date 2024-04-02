@@ -20,7 +20,6 @@ import com.turuchie.mellowhealthportal.models.ClinicalOperations.InclusionCriter
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.LipidPanel;
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.PatientCase;
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.PatientClinicalChemistry;
-import com.turuchie.mellowhealthportal.models.ClinicalOperations.PatientVisitEvaluation;
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.PatientVitalRecord;
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.PharmacoKineticParameter;
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.PregnancyFertilityAssessment;
@@ -31,6 +30,7 @@ import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.DiagnosticRec
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.FollowUpRecord;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.NauseaVomitAssessment;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PainAssessment;
+import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PatientVisitEvaluation;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PediatricFeverAssessment;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PediatricGIAssessment;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PhysicalAssessment;

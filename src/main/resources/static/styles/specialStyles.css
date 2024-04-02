@@ -1,0 +1,783 @@
+/* Global Styles */
+
+:root {
+  --primary-color: #6fa0d1;
+  --dark-color: #343a40;
+  --light-color: #f4f4f4;
+  --danger-color: #dc3545;
+  --success-color: #28a745;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.form select:hover {
+  cursor: pointer;
+}
+
+.form label {
+  color: rgb(187, 203, 238);
+  font-weight: bold;
+  font-size: 20px;
+}
+
+body {
+  font-family: 'Raleway', sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  background-color: #fff;
+  color: #333;
+}
+
+/* Utilities */
+.btn {
+  /* display: inline-block; */
+  background: var(--light-color);
+  color: #333;
+  padding: 0.6rem 1.3rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5%;
+  cursor: pointer;
+  margin-right: 0.5rem;
+  transition: opacity 0.2s ease-in;
+  outline: none;
+}
+
+.badge {
+  font-size: 0.8rem;
+  padding: 0.1rem;
+  text-align: center;
+  margin: 0.3rem;
+  background: var(--light-color);
+  color: #333;
+}
+
+.alert {
+  padding: 0.5rem;
+  margin: 1rem 0;
+  opacity: 0.9;
+  background: var(--light-color);
+  color: #333;
+  border-radius: 5%;
+}
+
+.btn-primary,
+.bg-primary,
+.badge-primary,
+.alert-primary {
+  background: #14072a;
+  color: #fff;
+  font-weight: bold;
+  font-size: 20px;
+  padding: 20px 0;
+}
+
+.btn-light,
+.bg-light,
+.badge-light,
+.alert-light {
+  background: var(--light-color);
+  color: #333;
+  font-weight: bold;
+  /* border: 1px solid grey; */
+}
+
+.flashMessage {
+  border-bottom: 1px solid black;
+  border-radius: 7%;
+  text-align: center;
+  font-family: fantasy;
+  color: rgb(71, 3, 21);
+  /* background-color:rgb(220, 136, 184); */
+  padding: 3px 10px;
+  font-size: 26px;
+  margin: 0 0 10px 0;
+  /* box-shadow: darkgrey; */
+  box-shadow: 3px 3px 10px #091827;
+  background-color: rgba(220, 136, 184, 0.7);
+}
+
+.flashMessage:hover {
+  opacity: 0.9;
+  cursor: pointer;
+}
+.register {
+  font-family: 'Raleway', sans-serif;
+  font-size: 1rem;
+  /* line-height: 1.6; */
+  background: url('./img/yvette-de-wit-8XLapfNMW04-unsplash.jpg') no-repeat center center/cover;
+  color: #333;
+  height: 100%;
+}
+
+.registercontainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* padding: 15px 10% 130px 10%; */
+  /* background: url('./img/photo-1492684223066-81342ee5ff30.avif') no-repeat center center/cover; */
+  /* background: url('./img/hanny-naibaho-aWXVxy8BSzc-unsplash.jpg') no-repeat center center/cover; */
+  background: url('./img/yvette-de-wit-8XLapfNMW04-unsplash.jpg') no-repeat center center/cover;
+  opacity: 0.8;
+}
+
+.registercontainer .lead {
+  color: #a9bfef;
+}
+
+.registercontainer p {
+  text-align: center;
+  z-index: 16;
+  font-weight: bold;
+  color: #120515;
+}
+
+.loginbody {
+  font-family: 'Raleway', sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  background: url('./img/andre-benz-Jb7TLs6fW_I-unsplash.jpg') no-repeat center center/cover;
+  /* background-color: #fff; */
+  color: #333;
+}
+
+.logincover::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+}
+
+.logincontainer * {
+  z-index: 15;
+}
+
+.logincontainer {
+  box-shadow: 3px 3px 10px #6fa0d1;
+  margin: auto;
+  padding: 8rem 20% 2rem 20%;
+  position: relative;
+  background: url('./img/yvette-de-wit-8XLapfNMW04-unsplash.jpg') no-repeat center center/cover;
+  /* border-radius: 5%; */
+  height: 100vh;
+  opacity: 0.8;
+}
+
+.loginbtn {
+  display: block;
+  width: 100%;
+  padding: 18px 0;
+  font-weight: bold;
+}
+
+.loginNav h1 {
+  margin: auto;
+}
+
+.profileShowcase::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* width: 100%; */
+  height: 100%;
+  background: rgba(0, 0, 0, 0.1);
+}
+.leadShowcase {
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 7%;
+  margin-bottom: 1rem;
+  color: rgb(189, 180, 255);
+  box-shadow: 2px 2px 7px #6fa0d1;
+  /* box-shadow: 3px 3px 10px #6fa0d1; */
+  background: rgba(0, 0, 0, 0.2);
+  /* box-shadow: 1px 1px 8px #6fa0d1; */
+  z-index: 38;
+}
+
+.leadShowcase a {
+  color: rgb(189, 180, 255);
+  ;
+}
+
+.textShowcase {
+  padding: 10px;
+  font-size: 0.9rem;
+  border-radius: 7%;
+  margin-bottom: 1rem;
+  color: rgb(189, 180, 255);
+  ;
+  box-shadow: 2px 2px 7px #6fa0d1;
+  background: rgba(0, 0, 0, 0.2);
+  color: rgb(189, 180, 255);
+}
+
+.textShowcase a {
+  color: rgb(189, 180, 255);
+}
+
+.leadShowcase:hover {
+  box-shadow: 2px 2px 7px #6fa0d1;
+  /* background:rgba(0, 0, 0, 0.6);  */
+}
+
+.registerleadShowcase {
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 7%;
+  /* margin-bottom: 1rem; */
+  color: rgb(211, 180, 255);
+  box-shadow: 2px 2px 7px #6fa0d1;
+  /* box-shadow: 3px 3px 10px #6fa0d1; */
+  background: rgba(0, 0, 0, 0.3);
+  /* box-shadow: 1px 1px 8px #6fa0d1; */
+}
+
+.registerleadShowcase a {
+  color: rgb(189, 180, 255);
+  ;
+}
+
+.registertextShowcase {
+  padding: 10px;
+  font-size: 0.9rem;
+  border-radius: 5%;
+  margin-bottom: 1rem;
+  color: rgb(189, 180, 255);
+  ;
+  box-shadow: 2px 2px 7px #6fa0d1;
+  background: rgba(0, 0, 0, 0.2);
+  color: rgb(189, 180, 255);
+}
+
+.registertextShowcase a {
+  color: rgb(189, 180, 255);
+}
+
+.registerleadShowcase:hover {
+  box-shadow: 2px 2px 7px #6fa0d1;
+  /* background:rgba(0, 0, 0, 0.6);  */
+}
+
+.leadprofiles {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: rgb(195, 156, 221);
+  background: #120515;
+  padding: 2rem;
+  border-radius: 5%;
+  opacity: 0.84;
+  z-index: 10;
+}
+
+.profilelanding {
+  /* position: relative; */
+  background: url('./img/muneeb-syed-4_M8uIfPEZw-unsplash.jpg') no-repeat center center/cover;
+  /* height: 100%; */
+  /* padding: 1rem; */
+}
+
+/* .profileShowcase {
+  margin: 120px 25% 20px 25%;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+  border: 1px solid whitesmoke;
+  border-radius: 5%;
+} */
+.profileShowcase:hover {
+  /* cursor: pointer; */
+  /* background: url('./img/photo-1492684223066-81342ee5ff30.avif') no-repeat center center/cover; */
+  background: rgba(0, 0, 0, 0.6);
+  /* opacity: 0.9; */
+  z-index: 38;
+}
+
+.profilespage {
+  display: flex;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  /* width: 100%; */
+  /* height: 100%; */
+}
+
+.profilespage .profileTile {
+  display: flex;
+}
+
+.profileShowcase * {
+  z-index: 40;
+}
+
+@keyframes animateProfileshowcase {
+  from {
+
+    width: 30%;
+    background-color: rgba(78, 69, 128, 0.1);
+  }
+
+  to {
+    width: 100%;
+    background-color: rgba(9, 6, 33, 0.466);
+  }
+}
+
+.profileCoverShowcase {
+  padding: 7.5% 0 2% 0;
+}
+
+.profileShowcase {
+  margin: 1px 28% 0px 28%;
+  padding: 10px 25px;
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+  justify-content: space-between;
+  text-align: center;
+  border: 1px solid rgb(166, 159, 249);
+  border-radius: 7%;
+  /* overflow: hidden; */
+  /* background-color:#343a40; */
+  background: rgba(9, 6, 33, 0.466);
+  animation-name: animateProfileShowcase;
+  animation-duration: 5s;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+  animation-delay: 4s;
+  animation-direction: alternate;
+  animation-timing-function: ease-in-out;
+  box-shadow: 3px 3px 10px #6fa0d1;
+  /* overflow: hidden; */
+}
+
+/* .main-container { */
+/* margin: 15px 33%; */
+/* } */
+
+.profilecontainer::before {
+  content: '';
+  /* position: absolute; */
+  top: 0;
+  left: 0;
+  /* width: 100%; */
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.profilecontainer * {
+  z-index: 40;
+}
+
+.profilecontainer {
+  /* max-width: 1100px; */
+  /* margin: auto;
+  overflow: hidden; */
+  /* padding: 1rem;
+  margin-top: 5.2rem; */
+  /* margin-bottom: 3rem;.3 */
+  background: url('./img/landing\ img.jpg') no-repeat center center/cover;
+  height: 100%;
+}
+
+.circle-profilecontainer {
+  /* max-width: 1100px; */
+  /* margin: auto;
+  overflow: hidden; */
+  /* padding: 1rem;
+  margin-top: 5.2rem; */
+  /* margin-bottom: 3rem;.3 */
+  background: url('./img/landing\ img.jpg') no-repeat center center/cover;
+  height: 100%;
+  border-radius: 5%;
+}
+
+.purple-container {
+  /* padding: 15px 10% 130px 10%; */
+  /* background: url('./img/photo-1492684223066-81342ee5ff30.avif') no-repeat center center/cover; */
+  /* background: url('./img/hanny-naibaho-aWXVxy8BSzc-unsplash.jpg') no-repeat center center/cover; */
+  background: url('./img/yvette-de-wit-8XLapfNMW04-unsplash.jpg') no-repeat center center/cover;
+  /* opacity: 0.8; */
+}
+
+.purple-circle-container {
+  background: url('./img/yvette-de-wit-8XLapfNMW04-unsplash.jpg') no-repeat center center/cover;
+  border-radius: 5%;
+}
+
+.innerprofilecontainer {
+  /* margin: auto; */
+  /* padding:1rem; */
+  background: url('./img/landing\ img.jpg') no-repeat center center/cover;
+}
+
+.profilecontainer h1 {
+  /* color: rgb(241, 227, 205); */
+  z-index: 41;
+}
+
+.registerbtn {
+  display: block;
+  /* padding: 15px; */
+  background: #06111c;
+  padding: 0.5rem 1rem;
+  color: rgb(165, 197, 237);
+  /* color: black; */
+  border-radius: 5%;
+  font-family: sans-serif;
+  font-size: 18px;
+  font-weight: bold;
+  margin: 10px 0;
+  width: 100%;
+  text-align: center;
+  box-shadow: 1px 1px 8px #6fa0d1;
+  z-index: 21;
+}
+
+.registerbtn:hover {
+  cursor: pointer;
+  opacity: 0.9;
+  background-color: rgba(78, 69, 128, 0.1);
+}
+
+.bluebtn {
+  display: block;
+  /* padding: 15px; */
+  background: #12081f8b;
+  /* background:rgba(0, 0, 0, 0.6); */
+  padding: 0.5rem 1rem;
+  /* color: rgb(165, 197, 237); */
+  /* color: black; */
+  border-radius: 7%;
+  /* font-family:sans-serif; */
+  font-size: 18px;
+  font-weight: bold;
+  margin: 10px 0;
+  width: 100%;
+  text-align: center;
+  box-shadow: 1px 1px 8px #6fa0d1;
+  z-index: 21;
+}
+
+/* .bluebtn p {
+  color: rgb(165, 197, 237);
+}
+.bluebtn a {
+  
+  color: rgb(165, 197, 237);
+} */
+.bluebtn:hover {
+  cursor: pointer;
+  opacity: 0.9;
+  background-color: rgba(78, 69, 128, 0.1);
+}
+
+.dark-glow {
+  display: block;
+  /* padding: 15px; */
+  background: #06111c;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 0.5rem 1rem;
+  /* color: rgb(165, 197, 237); */
+  /* color: black; */
+  color: rgb(189, 180, 255);
+  border-radius: 5%;
+  font-family: sans-serif;
+  font-size: 18px;
+  font-weight: bold;
+  margin: 10px 0;
+  width: 100%;
+  text-align: center;
+  box-shadow: 1px 1px 8px #6fa0d1;
+  z-index: 21;
+  color: rgb(195, 156, 221);
+}
+
+.dark-glow:hover {
+  cursor: pointer;
+  opacity: 0.9;
+  background: rgba(78, 69, 128, 0.136);
+}
+
+/* Overlay */
+.dark-overlay {
+  background-color: rgba(0, 0, 0, 0.7);
+  /* position: absolute; */
+  /* top: 0;
+  left: 0;  */
+  width: 100%;
+  height: 100%;
+}
+
+.circle-dark-overlay {
+  background-color: rgba(0, 0, 0, 0.7);
+  /* position: absolute; */
+  /* top: 0;
+  left: 0;  */
+  border-radius: 7%;
+  /* width: 100%; */
+  height: 100%;
+}
+
+.dark-profile-overlay {
+  background-color: rgba(0, 0, 0, 0.7);
+  /* position: absolute; */
+  /* top: 0;
+  left: 0;  */
+  border-radius: 7%;
+  width: 100%;
+  height: 100%;
+}
+
+/* .dark-profile-overlay a {
+  padding: 2px 5px;
+} */
+.dark-profile-overlay-longwords {
+  background-color: rgba(0, 0, 0, 0.7);
+  /* position: absolute; */
+  /* top: 0;
+  left: 0;  */
+  border-radius: 7%;
+  width: 100%;
+  height: 100%;
+  color: rgb(165, 197, 237);
+  border-radius: 5%;
+  font-family: sans-serif;
+  z-index: 21;
+}
+
+.dark-profile-overlay-longwords a {
+  /* padding: 5px 10px; */
+  font-size: 16px;
+  width: 33%;
+}
+
+
+.profile * {
+  z-index: 10;
+}
+
+.navbar * {
+  z-index: 31;
+}
+
+.leadprofiles * {
+  z-index: 10;
+}
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 0.5rem;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  border-bottom: solid 1px var(--primary-color);
+  /* opacity: 0.9; */
+  background: rgba(78, 69, 128, 0.24);
+  z-index: 23;
+  /* padding: 15px; */
+}
+
+.navbar h1 {
+  /* font-size: 40px; */
+  margin: 5px;
+}
+
+.navbar h1 a {
+  /* margin-bottom: 1rem; */
+  background: url('./img/photo-1492684223066-81342ee5ff30.avif') no-repeat center center/cover;
+  /* color: rgb(30, 20, 25); */
+  text-align: center;
+  color: aliceblue;
+  z-index: 32;
+  border-radius: 5%;
+  /* font-size: 28px; */
+  font-weight: normal;
+  font-family: fantasy;
+  box-shadow: 3px 3px 10px #76a9dc;
+  border: 1px solid rgb(245, 245, 245);
+}
+
+.navbar h1 a:hover {
+  color: #120515;
+  /* background: url('./img/dark\ sign\ up\ brownish.jpg') no-repeat center center/cover; */
+  background: url('./img/jessey-bijl-5Rt5KhbUp5g-unsplash.jpg') no-repeat center center/cover;
+  opacity: 0.9;
+  color: #f0f4fc;
+  /* color: rgb(26, 8, 8); */
+  box-shadow: 3px 3px 10px #6fa0d1;
+  font-size: 32px;
+  background-color: rgba(78, 69, 128, 0.1);
+  border-radius: 7%;
+  border: 1px solid whitesmoke;
+  /* padding: 10px; */
+}
+
+.navbar ul {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar .createbtn {
+  font-family: fantasy;
+  background: url('./img/dark\ sign\ up\ brownish.jpg') no-repeat center center/cover;
+  opacity: 0.9;
+  font-size: 24px;
+  color: #020306;
+  /* color: rgb(26, 8, 8); */
+  box-shadow: 3px 3px 10px #6fa0d1;
+  /* color: #f1f5ff; */
+  background-color: rgba(78, 69, 128, 0.1);
+  border-radius: 7%;
+  padding: 5px 10%;
+  border: 1px solid whitesmoke;
+}
+
+.navbar .logoutbtn {
+  /* margin-bottom: 1rem; */
+  border: 1px black solid;
+  background: url('./img/dark\ sign\ up\ brownish.jpg') no-repeat center center/cover;
+  /* color: rgb(30, 20, 25); */
+  color: aliceblue;
+  font-size: 24px;
+  font-weight: normal;
+  font-family: fantasy;
+  border-radius: 7%;
+  padding: 3px 5%;
+  box-shadow: 3px 3px 10px #6fa0d1;
+  border: 1px solid whitesmoke;
+}
+
+.navbar ul li a {
+  font-family: fantasy;
+  font-size: 18px;
+  font-weight: normal;
+  color: aliceblue;
+  margin: 15px;
+  width: 90%;
+  padding: 10px 35px;
+  z-index: 35;
+  border-radius: 5%;
+  box-shadow: 3px 3px 5px #6fa0d1;
+  background-color: rgba(78, 69, 128, 0.1);
+  border-radius: 7%;
+  border: 1px solid rgb(50, 18, 106);
+  background: url('./img/photo-1492684223066-81342ee5ff30.avif') no-repeat center center/cover;
+}
+
+.navbar a {
+  color: #8da7e1;
+  /* padding: 0.45rem; */
+  /* margin: 0 0.25rem; */
+}
+
+.navbar a:hover {
+  /* color: var(--primary-color); */
+  cursor: pointer;
+  color: #ffffff;
+  /* background: url('./img/faded.png') no-repeat center center/cover; */
+  /* background: url('./img/sergio-ruiz-WetGvQxnbYY-unsplash\ \(1\)\ copy.jpg') no-repeat center center/cover; */
+  /* background: url('./img/anthony-delanoix-hzgs56Ze49s-unsplash.jpg') no-repeat center center/cover;
+  color: #020306; */
+  background: url('./img/sergio-ruiz-WetGvQxnbYY-unsplash.jpg') no-repeat center center/cover;
+  opacity: 0.9;
+  color:aliceblue;
+  font-weight: normal;
+  /* color: rgb(255, 255, 255); */
+  z-index: 35;
+  border: 2px solid rgb(139, 120, 223);
+  font-size: 18px;
+}
+
+.navbar .createbtn:hover {
+  box-shadow: 3px 3px 10px #6fa0d1;
+  border: 1px solid whitesmoke;
+}
+
+.navbar .logoutbtn:hover {
+  box-shadow: 3px 3px 10px #6fa0d1;
+  border: 1px solid whitesmoke;
+}
+
+.navbar .welcome span {
+  margin-right: 0.6rem;
+}
+
+
+.navLead {
+  font-size: 1.6rem;
+  padding: 10px;
+  color: rgb(189, 180, 255);
+  box-shadow: 3px 3px 10px #6fa0d1;
+  border-radius: 7%;
+}
+
+.navleadShowcase {
+  padding: 5px;
+  font-size: 1rem;
+  border-radius: 7%;
+  margin-bottom: 1rem;
+  color: rgb(189, 180, 255);
+  box-shadow: 2px 2px 7px #6fa0d1;
+  /* box-shadow: 3px 3px 10px #6fa0d1; */
+  background: rgba(0, 0, 0, 0.2);
+  /* box-shadow: 1px 1px 8px #6fa0d1; */
+  z-index: 38;
+}
+
+.navleadShowcase a {
+  color: rgb(189, 180, 255);
+  ;
+}
+
+.navtextShowcase {
+  padding: 5px;
+  font-size: 0.9rem;
+  border-radius: 7%;
+  margin-bottom: 1rem;
+  color: rgb(189, 180, 255);
+  ;
+  box-shadow: 2px 2px 7px #6fa0d1;
+  background: rgba(0, 0, 0, 0.2);
+  color: rgb(189, 180, 255);
+}
+
+.navtextShowcase a {
+  color: rgb(189, 180, 255);
+}
+
+.navleadShowcase:hover {
+  box-shadow: 2px 2px 7px #6fa0d1;
+  /* background:rgba(0, 0, 0, 0.6);  */
+}
+/* Landing Page */
+.landing {
+  /* position: relative; */
+  background: url('./img/muneeb-syed-4_M8uIfPEZw-unsplash.jpg') no-repeat center center/cover;
+  height: 100%;
+}
+
+.landing-inner {
+  color: #fff;
+  height: 100%;
+  width: 80%;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}

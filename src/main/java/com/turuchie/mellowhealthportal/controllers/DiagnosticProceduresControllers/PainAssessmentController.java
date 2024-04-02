@@ -145,26 +145,22 @@ public class PainAssessmentController {
 
 	    Patient loggedInPatient = patientServ.getOne(patientId);
 	    PainAssessment onePainAssessment = painAssessmentServ.getOne(id);
+	    String formattedDayCreatedAt = onePainAssessment.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, yyyy"));
+	    String formattedCreatedAt = onePainAssessment.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy"));	
+	    long onePainAssessmentPatientId = painAssessmentServ.getOne(id).getPatient().getId();
 
 	    if (loggedInPatient == null || onePainAssessment == null) {
 	        return "redirect:" + PATIENT_LOGIN_PATH;
 	    }	
 
 		// Add formatted dates to the model
-		patientUtil.setPatientAttributes(model);
-        filterUtil.sortMostRecentPainAssessmentByStartDate(model, painAssessmentServ.getOne(id).getPatient().getId());
-        model.addAttribute("allPainAssessmentsWithFilter", searchUtil.returnSearchPatientCaseByCharacter(painAssessmentServ.getOne(id).getPatient().getPatientFirstName()));
 	    patientUtil.sortLoggedPatientAttributes(model, patientId);
-
-        model.addAttribute("allPatientCasesWithFilter", patientCaseServ.getAll());
-        model.addAttribute("allPainAssessmentsWithFilter", painAssessmentServ.getAll());
+        filterUtil.sortAllByStartDate(model, onePainAssessmentPatientId);
 	    String trimmedSearchTerm = searchedPatientName != null ? searchedPatientName.trim() : null;
 	    if (trimmedSearchTerm != null && !trimmedSearchTerm.isEmpty()) {
 	        // If a non-empty search value is provided
 	    	searchUtil.searchPatientCaseByCharacter(model, trimmedSearchTerm);
-	        model.addAttribute("searchedPainAssessment", searchUtil.returnFirstPatientCaseByCharacter(trimmedSearchTerm));
 	        model.addAttribute("allPatientCasesWithFilter", searchUtil.returnSearchPatientCaseByCharacter(trimmedSearchTerm));
-	        model.addAttribute("allPainAssessmentsWithFilter", searchUtil.returnSearchPatientCaseByCharacter(trimmedSearchTerm));
 	    } else {
 	        // If the search bar is empty, do not display physical assessment. one of the JSP is looping over filtered patient case cases
 	        //model.addAttribute("allPainAssessmentsWithFilter", Collections.emptyList());
@@ -175,10 +171,10 @@ public class PainAssessmentController {
         int assessmentHistory = filterUtil.calculateDaysLocalDateDifference(onePainAssessment.getCreatedAt().toLocalDate(), LocalDate.now());
 
         // Date Formatting
-        model.addAttribute("oneVisitHistory", assessmentHistory);
-		model.addAttribute("onePainAssessment", painAssessmentServ.getOne(id));
-		model.addAttribute("dayCreatedAt", onePainAssessment.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, yyyy")));
-		model.addAttribute("createdAt", onePainAssessment.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy")));	
+		model.addAttribute("createdAt", formattedCreatedAt);	
+		model.addAttribute("dayCreatedAt", formattedDayCreatedAt);
+		model.addAttribute("onePainAssessment", onePainAssessment);
+        model.addAttribute("oneAssessmentHistory", assessmentHistory);
 		return "PainAssessmentRecords/viewOnePainAssessmentRecord.jsp";
 	}
 
@@ -203,25 +199,23 @@ public class PainAssessmentController {
 	    if (loggedInPatient == null || loggedPatientName == null || patientCaseId == null) {
 	        // Handle the situation where loggedInPatient or searchedPatientCase is null
 	    }
-        // Add attributes related to patient case search
-        diagnosticUtil.searchPhysicalAssessmentByCharacter(model, loggedPatientName);
-        diagnosticUtil.searchSinglePhysicalAssessmentByCharacter(model, loggedPatientName);
-        model.addAttribute("searchedPatientCase", searchUtil.returnSearchPatientCaseByCharacter(loggedInPatient.getPatientFirstName()));
-        model.addAttribute("allPatientCasesWithFilter", searchUtil.returnSearchPatientCaseByCharacter(loggedInPatient.getPatientFirstName()));
+  
+	    // Add attributes related to patient case search
         model.addAttribute("searchedPatientAge", patientUtil.calculateDateDifference(loggedInPatient.getDateOfBirth(), LocalDate.now(), ChronoUnit.YEARS));
         String trimmedSearchTerm = searchedPatientName != null ? searchedPatientName.trim() : null;
         if (trimmedSearchTerm != null && !trimmedSearchTerm.isEmpty()) {
-            searchUtil.searchPatientCaseByCharacter(model, trimmedSearchTerm);
-            diagnosticUtil.searchPhysicalAssessmentByCharacter(model, trimmedSearchTerm);
+            searchUtil.searchPatientCaseByCharacter(model, loggedPatientName);
+            diagnosticUtil.searchPhysicalAssessmentByCharacter(model, loggedPatientName);
             diagnosticUtil.searchSinglePhysicalAssessmentByCharacter(model, loggedPatientName);
-            model.addAttribute("searchedPatientCase", searchUtil.returnFirstPatientCaseByCharacter(trimmedSearchTerm));
-            model.addAttribute("allPatientCasesWithFilter", searchUtil.returnSearchPatientCaseByCharacter(trimmedSearchTerm));
+            model.addAttribute("searchedPatientCase", searchUtil.returnFirstPatientCaseByCharacter(loggedPatientName));
+            model.addAttribute("allPatientCasesWithFilter", searchUtil.returnSearchPatientCaseByCharacter(loggedPatientName));
         } else {
             model.addAttribute("allPatientCasesWithFilter", Collections.emptyList());
+            diagnosticUtil.searchPhysicalAssessmentByCharacter(model, loggedPatientName);
+            diagnosticUtil.searchSinglePhysicalAssessmentByCharacter(model, loggedPatientName);
         }
 
 	    // Format the LocalDateTime objects
-	    patientUtil.setPatientAttributes(model);
 	    patientUtil.sortLoggedPatientAttributes(model, patientId);
 
 	    // Add common attributes

@@ -8,9 +8,11 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -18,15 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 
-import com.turuchie.mellowhealthportal.models.ClinicalOperations.CurrentMedication;
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.PatientCase;
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.PatientVitalRecord;
 import com.turuchie.mellowhealthportal.models.PatientOperations.IncidentReport;
 import com.turuchie.mellowhealthportal.models.PatientOperations.InsuranceInformation;
 import com.turuchie.mellowhealthportal.models.PatientOperations.PastMedicalHistory;
 import com.turuchie.mellowhealthportal.models.PatientOperations.Patient;
-import com.turuchie.mellowhealthportal.models.PatientOperations.RecentAdmission;
-import com.turuchie.mellowhealthportal.models.PatientOperations.RecentEmergency;
 import com.turuchie.mellowhealthportal.models.Physicians.Physician;
 import com.turuchie.mellowhealthportal.services.PhysicianService;
 import com.turuchie.mellowhealthportal.services.PhysiciansPatientService;
@@ -88,14 +87,26 @@ public class ModelAttributeUtil {
 	    return timeFormat;
 	}
 
+	public List<Integer> generatePainScaleValues() {
+	    List<Integer> painScaleValues = new ArrayList<>();
+	    for (int i = 0; i <= 10; i++) {
+	        painScaleValues.add(i);
+	    }
+	    return painScaleValues;
+	}
+
+	public void setPatientModelAttributes(Model model, Long patientId) {
+    	formatAndSetPastMedicalDateAttributes(model, patientId);
+    	mapAndSetAllPatientCaseDateAttributes(model, patientId);
+    	formatAndSetPatientCaseDateAttributes(model, patientId);
+    	addCommonPatientVitalRecordsAttributes(model, patientId);
+    	mapAllPastMedicalHistoryDayMonthYearAttributes(model, patientId);
+		
+	}
 	//  Helper method to set date-related attributes
     public void setCommonModelAttributes(Model model) {
     	addCommonModelAttributes(model);
-    	addCommonIncidentReportDateAttributes(model);
-    	addCommonPatientVitalRecordsAttributes(model);
-    	formatListAndSetAllPastMedicalHistoryStartDateAttributes(model);
-    	mapAndSetAllPatientCaseDateAttributes(model);
-    	formatAndSetPatientCaseDateAttributes(model);
+    	//addCommonIncidentReportDateAttributes(model);
     	formatAndSetAllPatientsDateAttributes(model);
     	formatListAndSetAllPatientAge(model);
     	formatRepoPatientAge(model);
@@ -105,8 +116,7 @@ public class ModelAttributeUtil {
     	setInsuranceReportProperty(model);
     	setMostRecentInsuranceReportProperty(model);
     	setMostRecentRecords(model);
-    	formatAndSetPastMedicalDateAttributes(model);
-    	mapAllPastMedicalHistoryDayMonthYearAttributes(model);
+    	formatListAndSetAllPastMedicalHistoryStartDateAttributes(model);
     }
 
     // Helper method to add common model attributes
@@ -193,31 +203,31 @@ public class ModelAttributeUtil {
 
     // Set Recent Records
     public void setMostRecentRecords(Model model) {
-        PatientCase mostRecentPatientCase = patientCaseServ.getMostRecentPatientCase();
-        PatientVitalRecord mostRecentPatientVitalRecord = patientVitalRecordServ.getMostRecentPatientVitalRecord();
-        CurrentMedication mostRecentCurrentMedication = currentMedicationServ.getMostRecentCurrentMedication();
-        RecentEmergency mostRecentRecentEmergency = recentEmergencyServ.getMostRecentRecentEmergency();
-        RecentAdmission mostRecentRecentAdmission = recentAdmissionServ.getMostRecentRecentAdmission();
-        PastMedicalHistory pastMedicalHistory = pastMedicalHistoryServ.getMostRecentPastMedicalHistory();
-
-        // Add most recent records to the model
-        model.addAttribute("mostRecentPatientCase", mostRecentPatientCase);
-        model.addAttribute("mostRecentPatientVitalRecord", mostRecentPatientVitalRecord);
-        model.addAttribute("mostRecentCurrentMedication", mostRecentCurrentMedication);
-        model.addAttribute("mostRecentRecentEmergency", mostRecentRecentEmergency);
-        model.addAttribute("mostRecentRecentAdmission", mostRecentRecentAdmission);
-        model.addAttribute("mostRecentPastMedicalHistory", pastMedicalHistory);
+//        PatientCase mostRecentPatientCase = patientCaseServ.getMostRecentPatientCase();
+//        PatientVitalRecord mostRecentPatientVitalRecord = patientVitalRecordServ.getMostRecentPatientVitalRecord();
+//        CurrentMedication mostRecentCurrentMedication = currentMedicationServ.getMostRecentCurrentMedication();
+//        RecentEmergency mostRecentRecentEmergency = recentEmergencyServ.getMostRecentRecentEmergency();
+//        RecentAdmission mostRecentRecentAdmission = recentAdmissionServ.getMostRecentRecentAdmission();
+//        PastMedicalHistory pastMedicalHistory = pastMedicalHistoryServ.getMostRecentPastMedicalHistory();
+//
+//        // Add most recent records to the model
+//        model.addAttribute("mostRecentPatientCase", mostRecentPatientCase);
+//        model.addAttribute("mostRecentPatientVitalRecord", mostRecentPatientVitalRecord);
+//        model.addAttribute("mostRecentCurrentMedication", mostRecentCurrentMedication);
+//        model.addAttribute("mostRecentRecentEmergency", mostRecentRecentEmergency);
+//        model.addAttribute("mostRecentRecentAdmission", mostRecentRecentAdmission);
+//        model.addAttribute("mostRecentPastMedicalHistory", pastMedicalHistory);
     }
 
-    // Helper method to convert Date to LocalDateTime and format dates for PastMedicalHistory
-    public void formatAndSetPastMedicalDateAttributes(Model model) {
-        // Fetch all Patients
-        Iterable<Patient> allPatients = patientServ.findAll();
+ // Helper method to convert Date to LocalDateTime and format dates for PastMedicalHistory
+    public void formatAndSetPastMedicalDateAttributes(Model model, Long patientId) {
+        // Fetch the patient by ID
+        Patient patient = patientServ.getOne(patientId);
 
-        // Extract createdAt dates from PatientCases
-        List<LocalDateTime> pastMedicalHistoryCreatedAtDates = new ArrayList<>();
+        if (patient != null) {
+            // Extract createdAt dates from the patient's PastMedicalHistory
+            List<LocalDateTime> pastMedicalHistoryCreatedAtDates = new ArrayList<>();
 
-        for (Patient patient : allPatients) {
             for (PastMedicalHistory pastMedicalHistory : patient.getPastMedicalHistories()) {
                 LocalDate createdAtDate = pastMedicalHistory.getCreatedAt();
 
@@ -228,118 +238,119 @@ public class ModelAttributeUtil {
                     pastMedicalHistoryCreatedAtDates.add(dateTime);
                 }
             }
+
+            // List Population
+            List<String> formattedPastMedicalHistoryCreatedAtList = pastMedicalHistoryCreatedAtDates.stream()
+                    .map(dateTime -> dateTime.format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy")))
+                    .collect(Collectors.toList());
+
+            List<String> formattedPastMedicalHistoryDayCreatedAtList = pastMedicalHistoryCreatedAtDates.stream()
+                    .map(dateTime -> dateTime.format(DateTimeFormatter.ofPattern("EEE, yyyy")))
+                    .collect(Collectors.toList());
+
+            model.addAttribute("pastMedicalHistoryCreatedAtList", formattedPastMedicalHistoryCreatedAtList);
+            model.addAttribute("pastMedicalHistoryDayCreatedAtList", formattedPastMedicalHistoryDayCreatedAtList);
+
+            LocalDateTime currentDateTime = LocalDateTime.now();
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy");
+            DateTimeFormatter dayformatter = DateTimeFormatter.ofPattern("EEE, yyyy");
+
+            String currentDateTimeFormatted = currentDateTime.format(formatter);
+            String dayCurrentDateTimeFormatted = currentDateTime.format(dayformatter);
+
+            // Set formatted date attributes in the model
+            model.addAttribute("currentDateTime", currentDateTimeFormatted);
+            model.addAttribute("dayCurrentDateTime", dayCurrentDateTimeFormatted);
+        } else {
+            // Handle the case where patient is not found
+            // You can log an error or perform appropriate error handling here
         }
-
-        // List Population
-        List<String> formattedPastMedicalHistoryCreatedAtList = pastMedicalHistoryCreatedAtDates.stream()
-                .map(dateTime -> dateTime.format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy")))
-                .collect(Collectors.toList());
-
-        List<String> formattedPastMedicalHistoryDayCreatedAtList = pastMedicalHistoryCreatedAtDates.stream()
-                .map(dateTime -> dateTime.format(DateTimeFormatter.ofPattern("EEE, yyyy")))
-                .collect(Collectors.toList());
-
-        model.addAttribute("pastMedicalHistoryCreatedAtList", formattedPastMedicalHistoryCreatedAtList);
-        model.addAttribute("pastMedicalHistoryDayCreatedAtList", formattedPastMedicalHistoryDayCreatedAtList);
-
-        LocalDateTime currentDateTime = LocalDateTime.now();
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy");
-        DateTimeFormatter dayformatter = DateTimeFormatter.ofPattern("EEE, yyyy");
-
-        String currentDateTimeFormatted = currentDateTime.format(formatter);
-        String dayCurrentDateTimeFormatted = currentDateTime.format(dayformatter);
-
-        // Set formatted date attributes in the model
-        model.addAttribute("currentDateTime", currentDateTimeFormatted);
-        model.addAttribute("dayCurrentDateTime", dayCurrentDateTimeFormatted);
     }
+ // Formatted Past Medical Records And Length Of Medical Condition
+    public void mapAllPastMedicalHistoryDayMonthYearAttributes(Model model, Long patientId) {
+        // Fetch the patient by ID
+        Patient patient = patientServ.getOne(patientId);
 
-    // Formatted Past Medical Records And Length Of Medical Condition
-    public void mapAllPastMedicalHistoryDayMonthYearAttributes(Model model) {
-        // Fetch all PatientCases
-        List<PastMedicalHistory> allPastMedicalHistories = pastMedicalHistoryServ.getAll();
+        if (patient != null) {
+            // Extract all PastMedicalHistory records for the patient
+            List<PastMedicalHistory> allPastMedicalHistories = patient.getPastMedicalHistories();
 
-        // Filter out PastMedicalHistories with null start dates
-        List<PastMedicalHistory> validPastMedicalHistories = allPastMedicalHistories.stream()
-                .filter(history -> history.getStartDate() != null)
-                .collect(Collectors.toList());
+            // Filter out PastMedicalHistories with null start dates
+            List<PastMedicalHistory> validPastMedicalHistories = allPastMedicalHistories.stream()
+                    .filter(history -> history.getStartDate() != null)
+                    .collect(Collectors.toList());
 
-        // Create a java.util.Map to store the association between each PastMedicalHistory and its length
-        java.util.Map<PastMedicalHistory, Integer> medicalConditionLengthMap = new HashMap<>();
+            // Create a java.util.Map to store the association between each PastMedicalHistory and its length
+            Map<PastMedicalHistory, Integer> medicalConditionLengthMap = new HashMap<>();
 
-        // Calculate lengths of medical conditions and populate the map
-        for (PastMedicalHistory history : validPastMedicalHistories) {
-            LocalDate startDate = history.getStartDate();
-            int lengthOfMedicalCondition = (int) ChronoUnit.YEARS.between(startDate, LocalDate.now());
-            medicalConditionLengthMap.put(history, lengthOfMedicalCondition);
-        }
-
-        model.addAttribute("formattedLengthOfMedicalConditionMap", medicalConditionLengthMap);
-
-        // Additional attributes for individual components of the created-at date
-        model.addAttribute("pastMedicalHistoryDay", validPastMedicalHistories.stream()
-                .map(history -> history.getStartDate().getDayOfMonth())
-                .collect(Collectors.toList()));
-
-        model.addAttribute("pastMedicalHistoryMonth", validPastMedicalHistories.stream()
-                .map(history -> history.getStartDate().getMonth())
-                .collect(Collectors.toList()));
-
-        model.addAttribute("pastMedicalHistoryYear", validPastMedicalHistories.stream()
-                .map(history -> history.getStartDate().getYear())
-                .collect(Collectors.toList()));
-    }
-
-    // Helper method to convert Date to LocalDateTime and format dates for PatientCases
-    public void formatAndSetPatientCaseDateAttributes(Model model) {
-        // Fetch all Patients
-        Iterable<Patient> allPatients = patientServ.findAll();
-
-        // Extract createdAt dates from PatientCases
-        List<LocalDateTime> patientCaseCreatedAtDates = new ArrayList<>();
-
-        for (Patient patient : allPatients) {
-            for (PatientCase patientCase : patient.getPatientCases()) {
-                LocalDateTime createdAtDate = patientCase.getCreatedAt();
-
-                // Check for null before converting
-                if (createdAtDate != null) {
-                    LocalDateTime dateTime = createdAtDate;
-                    patientCaseCreatedAtDates.add(dateTime);
-                }
+            // Calculate lengths of medical conditions and populate the map
+            for (PastMedicalHistory history : validPastMedicalHistories) {
+                LocalDate startDate = history.getStartDate();
+                int lengthOfMedicalCondition = (int) ChronoUnit.YEARS.between(startDate, LocalDate.now());
+                medicalConditionLengthMap.put(history, lengthOfMedicalCondition);
             }
+
+            model.addAttribute("formattedLengthOfMedicalConditionMap", medicalConditionLengthMap);
+
+            // Additional attributes for individual components of the created-at date
+            model.addAttribute("pastMedicalHistoryDay", validPastMedicalHistories.stream()
+                    .map(history -> history.getStartDate().getDayOfMonth())
+                    .collect(Collectors.toList()));
+
+            model.addAttribute("pastMedicalHistoryMonth", validPastMedicalHistories.stream()
+                    .map(history -> history.getStartDate().getMonth())
+                    .collect(Collectors.toList()));
+
+            model.addAttribute("pastMedicalHistoryYear", validPastMedicalHistories.stream()
+                    .map(history -> history.getStartDate().getYear())
+                    .collect(Collectors.toList()));
+        } else {
+            // Handle the case where patient is not found
+            // You can log an error or perform appropriate error handling here
+        }
+    }
+
+
+ // Helper method to convert Date to LocalDateTime and format dates for PatientCases
+    public void formatAndSetPatientCaseDateAttributes(Model model, Long patientId) {
+        // Fetch the patient by ID
+        Patient patient = patientServ.getOne(patientId);
+
+        if (patient != null) {
+            // Extract createdAt dates from PatientCases of the specified patient
+            List<LocalDateTime> patientCaseCreatedAtDates = patient.getPatientCases().stream()
+                    .map(PatientCase::getCreatedAt)
+                    .collect(Collectors.toList());
+
+            // Convert the patientCaseCreatedAtDates to formatted date strings
+            List<String> formattedPatientCaseCreatedAtList = patientCaseCreatedAtDates.stream()
+                    .map(dateTime -> dateTime.format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy")))
+                    .collect(Collectors.toList());
+
+            List<String> formattedPatientCaseDayCreatedAtList = patientCaseCreatedAtDates.stream()
+                    .map(dateTime -> dateTime.format(DateTimeFormatter.ofPattern("EEE, yyyy")))
+                    .collect(Collectors.toList());
+
+            model.addAttribute("patientCaseCreatedAtList", formattedPatientCaseCreatedAtList);
+            model.addAttribute("patientCaseDayCreatedAtList", formattedPatientCaseDayCreatedAtList);
         }
 
-        // Convert the patientCaseCreatedAtDates to formatted date strings
-        List<String> formattedPatientCaseCreatedAtList = patientCaseCreatedAtDates.stream()
-                .map(dateTime -> dateTime.format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy")))
-                .collect(Collectors.toList());
-
-        List<String> formattedPatientCaseDayCreatedAtList = patientCaseCreatedAtDates.stream()
-                .map(dateTime -> dateTime.format(DateTimeFormatter.ofPattern("EEE, yyyy")))
-                .collect(Collectors.toList());
-
-        model.addAttribute("patientCaseCreatedAtList", formattedPatientCaseCreatedAtList);
-        model.addAttribute("patientCaseDayCreatedAtList", formattedPatientCaseDayCreatedAtList);
-
+        // Set formatted date attributes in the model for the current date
         LocalDateTime currentDateTime = LocalDateTime.now();
-
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy");
         DateTimeFormatter dayformatter = DateTimeFormatter.ofPattern("EEE, yyyy");
-
         String currentDateTimeFormatted = currentDateTime.format(formatter);
         String dayCurrentDateTimeFormatted = currentDateTime.format(dayformatter);
-
-        // Set formatted date attributes in the model
         model.addAttribute("currentDateTime", currentDateTimeFormatted);
         model.addAttribute("dayCurrentDateTime", dayCurrentDateTimeFormatted);
     }
+
 
     // Helper method to convert PatientCase Created Dates
-    public void mapAndSetAllPatientCaseDateAttributes(Model model) {
-        // Fetch all PatientCases
-        List<PatientCase> allPatientCases = patientCaseServ.getAll();
+    public void mapAndSetAllPatientCaseDateAttributes(Model model, Long patientId) {
+        // Fetch all PatientCases for the specified patient
+        List<PatientCase> allPatientCases = patientServ.getOne(patientId).getPatientCases();
 
         // Extract createdAt dates from PatientCases
         List<LocalDateTime> createdAtDates = allPatientCases.stream()
@@ -364,6 +375,7 @@ public class ModelAttributeUtil {
         model.addAttribute("dayCurrentDateTime", currentDateTimeFormatted);  // Reusing the formatted current date
     }
 
+
     // Helper Method To Calculate Length Of Medical Condition
     public void formatListAndSetAllPastMedicalHistoryStartDateAttributes(Model model) {
         // Fetch all PatientCases
@@ -384,7 +396,7 @@ public class ModelAttributeUtil {
             for (PastMedicalHistory history : allPastMedicalHistories) {
                 LocalDate startDate = history.getStartDate();
                 if (startDate != null) {
-                    int lengthOfMedicalCondition = (int) ChronoUnit.YEARS.between(startDate, LocalDate.now());
+                    int lengthOfMedicalCondition = (int) ChronoUnit.MONTHS.between(startDate, LocalDate.now());
                     medicalConditionLengthMap.put(history, lengthOfMedicalCondition);
                 }
             }
@@ -409,7 +421,7 @@ public class ModelAttributeUtil {
         // Calculate lengths of medical conditions and populate the map
         for (PastMedicalHistory history : validPastMedicalHistories) {
             LocalDate startDate = history.getStartDate();
-            int lengthOfMedicalCondition = (int) ChronoUnit.YEARS.between(startDate, LocalDate.now());
+            int lengthOfMedicalCondition = (int) ChronoUnit.MONTHS.between(startDate, LocalDate.now());
             medicalConditionLengthMap.put(history, lengthOfMedicalCondition);
         }
 
@@ -533,59 +545,68 @@ public class ModelAttributeUtil {
 	     model.addAttribute("dayCurrentDateTime", dayCurrentDateTimeFormatted);
 	}
 
-    // Helper method to convert Patient Vital Record Created Dates
-    public void addCommonPatientVitalRecordsAttributes(Model model) {
-        // Fetch all PatientCases
-        List<PatientVitalRecord> allPatientVitalRecords = patientVitalRecordServ.getAll();
+	// Helper method to convert Patient Vital Record Created Dates
+	public void addCommonPatientVitalRecordsAttributes(Model model, Long patientId) {
+	    // Fetch all Patient Vital Records for the specified patient
+	    List<PatientVitalRecord> allPatientVitalRecords = patientServ.getOne(patientId).getPatientVitalRecords();
 
-        // Extract createdAt dates from PatientCases
-        List<LocalDateTime> createdAtDates = allPatientVitalRecords.stream()
-                .map(PatientVitalRecord::getCreatedAt)
-                .collect(Collectors.toList());
+	    // Extract createdAt dates from Patient Vital Records
+	    List<LocalDateTime> createdAtDates = allPatientVitalRecords.stream()
+	            .map(PatientVitalRecord::getCreatedAt)
+	            .collect(Collectors.toList());
 
-        // Convert createdAtDates to formatted date strings
-        List<String> formattedPatientVitalRecordCreatedAtList = createdAtDates.stream()
-                .map(dateTime -> dateTime.format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy")))
-                .collect(Collectors.toList());
+	    // Convert createdAtDates to formatted date strings
+	    List<String> formattedPatientVitalRecordCreatedAtList = createdAtDates.stream()
+	            .map(dateTime -> dateTime.format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy")))
+	            .collect(Collectors.toList());
 
-        List<String> formattedPatientVitalRecordDayCreatedAtList = createdAtDates.stream()
-                .map(dateTime -> dateTime.format(DateTimeFormatter.ofPattern("EEE, yyyy")))
-                .collect(Collectors.toList());
+	    List<String> formattedPatientVitalRecordDayCreatedAtList = createdAtDates.stream()
+	            .map(dateTime -> dateTime.format(DateTimeFormatter.ofPattern("EEE, yyyy")))
+	            .collect(Collectors.toList());
 
-        model.addAttribute("patientVitalRecordCreatedAt", formattedPatientVitalRecordCreatedAtList);
-        model.addAttribute("patientVitalRecordDayCreatedAt", formattedPatientVitalRecordDayCreatedAtList);
+	    model.addAttribute("patientVitalRecordCreatedAt", formattedPatientVitalRecordCreatedAtList);
+	    model.addAttribute("patientVitalRecordDayCreatedAt", formattedPatientVitalRecordDayCreatedAtList);
 
-        // Set formatted date attributes for the current date in the model
-        String currentDateTimeFormatted = LocalDateTime.now().format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy"));
-        model.addAttribute("currentDateTime", currentDateTimeFormatted);
-        model.addAttribute("dayCurrentDateTime", currentDateTimeFormatted);
-    }
+	    // Set formatted date attributes for the current date in the model
+	    String currentDateTimeFormatted = LocalDateTime.now().format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy"));
+	    model.addAttribute("currentDateTime", currentDateTimeFormatted);
+	    model.addAttribute("dayCurrentDateTime", currentDateTimeFormatted);
+	}
 
-    // Helper method to convert Patient Vital Record Created Dates
-    public void addCommonIncidentReportDateAttributes(Model model) {
-        // Fetch all PatientCases
-        List<IncidentReport> allIncidentReports = incidentReportServ.getAll();
+	// Helper method to convert Patient Vital Record Created Dates
+	public void addCommonIncidentReportDateAttributes(Model model, Long patientId) {
+	    // Fetch all Incident Reports for the specified patient
+	    List<IncidentReport> allIncidentReports = patientServ.getOne(patientId).getIncidentReports();
 
-        // Extract createdAt dates from PatientCases
-        List<LocalDateTime> createdAtDates = allIncidentReports.stream()
-                .map(IncidentReport::getCreatedAt)
-                .collect(Collectors.toList());
+	    if (allIncidentReports != null && !allIncidentReports.isEmpty()) {
+	        // Extract createdAt dates from Incident Reports
+	        List<LocalDateTime> createdAtDates = allIncidentReports.stream()
+	                .map(IncidentReport::getCreatedAt)
+	                .collect(Collectors.toList());
 
-        // Convert createdAtDates to formatted date strings
-        List<String> formattedPatientVitalRecordCreatedAtList = createdAtDates.stream()
-                .map(dateTime -> dateTime.format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy")))
-                .collect(Collectors.toList());
+	        // Convert createdAtDates to formatted date strings
+	        List<String> formattedIncidentReportCreatedAtList = createdAtDates.stream()
+	                .filter(Objects::nonNull) // Filter out null elements
+	                .map(dateTime -> dateTime.format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy")))
+	                .collect(Collectors.toList());
 
-        List<String> formattedPatientVitalRecordDayCreatedAtList = createdAtDates.stream()
-                .map(dateTime -> dateTime.format(DateTimeFormatter.ofPattern("EEE, yyyy")))
-                .collect(Collectors.toList());
 
-        model.addAttribute("allIncidentReportCreatedAt", formattedPatientVitalRecordCreatedAtList);
-        model.addAttribute("allIncidentReportDayCreatedAt", formattedPatientVitalRecordDayCreatedAtList);
+	        List<String> formattedIncidentReportDayCreatedAtList = createdAtDates.stream()
+	                .map(dateTime -> dateTime.format(DateTimeFormatter.ofPattern("EEE, yyyy")))
+	                .collect(Collectors.toList());
 
-        // Set formatted date attributes for the current date in the model
-        String currentDateTimeFormatted = LocalDateTime.now().format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy"));
-        model.addAttribute("currentDateTime", currentDateTimeFormatted);
-        model.addAttribute("dayCurrentDateTime", currentDateTimeFormatted);
-    }
+	        model.addAttribute("allIncidentReportCreatedAt", formattedIncidentReportCreatedAtList);
+	        model.addAttribute("allIncidentReportDayCreatedAt", formattedIncidentReportDayCreatedAtList);
+	    } else {
+	        // Handle case when there are no Incident Reports
+	        model.addAttribute("allIncidentReportCreatedAt", Collections.emptyList());
+	        model.addAttribute("allIncidentReportDayCreatedAt", Collections.emptyList());
+	    }
+
+	    // Set formatted date attributes for the current date in the model
+	    String currentDateTimeFormatted = LocalDateTime.now().format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy"));
+	    model.addAttribute("currentDateTime", currentDateTimeFormatted);
+	    model.addAttribute("dayCurrentDateTime", currentDateTimeFormatted);
+	}
+
 }

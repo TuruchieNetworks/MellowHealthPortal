@@ -101,13 +101,13 @@ public class CoagulationRecordsController {
 	    if (trimmedSearchTerm != null && !trimmedSearchTerm.isEmpty()) {
 	        // If a non-empty search value is provided
 	    	diagnosticUtil.setAllSearchTrimmedMethods(model, trimmedSearchTerm);
+	        model.addAttribute("searchedPatientCase", searchUtil.returnFirstPatientCaseByCharacter(trimmedSearchTerm));
 	        model.addAttribute("searchedCoagulationRecord", searchUtil.returnFirstPatientCaseByCharacter(trimmedSearchTerm));
 	        model.addAttribute("allPatientCasesWithFilter", searchUtil.returnSearchPatientCaseByCharacter(trimmedSearchTerm));
 	        model.addAttribute("allCoagulationRecordsWithFilter", searchUtil.returnSearchPatientCaseByCharacter(trimmedSearchTerm));
 	    } else {
 	        // If the search bar is empty, do not display physical oneCoagulationRecordHistory. one of the JSP is looping over filtered patient case cases
-	        //model.addAttribute("allCoagulationRecordsWithFilter", Collections.emptyList());
-	        diagnosticUtil.setAllSearchTrimmedMethods(model, patientName);
+	        model.addAttribute("allCoagulationRecordsWithFilter", Collections.emptyList());
 	        model.addAttribute("allPatientCasesWithFilter", Collections.emptyList());
 	    }
 

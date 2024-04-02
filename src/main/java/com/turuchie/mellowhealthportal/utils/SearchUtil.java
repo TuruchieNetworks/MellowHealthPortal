@@ -151,7 +151,7 @@ public class SearchUtil {
     	addMatchedPatientContainingSearchTerm(model, trimmedSearchTerm);
     	searchPatientCaseByCharacter(model, trimmedSearchTerm);
     	mapPatientCaseByCharacter(model, trimmedSearchTerm);
-    	//searchSinglePatientCaseByCharacter(model, trimmedSearchTerm);
+    	searchSinglePatientCaseByCharacter(model, trimmedSearchTerm);
     }
     
     public void setTrimmedSearchMethods(String trimmedSearchTerm) {
@@ -352,37 +352,34 @@ public class SearchUtil {
 
 
 	                    // Add to the model
-		                model.addAttribute("matchedPatientCase", onePatientCase);
-		                model.addAttribute("searchedPatientAge", searchedPatientAge);
-		                model.addAttribute("searchedPatientCasePhysiciansList", patientCasePhysician);
                         model.addAttribute("searchedMostRecentPastMedicalRecord", mostRecentPastMedicalRecord);
-                        model.addAttribute("searchedPatientCaseDayCreatedAt",formattedDayPatientCaseCreatedAtDate);
-		                model.addAttribute("searchedPatientCaseInsurance", onePatientCase.getInsuranceInformation());
                         model.addAttribute("searchedPatientLengthOfMedicalCondition", searchedPatientLengthOfMedicalCondition);
+	                    model.addAttribute("lengthOfPatientConditionYears", conditionLengthYears);
+	                    model.addAttribute("lengthOfPatientConditionDays", conditionLengthDays);
+	                    model.addAttribute("lengthOfPatientConditionMonths", conditionLengthMonths);
 	                    model.addAttribute("searchedMostRecentPastMedicalRecordDayCreatedAt", mostRecentPastMedicalRecord.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, yyyy")));
 	                    model.addAttribute("searchedMostRecentPastMedicalRecordCreatedAt", mostRecentPastMedicalRecord.getCreatedAt());
 	                    addDateAttributesToModel(model, onePatientCase.getCreatedAt().toLocalDate(), "patientCaseAccountLength");
 	                    addDateAttributesToModel(model, onePatientCase.getOnset(), "lengthOfPatientCondition");
 	              } else {
-	                        // Add to the model without PastMedicalHistory details
+                        addDateAttributesToModel(model, onePatientCase.getCreatedAt().toLocalDate(), "patientCaseAccountLength");
+                        addDateAttributesToModel(model, onePatientCase.getOnset(), "lengthOfPatientCondition");
+                    }
+	                    // Add to the model without PastMedicalHistory details
 		                model.addAttribute("matchedPatientCase", onePatientCase);
-	                    model.addAttribute("searchedPatientAge", searchedPatientAge);
+		                model.addAttribute("searchedPatientAge", searchedPatientAge);
+                        model.addAttribute("searchedPatientCaseDayCreatedAt",formattedDayPatientCaseCreatedAtDate);
+		                model.addAttribute("searchedPatientCaseInsurance", onePatientCase.getInsuranceInformation());
+		                model.addAttribute("searchedPatientCasePhysiciansList", patientCasePhysician);
                         model.addAttribute("patientCaseAccountLength", accountLengthYears);
-	                    model.addAttribute("patientCaseAccountLengthDays", accountLengthDays);
+	                    model.addAttribute("searchedPatientCaseAccountDaysHistory", accountLengthDays);
 	                    model.addAttribute("patientCaseAccountLengthMonths", accountLengthMonths);
-	                    model.addAttribute("lengthOfPatientConditionYears", conditionLengthYears);
-	                    model.addAttribute("lengthOfPatientConditionDays", conditionLengthDays);
-	                    model.addAttribute("lengthOfPatientConditionMonths", conditionLengthMonths);
 		                model.addAttribute("searchedPatientCasePhysiciansList", patientCasePhysician);
                         model.addAttribute("searchedPatientCaseCreatedAt", formattedPatientCaseCreatedAtDate);
                         model.addAttribute("searchedPatientCaseDayCreatedAt",formattedDayPatientCaseCreatedAtDate);
                         model.addAttribute("patientCaseCreatedAt", onePatientCase.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy")));
                         model.addAttribute("matchedPatientCaseDayCreatedAt", formattedDayPatientCaseCreatedAtDate);
 		                model.addAttribute("searchedPatientCaseInsurance", onePatientCase.getInsuranceInformation());
-                        addDateAttributesToModel(model, onePatientCase.getCreatedAt().toLocalDate(), "patientCaseAccountLength");
-                        addDateAttributesToModel(model, onePatientCase.getOnset(), "lengthOfPatientCondition");
-                    }
-
 	                    // Add PatientCase to the list
 	                    patientCaseList.add(onePatientCase);
 	                }
@@ -399,73 +396,24 @@ public class SearchUtil {
 	    }
 	}
 
-	// Method to list single searched patient case
+	// Method to search and list single patient cases by character
 	public void searchSinglePatientCaseByCharacter(Model model, String trimmedSearchTerm) {
-	    // If a non-empty search value is provided
+	    // Search for patients based on the provided search term
 	    List<Patient> matchedPatients = patientServ.searchPatientsByCharacters(trimmedSearchTerm.toLowerCase());
 
 	    if (!matchedPatients.isEmpty()) {
-	        // Single or multiple matches found, set the flag and add to the model
+	        // Populate model attributes for single or multiple matches found
 	        model.addAttribute("isSingleMatch", matchedPatients.size() == 1);
 	        model.addAttribute("matchedSearchPatientCharacterList", matchedPatients);
 
-	        // Populate PatientCase list for each patient
-	        List<PatientCase> searchedPatientCaseLists = new ArrayList<>();
+	        // Populate patient case lists for each matched patient
+	        List<List<PatientCase>> searchedPatientCaseLists = new ArrayList<>();
 	        for (Patient patient : matchedPatients) {
-	            List<PatientCase> patientCaseList = new ArrayList<>();
-
-	            // Check for null to avoid potential NullPointerException
-	            if (patient.getPatientCases() != null && !patient.getPatientCases().isEmpty()) {
-	                // Only add the first patient case
-	                PatientCase onePatientCase = patient.getPatientCases().get(0);
-
-                    // Calculate date differences
-                    LocalDate onset = onePatientCase.getOnset();
-                    LocalDate createdAt = onePatientCase.getCreatedAt().toLocalDate();
-                    LocalDate searchedPatientBirthDay = onePatientCase.getPatient().getDateOfBirth();
-                    
-                    long accountLengthYears = calculateDateDifference(createdAt, LocalDate.now(), ChronoUnit.YEARS);
-                    long accountLengthDays = calculateDateDifference(createdAt, LocalDate.now(), ChronoUnit.DAYS);
-                    long accountLengthMonths = calculateDateDifference(createdAt, LocalDate.now(), ChronoUnit.MONTHS);
-
-                    long conditionLengthYears = calculateDateDifference(onset, LocalDate.now(), ChronoUnit.YEARS);
-                    long conditionLengthDays = calculateDateDifference(onset, LocalDate.now(), ChronoUnit.DAYS);
-                    long conditionLengthMonths = calculateDateDifference(onset, LocalDate.now(), ChronoUnit.MONTHS);
-	                long searchedPatientAge = calculateDateDifference(searchedPatientBirthDay, LocalDate.now(), ChronoUnit.YEARS);
-
-	                // Use PatientFilterUtil to get the most recent PastMedicalHistory
-	                PastMedicalHistory mostRecentPastMedicalRecord = filterUtil.sortMostRecentPastMedicalRecord(model, patient.getId());
-
-	                // Calculate length of medical condition
-	                if (mostRecentPastMedicalRecord != null) {
-	                    LocalDate medicalConditionStartDate = mostRecentPastMedicalRecord.getStartDate();
-	                    long searchedPatientLengthOfMedicalCondition = calculateDateDifference(medicalConditionStartDate, LocalDate.now(), ChronoUnit.DAYS);
-
-	                    // Add to the model
-	                    model.addAttribute("searchedPatientAge", searchedPatientAge);
-	                    model.addAttribute("searchedPatientCaseAccountLength", accountLengthYears);
-	                    model.addAttribute("searchedPatientCaseAccountLengthDays", accountLengthDays);
-	                    model.addAttribute("patientCaseAccountLengthMonths", accountLengthMonths);
-	                    model.addAttribute("lengthOfPatientConditionYears", conditionLengthYears);
-	                    model.addAttribute("lengthOfPatientConditionDays", conditionLengthDays);
-	                    model.addAttribute("lengthOfPatientConditionMonths", conditionLengthMonths);
-                        model.addAttribute("searchedMostRecentPastMedicalRecord", mostRecentPastMedicalRecord);
-                        model.addAttribute("searchedPatientLengthOfMedicalCondition", searchedPatientLengthOfMedicalCondition);
-	                    model.addAttribute("searchedMostRecentPastMedicalRecordDayCreatedAt", mostRecentPastMedicalRecord.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, yyyy")));
-	                    model.addAttribute("oneSearchedMostRecentPastMedicalRecordCreatedAt", mostRecentPastMedicalRecord.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy")));
-	                    model.addAttribute("oneSearchedPatientCaseDayCreatedAt", createdAt.format(DateTimeFormatter.ofPattern("EEE, yyyy")));
-	                    model.addAttribute("oneSearchedPatientCaseCreatedAt", createdAt.format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy")));
-	                    model.addAttribute("searchedPatientLengthOfMedicalCondition", searchedPatientLengthOfMedicalCondition);
-	                    model.addAttribute("searchedMostRecentPastMedicalRecord", mostRecentPastMedicalRecord);
-	                }
-
-	                patientCaseList.add(onePatientCase);
-	            }
-
-	            searchedPatientCaseLists.add((PatientCase) patientCaseList);
+	            List<PatientCase> searchedPatientCaseList = getMostRecentPatientCaseForPatient(patient, model);
+	            searchedPatientCaseLists.add(searchedPatientCaseList);
+	            model.addAttribute("searchedSinglePatientCasesList", searchedPatientCaseList);
 	        }
 
-	        model.addAttribute("searchedSinglePatientCasesList", searchedPatientCaseLists);
 	    } else {
 	        // No match found, set the flag and add an empty list to the model
 	        model.addAttribute("isSingleMatch", false);
@@ -473,6 +421,71 @@ public class SearchUtil {
 	        model.addAttribute("searchedSinglePatientCasesLists", Collections.emptyList());
 	    }
 	}
+
+	// Helper method to retrieve the most recent patient case for a given patient
+	private List<PatientCase> getMostRecentPatientCaseForPatient(Patient patient, Model model) {
+	    List<PatientCase> searchedPatientCaseList = new ArrayList<>();
+	    List<PatientCase> patientCaseList = patient.getPatientCases();
+
+	    if (patientCaseList != null && !patientCaseList.isEmpty()) {
+	        // Sort patient cases by creation date in descending order to get the most recent one
+	        patientCaseList.sort(Comparator.comparing(PatientCase::getCreatedAt).reversed());
+
+	        // Retrieve the most recent patient case
+	        PatientCase mostRecentPatientCase = patientCaseList.get(0);
+
+	        // Populate model attributes related to the most recent patient case
+	        populateModelAttributesForPatientCase(model, mostRecentPatientCase);
+
+	        searchedPatientCaseList.add(mostRecentPatientCase);
+	    }
+
+	    return searchedPatientCaseList;
+	}
+
+	// Helper method to populate model attributes related to a patient case
+	private void populateModelAttributesForPatientCase(Model model, PatientCase patientCase) {
+	    if (patientCase != null) {
+	        LocalDate onset = patientCase.getOnset();
+	        LocalDate createdAt = patientCase.getCreatedAt().toLocalDate();
+	        LocalDate searchedPatientBirthDay = patientCase.getPatient().getDateOfBirth();
+	        String formattedPatientCaseDayCreatedAt = createdAt.format(DateTimeFormatter.ofPattern("EEE, yyyy"));
+	        String formattedPatientCaseCreatedAt = createdAt.format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy"));
+
+	        long accountLengthYears = calculateDateDifference(createdAt, LocalDate.now(), ChronoUnit.YEARS);
+	        long accountLengthDays = calculateDateDifference(createdAt, LocalDate.now(), ChronoUnit.DAYS);
+	        long accountLengthMonths = calculateDateDifference(createdAt, LocalDate.now(), ChronoUnit.MONTHS);
+
+	        long conditionLengthYears = calculateDateDifference(onset, LocalDate.now(), ChronoUnit.YEARS);
+	        long conditionLengthDays = calculateDateDifference(onset, LocalDate.now(), ChronoUnit.DAYS);
+	        long conditionLengthMonths = calculateDateDifference(onset, LocalDate.now(), ChronoUnit.MONTHS);
+	        long searchedPatientAge = calculateDateDifference(searchedPatientBirthDay, LocalDate.now(), ChronoUnit.YEARS);
+
+	        PastMedicalHistory mostRecentPastMedicalRecord = filterUtil.sortMostRecentPastMedicalRecord(model, patientCase.getPatient().getId());
+	        model.addAttribute("searchedPatientAge", searchedPatientAge);
+	        model.addAttribute("searchedMostRecentPatientCase", patientCase);
+	        model.addAttribute("searchedPatientCaseAccountLength", accountLengthYears);
+	        model.addAttribute("searchedPatientCaseAccountLengthDays", accountLengthDays);
+	        model.addAttribute("patientCaseAccountLengthMonths", accountLengthMonths);
+	        model.addAttribute("oneSearchedPatientCaseCreatedAt", formattedPatientCaseCreatedAt);
+	        model.addAttribute("oneSearchedPatientCaseDayCreatedAt",formattedPatientCaseDayCreatedAt);
+	        if (mostRecentPastMedicalRecord != null) {
+	            LocalDate medicalConditionStartDate = mostRecentPastMedicalRecord.getStartDate();
+	            long searchedPatientLengthOfMedicalCondition = calculateDateDifference(medicalConditionStartDate, LocalDate.now(), ChronoUnit.DAYS);
+
+	            model.addAttribute("lengthOfPatientConditionYears", conditionLengthYears);
+	            model.addAttribute("lengthOfPatientConditionDays", conditionLengthDays);
+	            model.addAttribute("lengthOfPatientConditionMonths", conditionLengthMonths);
+	            model.addAttribute("searchedMostRecentPastMedicalRecord", mostRecentPastMedicalRecord);
+	            model.addAttribute("searchedPatientLengthOfMedicalCondition", searchedPatientLengthOfMedicalCondition);
+	            model.addAttribute("searchedMostRecentPastMedicalRecordDayCreatedAt", mostRecentPastMedicalRecord.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, yyyy")));
+	            model.addAttribute("oneSearchedMostRecentPastMedicalRecordCreatedAt", mostRecentPastMedicalRecord.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy")));
+	            model.addAttribute("searchedPatientLengthOfMedicalCondition", searchedPatientLengthOfMedicalCondition);
+	            model.addAttribute("searchedMostRecentPastMedicalRecord", mostRecentPastMedicalRecord);
+	        }
+	    }
+	}
+
 
     // Method to search for patients by characters
     public List<Patient> searchPatientsByCharacters(String trimmedSearchTerm) {
@@ -506,7 +519,14 @@ public class SearchUtil {
 	        for (Patient patient : matchedPatients) {
 	            if (patient.getPatientCases() != null && !patient.getPatientCases().isEmpty()) {
 	                // Add only the first patient case
-	                firstPatientCases.add(patient.getPatientCases().get(0));
+
+	    	        List<PatientCase> patientCases = patient.getPatientCases();
+	                // Sort patient vital records by creation date in descending order to get the most recent one
+	    	        patientCases.sort(Comparator.comparing(PatientCase::getCreatedAt).reversed());
+	                
+	                // Retrieve the most recent patient vital record
+	    	        PatientCase mostRecentPatientCase = patientCases.isEmpty() ? null : patientCases.get(0);
+	                firstPatientCases.add(mostRecentPatientCase);
 	            }
 	        }
 	

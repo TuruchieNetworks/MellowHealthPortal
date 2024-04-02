@@ -66,6 +66,9 @@ public class PatientUtils {
 	
 	@Autowired
 	private SearchUtil searchUtil;
+	
+	@Autowired
+	private DiagnosticUtils diagnosticUtil;
 
     public PatientUtils(
             PatientService patientServ,
@@ -77,6 +80,7 @@ public class PatientUtils {
             PastMedicalHistoryService pastMedicalHistoryServ,
             ModelAttributeUtil modelUtil,
             PatientFilterUtil filterUtil,
+            DiagnosticUtils diagnosticUtil,
             InsuranceUtil insuranceUtil,
             SearchUtil searchUtil) {
         this.patientServ = patientServ;
@@ -88,6 +92,7 @@ public class PatientUtils {
         this.pastMedicalHistoryServ = pastMedicalHistoryServ;
         this.modelUtil = modelUtil;
         this.filterUtil = filterUtil;
+        this.diagnosticUtil = diagnosticUtil;
         this.insuranceUtil = insuranceUtil;
         this.searchUtil =searchUtil;
     }
@@ -115,35 +120,42 @@ public class PatientUtils {
 
     // Helper Method to set patient id attributes
     public void sortLoggedPatientAttributes(Model model, Long patientId) {
-    	setDateDifferences(patientId, model);
-    	setLoggedInPatientDateAttributes(patientId, model);
-    	formatAndSetOnePastMedicalHistoryStartDateAttributes(model, patientId);
-    	formatAndSetAllPastMedicalHistoryStartDateAttributes(model, patientId);
-    	filterUtil.sortAllByStartDate(model, patientId);
-    	searchUtil.sortLoggedPatientAttributes(model, patientId);
+	    Patient loggedInPatient = patientServ.getOne(patientId);
+	    if (loggedInPatient != null) {
+		    String loggedInPatientName =loggedInPatient.getPatientFirstName();
+
+		    setDateDifferences(patientId, model);
+		    addSearchedMethods(model, loggedInPatientName);
+	    	filterUtil.sortAllByStartDate(model, patientId);
+	    	setLoggedInPatientDateAttributes(patientId, model);
+	    	modelUtil.setPatientModelAttributes(model, patientId);
+		    model.addAttribute("loggedInPatient", loggedInPatient);
+	    	searchUtil.sortLoggedPatientAttributes(model, patientId);
+	    	formatAndSetOnePastMedicalHistoryStartDateAttributes(model, patientId);
+	    	formatAndSetAllPastMedicalHistoryStartDateAttributes(model, patientId);
+    	}
     }
  
     public void addModelAttributes(Model model) {
         model.addAttribute("allPatients", patientServ.findAll());
+        model.addAttribute("allPhysicians", physicianServ.findAll());
+        model.addAttribute("allPatientCases", patientCaseServ.getAll());
+        model.addAttribute("allIncidentReports", incidentReportServ.getAll());
+        model.addAttribute("allPhysiciansPatients", physiciansPatientServ.getAll());
         model.addAttribute("allPatientVitalRecords", patientVitalRecordServ.getAll());
         model.addAttribute("allPastMedicalHistories", pastMedicalHistoryServ.getAll());
-        model.addAttribute("allPatients", patientServ.findAll());
-        model.addAttribute("allIncidentReports", incidentReportServ.getAll());
-        model.addAttribute("allPatientCases", patientCaseServ.getAll());
-        model.addAttribute("allPhysicians", physicianServ.findAll());
-        model.addAttribute("allPhysiciansPatients", physiciansPatientServ.getAll());
-    	
     }
 
     public void addSearchedMethods(Model model, String trimmedSearchTerm) {
-    	addSearchedFilteredPatients(model, trimmedSearchTerm);
     	searchByCharacterMethod(model, trimmedSearchTerm);
-    	addMatchedPatientCommonAttributeLists(model, trimmedSearchTerm);
-    	addOneMatchedPatientCommonSearchAttribute(model, trimmedSearchTerm);
+    	addSearchedFilteredPatients(model, trimmedSearchTerm);
+    	searchUtil.setSearchUtilMethods(model, trimmedSearchTerm);
+    	searchPatientInsuranceByCharacter(model, trimmedSearchTerm);
     	addOneMatchedPatientCommonAttribute(model, trimmedSearchTerm);
     	addMatchedPatientContainingSearchTerm(model, trimmedSearchTerm);
-    	searchPatientInsuranceByCharacter(model, trimmedSearchTerm);
-    	searchUtil.setSearchUtilMethods(model, trimmedSearchTerm);
+    	addMatchedPatientCommonAttributeLists(model, trimmedSearchTerm);
+    	addOneMatchedPatientCommonSearchAttribute(model, trimmedSearchTerm);
+    	diagnosticUtil.setAllSearchTrimmedMethods(model, trimmedSearchTerm);
     }
 
     // Method to search for patients and their insurance information by characters
@@ -722,6 +734,16 @@ public class PatientUtils {
         return ChronoUnit.DAYS.between(currentDate, expirationDate);
     }
 
+    // Calculate Coverage Length in Days
+    public long calculateCoverageLengthInMonths(LocalDate expirationDate) {
+        if (expirationDate == null) {
+            return 0; // If expiration date is null, coverage length is zero
+        }
+
+        LocalDate currentDate = LocalDate.now();
+        return ChronoUnit.MONTHS.between(currentDate, expirationDate);
+    }
+
     // Calculate Coverage Length in Months and Years
     public Period calculateCoverageLengthInPeriod(LocalDate expirationDate) {
         if (expirationDate == null) {
@@ -735,7 +757,9 @@ public class PatientUtils {
 	 // Calculate Coverage Length and Add to Model
 	 public void addSpecificCoverageLengthToModel(Model model, LocalDate expirationDate) {
 	     long coverageLengthDays = calculateCoverageLengthInDays(expirationDate);
+	     long coverageLengthMonths = calculateCoverageLengthInMonths(expirationDate);
 	     model.addAttribute("lengthOfCoverageDays", coverageLengthDays);
+	     model.addAttribute("lengthOfCoverageMonths", coverageLengthMonths);
 	
 	     // Calculate coverage length in months and years
 	     Period coverageLengthPeriod = calculateCoverageLengthInPeriod(expirationDate);

@@ -66,7 +66,7 @@
 		    </form>
 			<c:if test="${not empty searchedPatientCasesList}">
 			    <p class="btn btn-outline-primary form-control" style="color:rgba(311, 31, 321, 0.9);background:rgba(11, 0.31, 1, 0.9);">
-		   		  	<a class="btn btn-outline-primary" href="/mellowHealth/hospitalDashboard/patientCases/${patientCase.id}" style="text-decoration:none;">
+		   		  	<a class="btn btn-outline-primary" href="/mellowHealth/hospitalDashboard/patientCases" style="text-decoration:none;">
 					    <c:out value="${oneSearchedSinglePatientCasesList[0].patient.patientFirstName} ${oneSearchedSinglePatientCasesList[0].patient.patientLastName} Date Of Birth: ${oneSearchedSinglePatientCasesList[0].patient.dateOfBirth}"/>
 					</a>
 			    </p>

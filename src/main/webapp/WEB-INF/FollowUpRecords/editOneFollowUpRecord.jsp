@@ -33,24 +33,24 @@
 	<h1 style="color:azure;border-bottom: 2px solid aliceblue;font-weight:bold;font-size:32px;background:chocolate;padding:10px;font-family:cursive;text-align:center;">WELCOME TO MELLOW HEALTH!</h1>
 	<div class="container-fluid p-6" style=" text-align:center;">
    	<c:choose>
-        <c:when test="${empty oneSearchedPatientCase}">
+        <c:when test="${empty searchedPatientCase}">
 			<a style="width: 100%; display:block; padding:0px;color:brown;text-decoration:none;" href="/mellowHealth/patientsPortal/patients/${loggedInPatient.id }">
 				<h1 style="color:azure;border-bottom:2px solid aliceblue;background:rgba(2.11, 24.5, 121, 0.9);border-radius:5%;font-weight:bold;font-size:22px;padding:10px;font-family:cursive;text-align:center;">
-					<c:out value="Record New Diagnostic Record Today ${currentDateTime}"/> <c:out value="${loggedInPatient.patientFirstName}"/> <c:out value="${loggedInPatient.patientLastName}"/>
+					<c:out value="Create New Follow Up Record Today ${currentDateTime} ${loggedInPatient.patientFirstName} ${loggedInPatient.patientLastName}"/>
 				</h1>
 			</a>
         </c:when>
 		<c:otherwise>
 			<a style="width: 100%; display:block; padding:0px;color:brown;text-decoration:none;" href="/mellowHealth/patientsPortal/patients/${loggedInPatient.id }">
 				<h1 style="color:azure;border-bottom:2px solid aliceblue;background:rgba(2.11, 24.5, 121, 0.9);border-radius:5%;font-weight:bold;font-size:22px;padding:10px;font-family:cursive;text-align:center;">
-					<c:out value="Record New Dianostic Record Today ${currentDateTime}"/> <c:out value="${oneSearchedPatientCase[0].patient.patientFirstName}"/> <c:out value="${oneSearchedPatientCase[0].patient.patientLastName}"/>
+					<c:out value="Create New Follow Up Record Today ${currentDateTime} ${oneSearchedPatientCase.patient.patientFirstName} ${oneSearchedPatientCase.patient.patientLastName}"/>
 				</h1>
 			</a>
 		</c:otherwise>
 	</c:choose>
 		
 			<div class ="btn btn-primary"  style="width:100%;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;text-align:center; background:rgba(1.33, 0.64, 30.60, 0.9);border-radius:7%;padding:5px;">
-				<form action="/mellowHealth/diagnosticRecords/editDiagnosticRecord/${diagnosticRecord.id}" class ="btn btn-primary"  style="width:100%;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;text-align:center; padding:5px;background:rgba(1.33, 0.64, 30.60, 0.9);border-radius:7%;">
+				<form action="/mellowHealth/followUpRecords/editFollowUpRecord/${followUpRecord.id}" class ="btn btn-primary"  style="width:100%;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;text-align:center; padding:5px;background:rgba(1.33, 0.64, 30.60, 0.9);border-radius:7%;">
 				    <label style="padding:5px 10px">Search Patient Name</label>
 					<input style="width: 40%;padding:5px;border-radius:7%;margin:0 5px" type="text" name="searchedPatientName"/>
 					<input style="width:25%;" class="btn btn-outline-primary" type="submit" value="Search Patient"/>
@@ -59,10 +59,10 @@
 		<div class="row">
 							            
 			<div class="col">
-				<form:form action="/mellowHealth/process/diagnosticRecords/editDiagnosticRecord/${diagnosticRecord.id}" method="PATCH" modelAttribute="diagnosticRecord">
+				<form:form action="/mellowHealth/process/followUpRecords/editFollowUpRecord/${followUpRecord.id }" method="PATCH" modelAttribute="followUpRecord">
 				<!-- Add this block to display global errors -->
 				<!--form:errors path="*" cssClass="text-danger"/!-->
-				
+			
 			    	<c:choose>
 				        <c:when test="${not empty searchedPatientCase}">
 							<div class="form-group" id="selectedPatientDiv" style="font-weight:bold; margin-top: 5px;">
@@ -96,7 +96,7 @@
 							<div class="form-group" id="selectedPatientDiv" style="font-weight:bold; margin-top: 5px;">
 						    	<label style="padding:10px 0">Registered Patient</label>			
 				                <form:select path="patient.id" class="form-control" style="cursor:pointer" id="patientSelect" onchange="updateSelectedPatient('patientSelect', 'patientName', 'selectedPatientDiv')">
-									<form:option value="${oneSearchedPatientCase[0].patient.id}" label="Patient Name: ${oneSearchedPatientCase[0].patient.patientFirstName} ${oneSearchedPatientCase[0].patient.patientLastName} Date Of Birth- ${oneSearchedPatientCase[0].patient.dateOfBirth}: ${searchedPatientAge} Yr Old ${oneSearchedPatientCase[0].patient.race} ${oneSearchedPatientCase[0].patient.gender}"/>
+									<form:option value="${oneSearchedPatientCase.patient.id}" label="Patient Name: ${oneSearchedPatientCase.patient.patientFirstName} ${oneSearchedPatientCase.patient.patientLastName} Date Of Birth- ${oneSearchedPatientCase.patient.dateOfBirth}: ${oneSearchedPatientAge} Yr Old ${oneSearchedPatientCase.patient.race} ${searchedPatientCase.patient.gender}"/>
 				                </form:select>
 				            </div>
 
@@ -105,90 +105,50 @@
 					     	<div class="form-group">
 						        <label style="padding:5px 0">Patient Case</label>
 				                <form:select path="patientCase.id" class="form-control" style="cursor:pointer" id="patientSelect">
-			                   		<form:option value="${oneSearchedPatientCase[0].id}" label="Chief Complaint: ${oneSearchedPatientCase[0].chiefComplaint} ${oneSearchedPatientCase[0].onset} Incident. Treating Physician: Dr. ${oneSearchedPatientCase[0].physician.firstName} ${oneSearchedPatientCase[0].physician.lastName}, ${oneSearchedPatientCaseCreatedAt} Visit"/>
+			                   		<form:option value="${oneSearchedPatientCase.id}" label="Chief Complaint: ${oneSearchedPatientCase.chiefComplaint} ${oneSearchedPatientCase.onset} Incident. Treating Physician: Dr. ${oneSearchedPatientCase.physician.firstName} ${oneSearchedPatientCase.physician.lastName}, ${oneSearchedPatientCaseCreatedAt} Visit"/>
 				                </form:select>
 				            </div>
 							<div class="form-group" id="selectedPatientDiv" style="font-weight:bold; margin-top: 5px;">
 						    	<label style="padding:10px 0">Treating Physician</label>					
 				                <form:select path="physician.id" class="form-control" style="cursor:pointer" id="patientSelect" onchange="updateSelectedPatient('patientSelect', 'patientName', 'selectedPatientDiv')">
-									<form:option value="${oneSearchedPatientCase[0].physician.id}" label="Treating Physician: Dr. ${oneSearchedPatientCase[0].physician.firstName} ${oneSearchedPatientCase[0].physician.lastName} Specialty- ${oneSearchedPatientCase[0].physician.certificationSpecialty}: ${oneSearchedPatientCase[0].physician.email}"/>
+									<form:option value="${oneSearchedPatientCase.physician.id}" label="Treating Physician: Dr. ${oneSearchedPatientCase.physician.firstName} ${oneSearchedPatientCase.physician.lastName} Specialty- ${oneSearchedPatientCase.physician.certificationSpecialty}: ${oneSearchedPatientCase.physician.email}"/>
 				                </form:select>
 				            </div>
 			            </c:otherwise>
 		           	</c:choose>
 					<div class="form-group">
-				        <label style="padding:5px 0">Historic Investigations</label>
+				        <label style="padding:5px 0">Current Diagnosis</label>
 					    <div class="form-group">
-				        	<form:errors path="historyFindings" class="text-danger" />
+				        	<form:errors path="currentDiagnosis" class="text-danger" />
 					    </div>
-				        <form:textarea path="historyFindings" class="form-control" placeholder="Please Enter Historic Findings!"></form:textarea>
+				        <form:input path="currentDiagnosis" class="form-control" placeholder="Please Enter Current Diagnosis!"/>
 				    </div>
 
 					<div class="form-group">
-				        <label style="padding:5px 0">Physical Exam Findings</label>
+				        <label style="padding:5px 0">Chief Complaint</label>
 					    <div class="form-group">
-				        	<form:errors path="physicalExamFindings" class="text-danger" />
+				        	<form:errors path="chiefComplaint" class="text-danger" />
 					    </div>
-				        <form:textarea path="physicalExamFindings" class="form-control" placeholder="Please Enter Physical Examination Reports!"></form:textarea>
+				        <form:textarea path="chiefComplaint" class="form-control" placeholder="Please Enter Chief Complaint!"/>
 				    </div>
 
 					<div class="form-group">
-				        <label style="padding:5px 0">Subjective Findings</label>
+				        <label style="padding:5px 0">Diagnostic Work Up</label>
 					    <div class="form-group">
-				        	<form:errors path="subjectiveSymptoms" class="text-danger" />
+				        	<form:errors path="diagnosticWorkUp" class="text-danger" />
 					    </div>
-				        <form:textarea path="subjectiveSymptoms" class="form-control" placeholder="Please Enter Subjective Reports!"></form:textarea>
+				        <form:textarea path="diagnosticWorkUp" class="form-control" placeholder="Please Enter Diagnostic Work Up!"/>
 				    </div>
 
 					<div class="form-group">
-				        <label style="padding:5px 0">Objective Findings</label>
+				        <label style="padding:5px 0">Recommended Procedure</label>
 					    <div class="form-group">
-				        	<form:errors path="objectiveFindings" class="text-danger" />
+				        	<form:errors path="recommendedProcedure" class="text-danger" />
 					    </div>
-				        <form:textarea path="objectiveFindings" class="form-control" placeholder="Please Enter Objective Observations!"></form:textarea>
+				        <form:textarea path="recommendedProcedure" class="form-control" placeholder="Please Enter Recommended Procedure!"/>
 				    </div>
-					
-					<div class="form-group">
-					    <label style="padding:5px 0">Diagnostic Plan</label>
-					    <div class="form-group">
-					        <form:errors path="diagnosticWorkUp" class="text-danger" />
-					    </div>
-					    <form:textarea path="diagnosticWorkUp" class="form-control" placeholder="Please Enter Diagnostic Work Up Plans For This Visit!"></form:textarea>
-					</div>
 
-					<div class="form-group">
-				        <label style="padding:5px 0">Differential Diagnosis</label>
-					    <div class="form-group">
-				        	<form:errors path="differentialDiagnosis" class="text-danger" />
-					    </div>
-				        <form:textarea path="differentialDiagnosis" class="form-control" placeholder="Please Enter Differential Diagnosis!"></form:textarea>
-				    </div>
-					
-					<div class="form-group">
-					    <label style="padding:5px 0">Treatment Plan</label>
-					    <div class="form-group">
-					        <form:errors path="treatmentPlan" class="text-danger" />
-					    </div>
-					    <form:textarea path="treatmentPlan" class="form-control" placeholder="Please Enter Treatment Plan For This Visit!"></form:textarea>
-					</div>
-					
-					<div class="form-group">
-					    <label style="padding:5px 0">Follow Up Plan</label>
-					    <div class="form-group">
-					        <form:errors path="followUpConsultation" class="text-danger" />
-					    </div>
-					    <form:textarea path="followUpConsultation" class="form-control" placeholder="Please Enter Any Follow Up Arrangement For This Visit!"></form:textarea>
-					</div>
-					
-					<div class="form-group">
-					    <label style="padding:5px 0">Patient Notes</label>
-					    <div class="form-group">
-					        <form:errors path="patientNote" class="text-danger" />
-					    </div>
-					    <form:textarea path="patientNote" class="form-control" placeholder="Please Enter Treatment Plan For This Visit!"></form:textarea>
-					</div>
-
-					<input type="submit" value="Edit Diagnostic Record Today ${currentDateTime}" class="btn btn-success" style="margin: 10px 0; width: 100%; padding: 10px;"/>
+					<input type="submit" value="Edit Follow Up Record Today ${currentDateTime}" class="btn btn-success" style="margin: 10px 0; width: 100%; padding: 10px;"/>
 				</form:form>
 				<h1 style="width:100%;"><a style=" margin:10px 0;width:100%;display:block; padding:10px" href="/mellowHealth/patientsPortal/patients/${loggedInPatient.id}" class="btn btn-warning">CANCEL!</a></h1>
 			</div>

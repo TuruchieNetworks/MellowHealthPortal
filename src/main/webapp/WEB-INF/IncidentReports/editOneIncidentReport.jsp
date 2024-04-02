@@ -1,7 +1,8 @@
- <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ page isErrorPage="true"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,7 +16,7 @@
 <script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <meta charset="ISO-8859-1">
-<title>MellowHealth Incidence Report Intake Form!</title>
+<title>Edit Incident Report!</title>
 </head>
 <body class="container-fluid p-8" style="
  	<c:choose>
@@ -37,27 +38,20 @@
 			</h1>
 		</a>
 			<div class ="btn btn-primary"  style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;text-align:center; background:rgba(1.33, 0.64, 30.60, 0.9);border-radius:7%;padding:5px;">
-				<form action="/mellowHealth/incidentReports/newIncidentReport" class ="btn btn-primary"  style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;text-align:center; padding:5px;background:rgba(1.33, 0.64, 30.60, 0.9);border-radius:7%;">
+				<form action="/mellowHealth/incidentReports/editIncidentReport/${incidentReport.id}" class ="btn btn-primary"  style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;text-align:center; padding:5px;background:rgba(1.33, 0.64, 30.60, 0.9);border-radius:7%;">
 				    <label style="padding:5px 10px">Search Patient Name</label>
 					<input style="padding:5px;border-radius:7%;margin:0 5px" type="text" name="searchedPatientName"/>
 					<input class="btn btn-outline-primary" type="submit" value="Search Patient"/>
 				</form>
-				<c:if test="${not empty searchedPatientCase}">
-					<p style="color:rgba(311, 31, 321, 0.9);">
-						<c:out value="${searchedPatientCase[0].patient.patientFirstName} ${searchedPatientCase[0].patient.patientLastName} Date Of Birth: ${searchedPatientCase[0].patient.dateOfBirth}"/>
-					</p>
-				</c:if>
+				<p style="color:rgba(311, 31, 321, 0.9);">${searchedPatientCase[0].patient.patientFirstName} ${searchedPatientCase[0].patient.patientLastName} Date Of Birth: ${searchedPatientCase[0].patient.dateOfBirth}</p>	
 			</div>
 		<div class="row">
 							            
 			<div class="col">
-				<form:form action="/mellowHealth/process/incidentReports/createNewIncident" method="POST" modelAttribute="incidentReport">
+				<form:form action="/mellowHealth/process/incidentReports/editIncidentReport/${incidentReport.id}" method="PATCH" modelAttribute="incidentReport">
 				<!-- Add this block to display global errors -->
 				<!--form:errors path="*" cssClass="text-danger"/! -->
 			       <div class="form-group">
-					    <div class="form-group">
-				        	<form:errors path="patient" class="text-danger" />
-					    </div>
 		                <label style="padding:10px 0">Select Registered Patients</label>
 		                <form:select path="patient.id" class="form-control" style="cursor:pointer" id="patientSelect" onchange="updateSelectedPatient('patientSelect', 'patientName', 'selectedPatientDiv')">
 		                    <c:choose>
@@ -72,14 +66,11 @@
 		            </div>
 
 			       <div class="form-group">
-					    <div class="form-group">
-				        	<form:errors path="patientCase" class="text-danger" />
-					    </div>
 		                <label style="padding:10px 0">Select Registered Patients</label>
 		                	<form:select path="patientCase.id" class="form-control" style="cursor:pointer" id="patientSelect" onchange="updateSelectedPatient('patientCaseSelect', 'patientName', 'selectedPatientDiv')">
 		                	<c:choose>
 		                        <c:when test="${searchedPatientCase != null && searchedPatientCase[0].patient.patientFirstName.length() > 1}">
-		                            <form:option value="${searchedPatientCase[0].id}" label="${searchedPatientCase[0].onset} Cheif Complaint: ${searchedPatientCase[0].chiefComplaint} ${oneSearchedPatientCaseCreatedAt} visit"/>
+		                            <form:option value="${searchedPatientCase[0].id}" label="${searchedPatientCase[0].onset} Cheif Complaint: ${searchedPatientCase[0].chiefComplaint} ${searchedPatientCaseCreatedAt} visit"/>
 		                        </c:when>
 		                        <c:otherwise>
 		                            <form:option value="${mostRecentPatientCase.id}" label="${mostRecentPatientCase.onset} Cheif Complaint: ${mostRecentPatientCase.chiefComplaint} ${mostRecentPatientCaseCreatedAt} Visit!"/>
@@ -93,7 +84,7 @@
 					    <div class="form-group">
 				        	<form:errors path="onset" class="text-danger" />
 					    </div>
-				        <form:input type="Date" value="${searchedOnset}" path="onset" class="form-control" placeholder="Please Enter Date Of Occurence!"/>
+				        <form:input type="Date" value="${incidenceOnset}" path="onset" class="form-control" placeholder="Please Enter Date Of Occurence!"/>
 				    </div>
 
 					<div class="form-group">
@@ -164,13 +155,16 @@
 				    </div>
 
 					<!-- Condition Status -->
+					
 					<div class="form-group">
 				        <label style="padding:5px 0 10px 0">Current Condition Status</label>
 					    <div class="form-group">
 				        	<form:errors path="conditionStatus" class="text-danger" />
 					    </div>
 						<form:select path="conditionStatus" class="form-control" style="cursor:pointer">
+
 					        <form:option value="">Please Select Condition Status</form:option>
+					    	<form:option value="${incidenceConditionStatus}" class="text-danger">${incidenceConditionStatus}</form:option>
 						    <c:forEach var="i" items="${painScale}">
 						        <c:choose>
 						            <c:when test="${i < 3}">
@@ -184,9 +178,10 @@
 						            </c:when>
 						        </c:choose>
 						    </c:forEach>
+						 				            
 						</form:select>
 					</div>
-				    <input type="submit" value="Create New Incident Report Today ${currentDateTime} " class="btn btn-outline-success" style="margin: 10px 0; width: 100%; padding: 10px;"/>
+				    <input type="submit" value="Edit New Incident Report Today ${currentDateTime} " class="btn btn-outline-success" style="margin: 10px 0; width: 100%; padding: 10px;"/>
 				</form:form>
 				<h1 style="width:100%;">
 					<a style=" margin:10px 0;width:100%;display:block; padding:10px" href="/mellowHealth/patientsPortal/patients/${loggedInPatient.id}" class="btn btn-outline-warning">
@@ -198,4 +193,4 @@
 	</div>
 	
 </body>
-</html> 
+</html>

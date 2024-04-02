@@ -126,11 +126,12 @@ public class CurrentMedicationsController {
 	    	searchUtil.searchPatientCaseByCharacter(model, trimmedSearchTerm);
 	        diagnosticUtil.searchCurrentMedicationByCharacter(model, trimmedSearchTerm);
 	        diagnosticUtil.searchSingleCurrentMedicationByCharacter(model, trimmedSearchTerm);
+	        model.addAttribute("searchedPatientCase", searchUtil.returnFirstPatientCaseByCharacter(trimmedSearchTerm));
 	        model.addAttribute("allPatientCasesWithFilter", searchUtil.returnSearchPatientCaseByCharacter(trimmedSearchTerm));
 	    } else {
 	        // If the search bar is empty, do not display physical oneCurrentMedicationHistory. one of the JSP is looping over filtered patient case cases
-	        //model.addAttribute("allCurrentMedicationsWithFilter", Collections.emptyList());
-	        //model.addAttribute("allPatientCasesWithFilter", Collections.emptyList());
+	        model.addAttribute("allCurrentMedicationsWithFilter", Collections.emptyList());
+	        model.addAttribute("allPatientCasesWithFilter", Collections.emptyList());
 	    }
 
 	    patientUtil.setPatientAttributes(model);

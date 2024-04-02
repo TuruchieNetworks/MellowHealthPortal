@@ -1,188 +1,177 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ page isErrorPage="true"%>
 <!DOCTYPE html>
 <html>
 <head>
 <!-- for Bootstrap CSS -->
-<link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css" />
 <!-- YOUR own local CSS -->
-<link rel="stylesheet" href="/css/main.css"/>
+<link rel="stylesheet" href="/css/styles.css"/>
+<!-- Local JavaScript section -->
+<script src="<c:url value='/scripts.js'/>"></script>
 <!-- For any Bootstrap that uses JS -->
 <script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <meta charset="ISO-8859-1">
-<title>Mellow Health Physicians Dashboard!</title>
+<title>Add Patients Vitals!</title>
 </head>
 <body class="container-fluid p-8" style="
- 		                <c:choose>
-	                    <c:when test="${loggedInInstructor.courses.size() <= 2 }">
-			                color: khaki;background:aqua;background: rgba(1.3, 290.64, 360, 0.9);
-	                    </c:when>
-	                    <c:when test="${loggedInInstructor.courses.size() % 2 == 1}">
-			                color:pink; background: rgba(62.13, 110.123, 380.160, 0.9);
-	                    </c:when>
-	                    <c:otherwise>
-	                        color: rgb(211, 180, 255);background:rgba(110.2, 100.4, 336.6, 0.9);
-	                    </c:otherwise>
-	               		</c:choose>font-family:cursive;">
-	<h1 style="text-align:center;border-bottom: 2px solid chocolate;color: brown; font-family:fantasy;background:rgba(10.2, 3.3, 3.6, 0.9);margin-top:5px;border-radius:5%;"> <a href="/instructors/classes/${loggedInInstructor.id}" style=" margin: 0 15px 0 0; display:block; padding: 10px;color: khaki;text-decoration:none;">Welcome To Your Physician Dashboard<c:out value=" Dr. ${loggedInInstructor.name}"/>!</a></h1>
-	<table class="table table-dark" style="text-align:center;border-radius:5%;">
-		  <thead>
-		    <tr>
-		      <th scope="col">Id</th>
-		      <th scope="col">Chief Complaint</th>
-		      <th scope="col">Physician</th>
-		      <th scope="col">Schedule</th>
-		      <th scope="col">Actions</th>
-		  </thead>
-		<tbody>
-		    <c:forEach items="${allInstructors}" var="instructor">
-		        <c:forEach items="${instructor.courses}" var="course">
-		            <tr style="text-decoration:none; color:aqua"class="table-dark">
-		                <td><c:out value="${course.instructor.id}" /></td>
-		                <td><a href="/courses/${course.id }"style="text-decoration:none; color:aqua"><c:out value="${course.courseName}"/></a></td>
-		                <td ><a href="/instructors/classes/${course.instructor.id }"style="text-decoration:none; color:silk"><c:out value="Dr. ${instructor.name}"/></a></td>
-		                <td><a href="/instructors/classes/${course.instructor.id }"style="text-decoration:none; 
-		                <c:choose>
-	                    <c:when test="${course.programDate == 'Saturday' || course.programDate == 'Sunday'}">
-			                color: khaki;
-	                    </c:when>
-	                    <c:when test="${course.programDate == 'Monday' || course.programDate == 'Tuesday'}">
-			                color:pink;
-	                    </c:when>
-	                    <c:otherwise>
-	                        color: rgb(211, 180, 255); color;
-	                    </c:otherwise>
-	               		</c:choose>
-	               		"><c:out value="${course.programDate}"/></a></td>
-		           		<c:choose>
-						<c:when test="${course.instructor.id == loggedInInstructor.id}">
-				        <td style=" 	
-		        		<c:choose>
-			            <c:when test="${course.programDate == 'Saturday' || course.programDate == 'Sunday'}">
-					         color: rgb(412, 580, 515);background: rgba(13, 64, 60, 0.9); 
-			            </c:when>
-			            <c:when test="${course.programDate == 'Monday' || course.programDate == 'Tuesday'}">
-					         color: rgb(412, 580, 515); background: rgba(13, 114, 160, 0.9); 
-			            </c:when>
-			            <c:when test="${course.programDate == 'Thursday' || course.programDate == 'Friday'}">
-					     	 color: rgb(412, 580, 515); background: rgba(133, 64, 60, 0.9); 
-			             </c:when>
-			             <c:otherwise>
-			                  color: rgb(21, 180, 255); color:pink;background: rgba(133, 64, 60, 0.9);
-			             </c:otherwise>
-			             </c:choose>
-			             " class="d-flex justify-content-around">
-							<form action="/courses/edit/${course.id}" method="get" style="margin:0 10px 0 0; ">
-							    <input type="hidden" name="_method" value="edit">
-							    <input class ="btn btn-warning" type="submit" value="Edit Case" style=" margin:10px 0; width: 100%; display:block; padding: 10px" >
-							</form>
-							<form action="/courses/delete/${course.id}" method="post">
-							    <input type="hidden" name="_method" value="delete">
-								<input class ="btn btn-danger" type="submit" value="Delete Case" style=" margin:10px 0; width: 100%; display:block; padding: 10px">
-							</form>
-						</td>
-		 				</c:when>
-						<c:otherwise>
-						  <td class="table-dark d-flex justify-content-around"><a href="/courses/${course.id }"style="text-decoration:none; 
-						<c:choose>
-	                    <c:when test="${course.programDate == 'Saturday' || course.programDate == 'Sunday'}">
-			                color: rgb(412, 580, 515);  background: rgba(17, 64, 130, 0.9); 
-	                    </c:when>
-	                    <c:when test="${course.programDate == 'Monday' || course.programDate == 'Tuesday'}">
-			                color: rgb(412, 580, 515);  background: rgba(17, 64, 130, 0.9); 
-	                    </c:when>
-	                    <c:when test="${course.programDate == 'Thursday' || course.programDate == 'Friday'}">
-			                color: rgb(412, 580, 515);  background: rgba(17, 104, 130, 0.9); 
-	                    </c:when>
-	                    <c:otherwise>
-	                        color: rgb(21, 180, 255); color:pink;background: rgba(133, 64, 60, 0.9); 
-	                    </c:otherwise>
-	               		</c:choose>
-	               			padding:15px; border-radius:5%; width:100%; height:100%;"
-	               		<c:choose>
-	                    <c:when test="${course.programDate == 'Saturday' || course.programDate == 'Sunday'}">
-			            	class= "btn btn-warning"
-	                    </c:when>
-	                    <c:when test="${course.programDate == 'Monday' || course.programDate == 'Tuesday'}">
-			            	class= "btn btn-primary"
-	                    </c:when>
-	                    <c:when test="${course.programDate == 'Thursday' || course.programDate == 'Friday'}">
-			            	class= "btn btn-danger"
-	                    </c:when>
-	                    <c:otherwise>
-	                    	class= "btn btn-primary"  
-	                    </c:otherwise>
-	               		</c:choose>	
-	               			><c:out value="${course.description}: ${course.programDate}s - ${course.courseTime }"/></a></td>
-						</c:otherwise>
-            			</c:choose>
-		            </tr>
-		        </c:forEach>
-		    </c:forEach>
-		</tbody>
-		</table>
-	<div class="form-group"style="
- 		                <c:choose>
-	                    <c:when test="${loggedInInstructor.courses.size() <= 2 }">
-			                color: khaki;background:aqua;background: rgba(13, 0.64, 60, 0.9);
-	                    </c:when>
-	                    <c:when test="${loggedInInstructor.courses.size() % 2 == 1}">
-			                color:pink; background: rgba(13, 0.123, 0.160, 0.9);
-	                    </c:when>
-	                    <c:otherwise>
-	                        color: rgb(211, 180, 255);background: rgba(5.2, 11.4, 11.6, 0.9);
-	                    </c:otherwise>
-	               		</c:choose>
-	               		display:flex; justify-content:space-between; padding:15px;border-radius:5%;">
-		<h1 style=" margin: 10px 15px 0 0; width: 100%"><a href="/courses/new" class="btn btn-success" style=" margin: 0 15px 0 0; width: 100%; display:block; padding: 10px;background: rgba(2, 10.13, 0.160, 0.9);">Add New Visit!</a></h1>
-		<h1 style=" margin: 10px 15px 0 0; width: 100%"><a href="/instructors/classes/${loggedInInstructor.id}" class="btn btn-primary" style=" margin: 0 15px 0 0; width: 100%; display:block; padding: 10px;">${loggedInInstructor.name }'s Cases!</a></h1>
-		<h1 style=" margin: 10px 15px 0 0; width: 100%"><a href="/instructors/logout" class="btn btn-warning" style="width: 100%; display:block; padding: 10px">LOGOUT HERE!</a></h1>
-		<form action="/courses" method="get">
-			<input type="submit" value="View Admitted Patients!" class="btn btn-primary"style="margin: 10px 0; width:100%; padding: 10px;background:rgba(10.1, 110.3, 10, 0.9)"/>
-		</form>
-	</div>	
-	<div class="form-group"style="
-	    		<c:choose>
-	            <c:when test="${loggedInInstructor.courses.size() <= 2 }">
-			     	 color: rgb(412, 580, 515); background: rgba(10.531, 10.64, 0.36, 0.9);
-	            </c:when>
-	            <c:when test="${loggedInInstructor.courses.size() % 2 == 1}">
-			     	 color: rgb(412, 580, 515); background: rgba(10.531, 10.64, 3.6, 0.9); 
-	            </c:when>
-	            <c:when test="${loggedInInstructor.courses.size() % 2 == 0}">
-			     	 color: rgb(412, 580, 515); background: rgba(10.531, 10.64, 36, 0.9); 
-	            </c:when>
-	            <c:otherwise>
-			     	 color: rgb(412, 580, 515); background: rgba(10.531, 10.64, 0.36, 0.9); 
-	             </c:otherwise>
-	             </c:choose>
-	             display:flex; justify-content:space-between;align-items:center; border-radius:5%;padding:10px;margin:10px 0;">
+ 	<c:choose>
+	     <c:when test="${loggedInPatient.patientCases.size() <= 2 }">
+			 color: khaki;background:aqua;background: rgba(1.3, 0.64, 10, 0.9);
+	     </c:when>
+	     <c:when test="${loggedInPatient.patientCases.size() % 2 == 1}">
+			 color:pink; background: rgba(62.13, 110.123, 380.160, 0.9);
+	     </c:when>
+	     <c:otherwise>
+	         color: rgb(211, 180, 255);background:rgba(0.2, 0.4, 27.6, 0.9);
+	     </c:otherwise>
+	</c:choose>font-family:cursive;">
+	<h1 style="color:azure;border-bottosm: 2px solid aliceblue;font-weight:bold;font-size:32px;background:chocolate;padding:10px;font-family:cursive;text-align:center;">WELCOME TO MELLOW HEALTH!</h1>
+	<div class="container-fluid p-6" style=" text-align:center;">
+		<a style="width: 100%; display:block; padding:0px;color:brown;text-decoration:none;" href="/mellowHealth/patientsPortal/patients/${loggedInPatient.id }">
+			<h1 style="color:azure;border-bottom:2px solid aliceblue;background:rgba(2.11, 24.5, 121, 0.9);border-radius:5%;font-weight:bold;font-size:22px;padding:10px;font-family:cursive;text-align:center;">
+				<c:out value="Register Your Vital Signs Today ${currentDateTime}"/> <c:out value="${loggedInPatient.patientFirstName}"/> <c:out value="${loggedInPatient.patientLastName}!"/>
+			</h1>
+		</a>
+			<div class ="btn btn-primary"  style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;text-align:center; background:rgba(1.33, 0.64, 30.60, 0.9);border-radius:7%;padding:5px;">
+				<form action="/mellowHealth/patientVitalRecords/editPatientVitalRecord/${patientVitalRecord.id}" class ="btn btn-primary"  style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;text-align:center; padding:5px;background:rgba(1.33, 0.64, 30.60, 0.9);border-radius:7%;">
+				    <label style="padding:5px 10px">Search Patient Name</label>
+					<input style="padding:5px;border-radius:7%;margin:0 5px" type="text" name="searchedPatientName"/>
+					<input class="btn btn-outline-primary" type="submit" value="Search Patient"/>
+				</form>
+				<p style="color:rgba(311, 31, 321, 0.9);">${matchedPatientFullName.patientFirstName} ${matchedPatientFullName.patientLastName} Date Of Birth: ${matchedPatientFullName.dateOfBirth}</p>	
+			</div>
+		<div class="row">
+							            
+			<div class="col">
+				<form:form action="/mellowHealth/process/patientVitalRecords/editPatientVitalRecord/${patientVitalRecord.id}" method="PATCH" modelAttribute="patientVitalRecord">
+				<!-- Add this block to display global errors -->
+				<!--form:errors path="*" cssClass="text-danger"/!-->
+			       <div class="form-group">
+		                <label style="padding:10px 0">Select Registered Patients</label>
+		                <form:select path="patient.id" class="form-control" style="cursor:pointer" id="patientSelect" onchange="updateSelectedPatient('patientSelect', 'patientName', 'selectedPatientDiv')">
+		                    <c:choose>
+		                        <c:when test="${searchedPatientCase != null && searchedPatientCase[0].patient.patientFirstName.length() > 1}">
+		                            <form:option value="${searchedPatientCase[0].patient.id}" label="Searched Mellow Patient: ${searchedPatientCase[0].patient.patientFirstName} ${searchedPatientCase[0].patient.patientLastName} Date Of Birth: ${searchedPatientCase[0].patient.dateOfBirth} ${searchedPatientAge} yr Old ${searchedPatientCase[0].patient.race}: ${searchedPatientCase[0].patient.gender} Contact Details: ${searchedPatientCase[0].patient.patientAddresses[0].phoneNumber} ${searchedPatientCase[0].patientVitalRecords.size()} Patient Vital Records Today, ${currentDateTime}"/>
+		                        </c:when>
+		                        <c:otherwise>
+		                            <form:option value="${mostRecentPatientCase.patient.id}" label="${mostRecentPatientCase.patient.patientFirstName} ${mostRecentPatientCase.patient.patientLastName} Date Of Birth: ${mostRecentPatientCase.patient.dateOfBirth} ${searchedPatientAge} yr Old ${mostRecentPatientCase.patient.race}: ${mostRecentPatientCase.patient.gender} Contact Details: ${mostRecentPatientCase.patient.patientAddresses[0].phoneNumber} ${mostRecentPatientCase.patientVitalRecords.size()} Patient Vital Records Today, ${currentDateTime}"/>
+		                        </c:otherwise>
+		                    </c:choose>
+		                </form:select>
+		            </div>
 
-	 	<h1 style="width: 100%"><a style=" margin:10px 15px 0 0 ; width: 100%; display:block; padding: 12px;background: rgba(13, 0.123, 0.160, 0.9);"  href="/courses" class="btn btn-success">VIEW HOSPITAL CASES!</a></h1>
-	 	<h1 style=" margin: 10px 15px; width: 100%"><a href="/courses/new" class="btn btn-warning"style=" margin: 0 0 0 0px; width: 100%; display:block; padding: 10px;font-weight:bold;">ADD NEW VISIT!</a></h1>
-		<h1 style="background:rgba(10.1, 110.3, 10, 0.9);margin: 10px 0; width: 100%"><a href="/courses" class="btn btn-primary" style=" margin: 10px 10px 10 0; width: 100%; display:block; padding: 10px;">View Dr. ${loggedInInstructor.name}'s Profile!</a></h1>
+			       <div class="form-group">
+		                <label style="padding:10px 0">Select Registered Patients</label>
+		                	<form:select path="physician.id" class="form-control" style="cursor:pointer" id="patientSelect" onchange="updateSelectedPatient('patientCaseSelect', 'patientName', 'selectedPatientDiv')">
+		                	<c:choose>
+		                        <c:when test="${searchedMostRecentPatientCase != null && searchedMostRecentPatientCase.patient.patientFirstName.length() > 1}">
+		                            <form:option value="${searchedMostRecentPatientCase.physician.id}" label="Treating Physician: Dr ${searchedMostRecentPatientCase.physician.firstName} ${searchedMostRecentPatientCase.physician.lastName} Contact Details: ${searchedMostRecentPatientCase.physician.email} Specialty: ${mostRecentPatientCase.physician.certificationSpecialty}"/>
+		                        </c:when>
+		                        <c:otherwise>
+		                            <form:option value="${mostRecentPatientCase.physician.id}" label="Treating Physician: Dr ${mostRecentPatientCase.physician.firstName} ${mostRecentPatientCase.physician.lastName} Contact Details: ${mostRecentPatientCase.physician.email} Specialty: ${mostRecentPatientCase.physician.certificationSpecialty}"/>
+		                       </c:otherwise>
+		                    </c:choose>
+		                </form:select>
+		            </div>
+
+	       			<div class="form-group">
+					    <div class="form-group">
+				        	<form:errors path="patientCase" class="text-danger" />
+					    </div>
+		                <label style="padding:10px 0">Select Registered Patients</label>
+		                	<form:select path="patientCase.id" class="form-control" style="cursor:pointer" id="patientSelect" onchange="updateSelectedPatient('patientCaseSelect', 'patientName', 'selectedPatientDiv')">
+		                	<c:choose>
+		                        <c:when test="${searchedPatientCase != null && searchedPatientCase[0].patient.patientFirstName.length() > 1}">
+		                            <form:option value="${searchedPatientCase[0].id}" label="${searchedPatientCase[0].onset} Cheif Complaint: ${searchedPatientCase[0].chiefComplaint} ${oneSearchedPatientCaseCreatedAt} visit"/>
+		                        </c:when>
+		                        <c:otherwise>
+		                            <form:option value="${mostRecentPatientCase.id}" label="${mostRecentPatientCase.onset} Cheif Complaint: ${mostRecentPatientCase.chiefComplaint} ${mostRecentPatientCaseCreatedAt} Visit!"/>
+		                       </c:otherwise>
+		                    </c:choose>
+		                </form:select>
+		            </div>
+
+
+					<div class="form-group">
+					    <label style="padding:5px 0 10px 0">Systolic Blood Pressure</label>
+					    <div class="form-group">
+					        <form:errors path="systolicBloodPressure" class="text-danger" />
+					    </div>
+					    <div class="form-group" id="selectedPatientDiv" style="font-weight:bold; margin-top: 5px;"></div>
+					    <form:input type="number" path="systolicBloodPressure" class="form-control" placeholder="Please Enter Systolic BloodPressure Value!" style="width:100%; padding:8px; border-radius:5%;" />
+					</div>
+
+					<div class="form-group">
+					    <label style="padding:5px 0 10px 0">Diastolic Blood Pressure</label>
+					    <div class="form-group">
+					        <form:errors path="diastolicBloodPressure" class="text-danger" />
+					    </div>
+					    <div class="form-group" id="selectedPatientDiv" style="font-weight:bold; margin-top: 5px;"></div>
+					    <form:input type="number" path="diastolicBloodPressure" class="form-control" placeholder="Please Enter Systolic BloodPressure Value!" style="width:100%; padding:8px; border-radius:5%;" />
+					</div>
+
+				    <div class="form-group">
+				        <label style="padding:5px 0 10px 0">Heart Rate</label>
+					    <div class="form-group">
+				        	<form:errors path="heartRate" class="text-danger" />
+					    </div>
+				        <form:input type="number" path="heartRate" class="form-control" placeholder="Please Enter Measured Heart Rate!"/>
+				    </div>
+
+					<div class="form-group">
+				        <label style="padding:5px 0 10px 0">Respiratory Rate</label>
+					    <div class="form-group">
+				        	<form:errors path="respiratoryRate" class="text-danger" />
+					    </div>
+				        <form:input type="number" path="respiratoryRate" class="form-control" placeholder="Please Enter Measured Respiratory Rate!"/>
+				    </div>
+
+					<div class="form-group">
+				        <label style="padding:5px 0 10px 0">Pulse Rate</label>
+					    <div class="form-group">
+				        	<form:errors path="pulseRate" class="text-danger" />
+					    </div>
+				        <form:input type="number" path="pulseRate" class="form-control" placeholder="Please Enter Measured Pulse Rate!"/>
+				    </div>
+
+					<div class="form-group">
+				        <label style="padding:5px 0 10px 0">Body Temperature In Fahrenheit</label>
+					    <div class="form-group">
+				        	<form:errors path="bodyTemperature" class="text-danger" />
+					    </div>
+				        <form:input type="number" path="bodyTemperature" class="form-control" placeholder="Please Enter Measured Pulse Rate!"/>
+				    </div>
+
+					<div class="form-group">
+				        <label style="padding:5px 0 10px 0">Height in cm</label>
+					    <div class="form-group">
+				        	<form:errors path="height" class="text-danger" />
+					    </div>
+				        <form:input type="number" path="height" class="form-control" placeholder="Please Enter Height!"/>
+				    </div>
+
+					<div class="form-group">
+				        <label style="padding:5px 0 10px 0">Weight</label>
+					    <div class="form-group">
+				        	<form:errors path="weight" class="text-danger" />
+					    </div>
+				        <form:input type="number" path="weight" class="form-control" placeholder="Please Enter Measured Body Weight!"/>
+				    </div>
+				    <input type="submit" value="Edit Patient Vital Record Today ${currentDateTime} " class="btn btn-outline-success" style="margin: 10px 0; width: 100%; padding: 10px;"/>
+				</form:form>
+				<h1 style="width:100%;">
+					<a style=" margin:10px 0;width:100%;display:block; padding:10px" href="/mellowHealth/patientsPortal/patients/${loggedInPatient.id}" class="btn btn-outline-warning">
+						<c:out value="CANCEL!"/>
+					</a>
+				</h1>
+			</div>
+		</div>
 	</div>
-	<div class="form-group"style="
-	    		<c:choose>
-	            <c:when test="${loggedInInstructor.courses.size() <= 2 }">
-			     	 color: rgb(412, 580, 515); background: rgba(10.531, 10.64, 0.36, 0.9);
-	            </c:when>
-	            <c:when test="${loggedInInstructor.courses.size() % 2 == 1}">
-			     	 color: rgb(412, 580, 515); background: rgba(10.531, 10.64, 3.6, 0.9); 
-	            </c:when>
-	            <c:when test="${loggedInInstructor.courses.size() % 2 == 0}">
-			     	 color: rgb(412, 580, 515); background: rgba(10.531, 10.64, 3.6, 0.9); 
-	            </c:when>
-	            <c:otherwise>
-	                  color: rgb(21, 180, 255);background: rgba(7, 100, 8, 0.9);
-	             </c:otherwise>
-	             </c:choose>
-	             display:flex; justify-content:space-between;align-items:center; border-radius:5%;padding:10px;margin:10px 0;">
-			 	<h1 style=" margin: 10px 15px 0 0; width: 100%"><a href="/instructors/logout" class="btn btn-danger" style=" margin: 0 15px 0 0; width: 100%; display:block; padding: 10px">LOGOUT HERE!</a></h1>
-		 		<h1 style="width:100%"><a style="background:rgba(68, 8, 120, 0.9);margin:16px 0 0 0;width:100%; display:block; padding: 10px" href="/instructors/classes/${loggedInInstructor.id }" class="btn btn-success">Access ${loggedInInstructor.name }'s Yoga Program!</a></h1>
-		</div>	
+	
 </body>
 </html>

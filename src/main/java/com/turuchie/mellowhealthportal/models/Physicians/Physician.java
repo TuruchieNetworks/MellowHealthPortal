@@ -8,12 +8,12 @@ import com.turuchie.mellowhealthportal.models.ClinicalOperations.CoagulationReco
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.CurrentMedication;
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.DoseRegimen;
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.PatientCase;
-import com.turuchie.mellowhealthportal.models.ClinicalOperations.PatientVisitEvaluation;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.AbdominalAssessment;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.DiagnosticRecord;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.FollowUpRecord;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.NauseaVomitAssessment;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PainAssessment;
+import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PatientVisitEvaluation;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PediatricFeverAssessment;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PediatricGIAssessment;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PhysicalAssessment;

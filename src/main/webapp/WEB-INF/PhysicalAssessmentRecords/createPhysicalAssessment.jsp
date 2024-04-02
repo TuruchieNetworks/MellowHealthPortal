@@ -114,8 +114,10 @@
 		
 					     	<div class="form-group">
 						        <label style="padding:5px 0">Patient Case</label>
-				                <form:select path="patientCase.id" class="form-control" style="cursor:pointer" id="patientSelect">
-			                   		<form:option value="${searchedPatientCase[0].id}" label="Chief Complaint: ${searchedPatientCase[0].chiefComplaint} ${searchedPatientCase[0].onset} Incident. Treating Physician: Dr. ${searchedPatientCase[0].physician.firstName} ${searchedPatientCase[0].physician.lastName}, ${searchedPatientCaseCreatedAt} Visit"/>
+				                	<form:select path="patientCase.id" class="form-control" style="cursor:pointer" id="patientSelect">
+				                	<c:forEach items="${allPatientCasesWithFilter}" var="matchedPatientCase"> 
+			                   			<form:option value="${matchedPatientCase.id}" label="Chief Complaint: ${matchedPatientCase.chiefComplaint} ${matchedPatientCase.onset} Incident. Treating Physician: Dr. ${matchedPatientCase.physician.firstName} ${matchedPatientCase.physician.lastName}, ${searchedPatientCaseCreatedAt} Visit"/>
+			                   		</c:forEach>
 				                </form:select>
 				            </div>
 			            </c:otherwise>

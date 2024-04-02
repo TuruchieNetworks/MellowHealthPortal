@@ -10,6 +10,7 @@ import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.AbdominalAsse
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.DiagnosticRecord;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.FollowUpRecord;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PainAssessment;
+import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PatientVisitEvaluation;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PediatricFeverAssessment;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PediatricGIAssessment;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PhysicalAssessment;

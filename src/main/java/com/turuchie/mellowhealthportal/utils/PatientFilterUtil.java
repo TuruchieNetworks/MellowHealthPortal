@@ -1,5 +1,7 @@
 package com.turuchie.mellowhealthportal.utils;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -17,8 +19,10 @@ import com.turuchie.mellowhealthportal.models.ClinicalOperations.DoseRegimen;
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.PatientCase;
 import com.turuchie.mellowhealthportal.models.ClinicalOperations.PatientVitalRecord;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.DiagnosticRecord;
+import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.FollowUpRecord;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PainAssessment;
 import com.turuchie.mellowhealthportal.models.DiagnosticProcedures.PhysicalAssessment;
+import com.turuchie.mellowhealthportal.models.PatientOperations.AdverseEffect;
 import com.turuchie.mellowhealthportal.models.PatientOperations.IncidentReport;
 import com.turuchie.mellowhealthportal.models.PatientOperations.InsuranceInformation;
 import com.turuchie.mellowhealthportal.models.PatientOperations.PastMedicalHistory;
@@ -35,17 +39,19 @@ public class PatientFilterUtil {
 
 	// Sort All Attributes
     public void sortAllByStartDate(Model model, Long patientId) {
-    	sortMostRecentPastMedicalRecord(model, patientId);
-        sortMostRecentPatientCaseByStartDate(model, patientId);
-        sortMostRecentIncidentReportByStartDate(model, patientId);
-        setMostRecentInsuranceReportProperty(model, patientId);
-        sortMostRecentDoseRegimenByStartDate(model, patientId);
-        sortMostRecentCurrentMedication(model, patientId);
+        sortMostRecentAdverseEffect(model, patientId);
+        sortMostRecentFollowUpRecord(model, patientId);
         sortMostRecentPainAssessment(model, patientId);
+        sortMostRecentCurrentMedication(model, patientId);
+    	sortMostRecentPastMedicalRecord(model, patientId);
         sortMostRecentPhysicalAssessment(model, patientId);
         addPhysicalAssessmentInfoToModel(model, patientId);
+        setMostRecentInsuranceReportProperty(model, patientId);
+        sortMostRecentDoseRegimenByStartDate(model, patientId);
+        sortMostRecentPatientCaseByStartDate(model, patientId);
         setMostRecentDiagnosticReportProperty(model, patientId);
         sortMostRecentPainAssessmentByStartDate(model, patientId);
+        sortMostRecentIncidentReportByStartDate(model, patientId);
         sortMostRecentCurrentMedicationByStartDate(model, patientId);
         sortMostRecentPhysicalAssessmentByStartDate(model, patientId);
         sortMostRecentPatientVitalRecordByStartDate(model, patientId);
@@ -65,8 +71,35 @@ public class PatientFilterUtil {
 
         // Get the most recent past medical record (if any)
         PastMedicalHistory mostRecentPastMedicalRecord = pastMedicalRecords.isEmpty() ? null : pastMedicalRecords.get(0);
+        // Add model attributes related to the most recent PastMedicalRecord Record
+        if (mostRecentPastMedicalRecord != null) {
+            LocalDate createdAt = mostRecentPastMedicalRecord.getCreatedAt();
+            LocalDate onsetOfPastMedicalRecord = mostRecentPastMedicalRecord.getStartDate();
 
-        model.addAttribute("mostRecentPastMedicalRecord", mostRecentPastMedicalRecord);
+            long accountLengthDays = calculateDaysLocalDateDifference(createdAt, LocalDate.now());
+            long accountLengthYears = calculateLocalDateDifference(createdAt, LocalDate.now());
+            long accountLengthMonths = calculateMonthsLocalDateDifference(createdAt, LocalDate.now());
+
+            long accountYearsHistory = calculateLocalDateDifference(onsetOfPastMedicalRecord, LocalDate.now());
+            long accountDaysHistory = calculateDaysLocalDateDifference(onsetOfPastMedicalRecord, LocalDate.now());
+            long accountMonthsHistory = calculateMonthsLocalDateDifference(onsetOfPastMedicalRecord, LocalDate.now());
+
+            String dayFormattedCreatedAt = createdAt.format(DateTimeFormatter.ofPattern("EEE, yyyy"));
+            String formattedCreatedAt = createdAt.format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy"));
+
+            model.addAttribute("mostRecentPastMedicalRecordDaysHistory", accountDaysHistory);
+            model.addAttribute("mostRecentPastMedicalRecordYearsHistory", accountYearsHistory);
+            model.addAttribute("mostRecentPastMedicalRecordMonthsHistory", accountMonthsHistory);
+
+            model.addAttribute("mostRecentPastMedicalRecordAccountDaysHistory", accountLengthDays);
+            model.addAttribute("mostRecentPastMedicalRecordAccountMonthsHistory", accountLengthMonths);
+            model.addAttribute("mostRecentPastMedicalRecordAccountYearsHistory", accountLengthYears);
+
+            model.addAttribute("mostRecentPastMedicalRecord", mostRecentPastMedicalRecord);
+            model.addAttribute("mostRecentPastMedicalRecordCreatedAt", formattedCreatedAt);
+            model.addAttribute("mostRecentPastMedicalRecordDaysCreatedAt", dayFormattedCreatedAt);
+        }
+
         return mostRecentPastMedicalRecord;
     }
 
@@ -88,17 +121,111 @@ public class PatientFilterUtil {
         return mostRecentAssessmentRecords;
     }
 
-    
- // Calculate Assessment History and create a list for patients' physical assessments
-    public long calculateTotalLengthOfPhysicalAssessments(List<PhysicalAssessment> physicalAssessmentList) {
-        long totalLength = 0;
+    // Helper method to sort past medical history by start date and populate model attributes
+    public FollowUpRecord sortMostRecentFollowUpRecord(Model model, Long patientId) {
+        // Fetch the logged-in patient
+        Patient loggedInPatient = patientServ.getOne(patientId);
 
-        for (PhysicalAssessment assessmentHistory : physicalAssessmentList) {
-            int lengthOfAssessmentRecord = calculateDaysLocalDateDifference(assessmentHistory.getCreatedAt(), LocalDate.now());
-            totalLength += lengthOfAssessmentRecord;
+        // Get the follow-up records for the logged-in patient
+        List<FollowUpRecord> followUpRecords = loggedInPatient.getFollowUpRecords();
+
+        // Sort the follow-up records by start date in descending order
+        followUpRecords.sort(Comparator.comparing(FollowUpRecord::getCreatedAt).reversed());
+
+        // Get the most recent FollowUp Record (if any)
+        FollowUpRecord mostRecentFollowUpRecord = followUpRecords.isEmpty() ? null : followUpRecords.get(0);
+
+        // Add model attributes related to the most recent FollowUp Record
+        if (mostRecentFollowUpRecord != null) {
+            LocalDate createdAt = mostRecentFollowUpRecord.getCreatedAt();
+            long accountLengthDays = calculateDaysLocalDateDifference(createdAt, LocalDate.now());
+            long accountLengthYears = calculateLocalDateDifference(createdAt, LocalDate.now());
+            long accountLengthMonths = calculateMonthsLocalDateDifference(createdAt, LocalDate.now());
+
+            String dayFormattedCreatedAt = createdAt.format(DateTimeFormatter.ofPattern("EEE, yyyy"));
+            String formattedCreatedAt = createdAt.format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy"));
+
+            model.addAttribute("mostRecentFollowUpCreatedAt", formattedCreatedAt);
+            model.addAttribute("mostRecentFollowUpDaysCreatedAt", dayFormattedCreatedAt);
+            model.addAttribute("mostRecentFollowUpAccountDaysHistory", accountLengthDays);
+            model.addAttribute("mostRecentFollowUpAccountMonthsHistory", accountLengthMonths);
+            model.addAttribute("mostRecentFollowUpAccountYearsHistory", accountLengthYears);
+            model.addAttribute("mostRecentFollowUpRecord", mostRecentFollowUpRecord);
         }
 
-        return totalLength;
+        return mostRecentFollowUpRecord;
+    }
+    
+
+ // Helper method to sort adverse effects by start date
+    public AdverseEffect sortMostRecentAdverseEffect(Model model, Long patientId) {
+        // Fetch the logged-in patient
+        Patient loggedInPatient = patientServ.getOne(patientId);
+
+        // Get the patient cases for the logged-in patient
+        List<PatientCase> patientCases = loggedInPatient.getPatientCases();
+        
+        // Retrieve the most recent patient case
+        PatientCase mostRecentPatientCase = getMostRecentPatientCase(patientCases);
+
+        // Retrieve the most recent adverse effect for the most recent patient case
+        AdverseEffect mostRecentAdverseEffect = getMostRecentAdverseEffect(mostRecentPatientCase);
+
+        // Populate model attributes related to the most recent adverse effect
+        populateAdverseEffectModelAttributes(model, mostRecentAdverseEffect);
+
+        return mostRecentAdverseEffect;
+    }
+
+    // Helper method to retrieve the most recent patient case
+    PatientCase getMostRecentPatientCase(List<PatientCase> patientCases) {
+        if (patientCases == null || patientCases.isEmpty()) {
+            return null;
+        }
+
+        // Sort patient cases by creation date in descending order to get the most recent one
+        patientCases.sort(Comparator.comparing(PatientCase::getCreatedAt).reversed());
+        return patientCases.get(0);
+    }
+
+    // Helper method to retrieve the most recent adverse effect for a given patient case
+    private AdverseEffect getMostRecentAdverseEffect(PatientCase mostRecentPatientCase) {
+        if (mostRecentPatientCase == null) {
+            return null;
+        }
+
+        // Retrieve adverse effects associated with the most recent patient case
+        List<AdverseEffect> adverseEffects = mostRecentPatientCase.getAdverseEffects();
+        if (adverseEffects == null || adverseEffects.isEmpty()) {
+            return null;
+        }
+
+        // Sort adverse effects by creation date in descending order to get the most recent one
+        adverseEffects.sort(Comparator.comparing(AdverseEffect::getCreatedAt).reversed());
+        return adverseEffects.get(0);
+    }
+
+    // Helper method to populate model attributes related to the most recent adverse effect
+    private void populateAdverseEffectModelAttributes(Model model, AdverseEffect mostRecentAdverseEffect) {
+        if (mostRecentAdverseEffect == null) {
+            return;
+        }
+
+        LocalDate createdAt = mostRecentAdverseEffect.getCreatedAt();
+        long accountLengthDays = calculateDaysLocalDateDifference(createdAt, LocalDate.now());
+        long accountLengthYears = calculateLocalDateDifference(createdAt, LocalDate.now());
+        long accountLengthMonths = calculateMonthsLocalDateDifference(createdAt, LocalDate.now());
+
+        String dayFormattedCreatedAt = createdAt.format(DateTimeFormatter.ofPattern("EEE, yyyy"));
+        String formattedCreatedAt = createdAt.format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy"));
+
+        // Add attributes related to the most recent adverse effect to the model
+        model.addAttribute("mostRecentAdverseEffectCreatedAt", formattedCreatedAt);
+        model.addAttribute("mostRecentAdverseEffectDaysCreatedAt", dayFormattedCreatedAt);
+        model.addAttribute("mostRecentAdverseEffectAccountDaysHistory", accountLengthDays);
+        model.addAttribute("mostRecentAdverseEffectAccountMonthsHistory", accountLengthMonths);
+        model.addAttribute("mostRecentAdverseEffectAccountYearsHistory", accountLengthYears);
+        model.addAttribute("mostRecentAdverseEffect", mostRecentAdverseEffect);
     }
 
     // In PatientFilterUtil or your service class
@@ -120,144 +247,346 @@ public class PatientFilterUtil {
 
         return allAssessmentRecords;
     }
+    
+    // Calculate Assessment History and create a list for patients' physical assessments
+    public long calculateTotalLengthOfPhysicalAssessments(List<PhysicalAssessment> physicalAssessmentList) {
+        long totalLength = 0;
 
- // In your service or controller class
-    public void addPhysicalAssessmentInfoToModel(Model model, Long patientId) {
-        // Fetch the logged-in patient
-        Patient loggedInPatient = patientServ.getOne(patientId);
-
-        // Get the physical assessments for the logged-in patient
-        List<PhysicalAssessment> allAssessmentRecords = loggedInPatient.getPhysicalAssessments();
-
-        // Calculate the total length of physical assessments
-        long allAssessmentHistories = calculateTotalLengthOfPhysicalAssessments(allAssessmentRecords);
-
-        // Add the total length to the model
-        model.addAttribute("assessmentHistories", allAssessmentHistories);
-
-        // You can also add the list of assessments to the model if needed
-        model.addAttribute("allPhysicalAssessmentRecords", allAssessmentRecords);
-    }
-
-    // Helper method to sort patient cases by start date
-    public void sortMostRecentPatientCaseByStartDate(Model model, Long patientId) {
-        Patient loggedInPatient = patientServ.getOne(patientId);
-        // Case where loggedInPatient is null
-        if (loggedInPatient == null) {
-            return;
+        for (PhysicalAssessment assessmentHistory : physicalAssessmentList) {
+           int lengthOfAssessmentRecord = calculateDaysLocalDateDifference(assessmentHistory.getCreatedAt(), LocalDate.now());
+           totalLength += lengthOfAssessmentRecord;
         }
 
-        List<PatientCase> patientCases = loggedInPatient.getPatientCases();
-        //Case where patientCases is null or empty
-        if (patientCases == null || patientCases.isEmpty()) {
-            return;
-        }
-
-        patientCases.sort(Comparator.comparing(PatientCase::getCreatedAt).reversed());
-        PatientCase mostRecentPatientCase = patientCases.get(0);
-
-        // Calculate date differences
-        LocalDate onset = mostRecentPatientCase.getOnset();
-        LocalDate createdAt = mostRecentPatientCase.getCreatedAt().toLocalDate();
-        LocalDate searchedPatientBirthDay = mostRecentPatientCase.getPatient().getDateOfBirth();
- 
-        // Date Ranges
-        int onsetHistory = calculateLocalDateDifference(mostRecentPatientCase.getOnset(), LocalDate.now() );
-        int visitHistory = calculateDaysLocalDateDifference(createdAt, LocalDate.now());
-        
-        long accountLengthYears = calculateLocalDateDifference(createdAt, LocalDate.now());
-        long accountLengthDays = calculateLocalDateDifference(createdAt, LocalDate.now());
-        long accountLengthMonths = calculateLocalDateDifference(createdAt, LocalDate.now());
-
-        long conditionLengthYears = calculateLocalDateDifference(onset, LocalDate.now());
-        long conditionLengthDays = calculateLocalDateDifference(onset, LocalDate.now());
-        long conditionLengthMonths = calculateLocalDateDifference(onset, LocalDate.now());
-        long searchedPatientAge = calculateLocalDateDifference(searchedPatientBirthDay, LocalDate.now());
-
-        // Use PatientFilterUtil to get the most recent PastMedicalHistory
-        PastMedicalHistory mostRecentPastMedicalRecord = sortMostRecentPastMedicalRecord(model, patientId);
-
-        // Calculate length of medical condition
-        if (mostRecentPastMedicalRecord != null) {
-            LocalDate medicalConditionStartDate = mostRecentPastMedicalRecord.getStartDate();
-            long searchedPatientLengthOfMedicalCondition = calculateLocalDateDifference(medicalConditionStartDate, LocalDate.now());
-	        model.addAttribute("searchedPatientLengthOfMedicalCondition", searchedPatientLengthOfMedicalCondition);
-	        model.addAttribute("searchedPatientMostRecentLengthOfMedicalCondition", searchedPatientLengthOfMedicalCondition);
-	        model.addAttribute("searchedMostRecentPastMedicalRecordDayCreatedAt", mostRecentPastMedicalRecord.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, yyyy")));
-	        model.addAttribute("oneSearchedMostRecentPastMedicalRecordCreatedAt", mostRecentPastMedicalRecord.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy")));
-		 }
-        	// Date Formatting
-	        model.addAttribute("mostRecentOnsetHistory", onsetHistory);
-	        model.addAttribute("mostRecentVisitHistory", visitHistory);
-	        model.addAttribute("mostRecentPatientCase", mostRecentPatientCase);
-	        model.addAttribute("searchedPatientAge", searchedPatientAge);
-	        model.addAttribute("searchedPatientCaseAccountLength", accountLengthYears);
-	        model.addAttribute("patientCaseAccountLengthDays", accountLengthDays);
-	        model.addAttribute("patientCaseAccountLengthMonths", accountLengthMonths);
-	        model.addAttribute("lengthOfPatientConditionYears", conditionLengthYears);
-	        model.addAttribute("lengthOfPatientConditionDays", conditionLengthDays);
-	        model.addAttribute("lengthOfPatientConditionMonths", conditionLengthMonths);
-	        model.addAttribute("searchedMostRecentPastMedicalRecord", mostRecentPastMedicalRecord);
-	        model.addAttribute("searchedMostRecentPastMedicalRecord", mostRecentPastMedicalRecord);
-	        model.addAttribute("oneSearchedPatientCaseDayCreatedAt", createdAt.format(DateTimeFormatter.ofPattern("EEE, yyyy")));
-	        model.addAttribute("oneSearchedPatientCaseCreatedAt", createdAt.format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy")));
-	        model.addAttribute("mostRecentPatientCaseDayCreatedAt", mostRecentPatientCase.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, yyyy")));
-	        model.addAttribute("mostRecentPatientCaseCreatedAt", mostRecentPatientCase.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy")));
-   
-   	}
-
-    // Sort Current Medication By Start Date
-    public CurrentMedication sortMostRecentCurrentMedication(Model model, Long patientId) {
-        // Fetch the logged-in patient
-        Patient loggedInPatient = patientServ.getOne(patientId);
-
-        // Get the past medical records for the logged-in patient
-        List<CurrentMedication> currentMedications = loggedInPatient.getCurrentMedications();
-
-        // Sort the past medical records by start date in descending order
-        currentMedications.sort(Comparator.comparing(CurrentMedication::getStartDate).reversed());
-
-        // Get the most recent past medical record (if any)
-        CurrentMedication mostRecentCurrentMedication = currentMedications.isEmpty() ? null : currentMedications.get(0);
-
-        model.addAttribute("mostRecentCurrentMedication", mostRecentCurrentMedication);
-        return mostRecentCurrentMedication;
-    } 
-
-    // Sort Pain Assessment By Created At
-    public PainAssessment sortMostRecentPainAssessment(Model model, Long patientId) {
-        // Fetch the logged-in patient
-        Patient loggedInPatient = patientServ.getOne(patientId);
-
-        // Get the past medical records for the logged-in patient
-        List<PainAssessment> painAssessments = loggedInPatient.getPainAssessments();
-
-        // Sort the past medical records by start date in descending order
-        painAssessments.sort(Comparator.comparing(PainAssessment::getCreatedAt).reversed());
-
-        // Get the most recent past medical record (if any)
-        PainAssessment mostRecentPainAssessment = painAssessments.isEmpty() ? null : painAssessments.get(0);
-
-        model.addAttribute("mostRecentPainAssessment", mostRecentPainAssessment);
-        return mostRecentPainAssessment;
+        return totalLength;
     }
+
+    // In your service or controller class
+       public void addPhysicalAssessmentInfoToModel(Model model, Long patientId) {
+           // Fetch the logged-in patient
+           Patient loggedInPatient = patientServ.getOne(patientId);
+
+	   	    // Get all patient cases for the logged-in patient
+	   	    List<PatientCase> patientCases = loggedInPatient.getPatientCases();
+	   	    
+	   	    // Retrieve the most recent patient case
+	   	    PatientCase mostRecentPatientCase = getMostRecentPatientCase(patientCases);
+	   	    
+	   	    // If there are no patient cases, return null
+	   	    if (mostRecentPatientCase == null) {
+	   	        return;
+	   	    }
+
+           // Get the physical assessments for the logged-in patient
+           List<PhysicalAssessment> allAssessmentRecords = mostRecentPatientCase.getPhysicalAssessments();
+
+           // Calculate the total length of physical assessments
+           long allAssessmentHistories = calculateTotalLengthOfPhysicalAssessments(allAssessmentRecords);
+
+           // Add the total length to the model
+           model.addAttribute("assessmentHistories", allAssessmentHistories);
+
+           // You can also add the list of assessments to the model if needed
+           model.addAttribute("allPhysicalAssessmentRecords", allAssessmentRecords);
+       }
+
+       // Helper method to sort patient cases by start date
+       public void sortMostRecentPatientCaseByStartDate(Model model, Long patientId) {
+    	    Patient loggedInPatient = patientServ.getOne(patientId);
+    	    if (loggedInPatient == null) {
+    	        return;
+    	    }
+
+    	    List<PatientCase> patientCases = loggedInPatient.getPatientCases();
+    	    if (patientCases == null || patientCases.isEmpty()) {
+    	        return;
+    	    }
+
+    	    patientCases.sort(Comparator.comparing(PatientCase::getCreatedAt).reversed());
+    	    PatientCase mostRecentPatientCase = patientCases.get(0);
+
+    	    // Calculate date differences
+    	    LocalDate onset = mostRecentPatientCase.getOnset();
+    	    LocalDate createdAt = mostRecentPatientCase.getCreatedAt().toLocalDate();
+    	    LocalDate searchedPatientBirthDay = mostRecentPatientCase.getPatient().getDateOfBirth();
+
+    	    // Date Ranges
+    	    int onsetHistory = calculateLocalDateDifference(mostRecentPatientCase.getOnset(), LocalDate.now());
+    	    int visitHistory = calculateDaysLocalDateDifference(createdAt, LocalDate.now());
+
+    	    long accountLengthYears = calculateLocalDateDifference(createdAt, LocalDate.now());
+    	    long accountLengthDays = calculateDaysLocalDateDifference(createdAt, LocalDate.now());
+    	    long accountLengthMonths = calculateMonthsLocalDateDifference(createdAt, LocalDate.now());
+
+    	    long conditionLengthYears = calculateLocalDateDifference(onset, LocalDate.now());
+    	    long conditionLengthDays = calculateDaysLocalDateDifference(onset, LocalDate.now());
+    	    long conditionLengthMonths = calculateMonthsLocalDateDifference(onset, LocalDate.now());
+    	    long searchedPatientAge = calculateLocalDateDifference(searchedPatientBirthDay, LocalDate.now());
+
+    	    // Use PatientFilterUtil to get the most recent PastMedicalHistory
+    	    PastMedicalHistory mostRecentPastMedicalRecord = sortMostRecentPastMedicalRecord(model, patientId);
+
+    	    populatePatientCaseModelAttributes(model, mostRecentPatientCase, onsetHistory, visitHistory, searchedPatientAge,
+   	            accountLengthYears, accountLengthDays, accountLengthMonths, conditionLengthYears, conditionLengthDays,
+   	            conditionLengthMonths, mostRecentPastMedicalRecord, createdAt);
+    	}
+
+    	private void populatePatientCaseModelAttributes(Model model, PatientCase mostRecentPatientCase, int onsetHistory,
+           int visitHistory, long searchedPatientAge, long accountLengthYears,
+    	   long accountLengthDays, long accountLengthMonths, long conditionLengthYears,
+    	   long conditionLengthDays, long conditionLengthMonths,
+    	   PastMedicalHistory mostRecentPastMedicalRecord, LocalDate createdAt) {
+    	    // Date Formatting
+    	    model.addAttribute("mostRecentOnsetHistory", onsetHistory);
+    	    model.addAttribute("mostRecentVisitHistory", visitHistory);
+    	    model.addAttribute("searchedPatientAge", searchedPatientAge);
+    	    model.addAttribute("mostRecentPatientCase", mostRecentPatientCase);
+    	    model.addAttribute("searchedPatientCaseAccountLength", accountLengthYears);
+    	    model.addAttribute("patientCaseAccountLengthDays", accountLengthDays);
+    	    model.addAttribute("patientCaseAccountLengthMonths", accountLengthMonths);
+    	    model.addAttribute("lengthOfPatientConditionYears", conditionLengthYears);
+    	    model.addAttribute("lengthOfPatientConditionDays", conditionLengthDays);
+    	    model.addAttribute("lengthOfPatientConditionMonths", conditionLengthMonths);
+    	    model.addAttribute("searchedMostRecentPastMedicalRecord", mostRecentPastMedicalRecord);
+    	    model.addAttribute("oneSearchedPatientCaseDayCreatedAt", createdAt.format(DateTimeFormatter.ofPattern("EEE, yyyy")));
+    	    model.addAttribute("oneSearchedPatientCaseCreatedAt", createdAt.format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy")));
+    	    model.addAttribute("mostRecentPatientCaseDayCreatedAt", mostRecentPatientCase.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, yyyy")));
+    	    model.addAttribute("mostRecentPatientCaseCreatedAt", mostRecentPatientCase.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy")));
+    	}
+
+    	// Sort Current Medication By Start Date
+    	public CurrentMedication sortMostRecentCurrentMedication(Model model, Long patientId) {
+    	    // Fetch the logged-in patient
+    	    Patient loggedInPatient = patientServ.getOne(patientId);
+    	    
+    	    // Get all patient cases for the logged-in patient
+    	    List<PatientCase> patientCases = loggedInPatient.getPatientCases();
+    	    
+    	    // Retrieve the most recent patient case
+    	    PatientCase mostRecentPatientCase = getMostRecentPatientCase(patientCases);
+    	    
+    	    // If there are no patient cases, return null
+    	    if (mostRecentPatientCase == null) {
+    	        return null;
+    	    }
+
+    	    // Get the current medications for the most recent patient case
+    	    List<CurrentMedication> currentMedications = mostRecentPatientCase.getCurrentMedications();
+    	    
+    	    // Sort current medications by start date in descending order to get the most recent one
+    	    currentMedications.sort(Comparator.comparing(CurrentMedication::getStartDate).reversed());
+    	    
+    	    // Retrieve the most recent current medication
+    	    CurrentMedication mostRecentCurrentMedication = currentMedications.isEmpty() ? null : currentMedications.get(0);
+
+    	    // Add the most recent current medication to the model
+    	    model.addAttribute("mostRecentCurrentMedication", mostRecentCurrentMedication);
+    	    
+    	    return mostRecentCurrentMedication;
+    	}
+
+    	// Sort Pain Assessment By Created At
+    	public PainAssessment sortMostRecentPainAssessment(Model model, Long patientId) {
+    	    // Fetch the logged-in patient
+    	    Patient loggedInPatient = patientServ.getOne(patientId);
+    	    
+    	    // Get all patient cases for the logged-in patient
+    	    List<PatientCase> patientCases = loggedInPatient.getPatientCases();
+    	    
+    	    // Retrieve the most recent patient case
+    	    PatientCase mostRecentPatientCase = getMostRecentPatientCase(patientCases);
+    	    
+    	    // If there are no patient cases, return null
+    	    if (mostRecentPatientCase == null) {
+    	        return null;
+    	    }
+
+    	    // Get the pain assessments for the most recent patient case
+    	    List<PainAssessment> painAssessments = mostRecentPatientCase.getPainAssessments();
+    	    
+    	    // Sort pain assessments by creation date in descending order to get the most recent one
+    	    painAssessments.sort(Comparator.comparing(PainAssessment::getCreatedAt).reversed());
+    	    
+    	    // Retrieve the most recent pain assessment
+    	    PainAssessment mostRecentPainAssessment = painAssessments.isEmpty() ? null : painAssessments.get(0);
+
+    	    // Add the most recent pain assessment to the model
+    	    model.addAttribute("mostRecentPainAssessment", mostRecentPainAssessment);
+    	    
+    	    return mostRecentPainAssessment;
+    	}
 
     // Helper method to sort patient vital records by start date
     public void sortMostRecentPatientVitalRecordByStartDate(Model model, Long patientId) {
+        // Fetch the logged-in patient
         Patient loggedInPatient = patientServ.getOne(patientId);
-        List<PatientVitalRecord> patientVitalRecords = loggedInPatient.getPatientVitalRecords();
+        
+        // Get all patient cases for the logged-in patient
+        List<PatientCase> patientCases = loggedInPatient.getPatientCases();
+        
+        // Retrieve the most recent patient case
+        PatientCase mostRecentPatientCase = sortMostRecentPatientCase(patientCases);
+        
+        // If there are no patient cases, return
+        if (mostRecentPatientCase == null) {
+            return;
+        }
+
+        // Get all patient vital records for the most recent patient case
+        List<PatientVitalRecord> patientVitalRecords = mostRecentPatientCase.getPatientVitalRecords();
+        
+        // Sort patient vital records by creation date in descending order to get the most recent one
         patientVitalRecords.sort(Comparator.comparing(PatientVitalRecord::getCreatedAt).reversed());
+        
+        // Retrieve the most recent patient vital record
         PatientVitalRecord mostRecentPatientVitalRecord = patientVitalRecords.isEmpty() ? null : patientVitalRecords.get(0);
+
+        // Add the most recent patient vital record to the model
+        populatePatientVitalRecordAccountHistory(model, mostRecentPatientVitalRecord);
         model.addAttribute("mostRecentPatientVitalRecord", mostRecentPatientVitalRecord);
     }
 
-    // Helper method to sort incident reports by start date
+ // Helper method to calculate account history for the most recent patient vital record
+    private void populatePatientVitalRecordAccountHistory(Model model, PatientVitalRecord mostRecentPatientVitalRecord) {
+        if (mostRecentPatientVitalRecord == null) {
+            return;
+        }
+        
+        // Retrieve weight (in pounds) and height (in centimeters) from the most recent patient vital record
+        BigDecimal weightInPounds = mostRecentPatientVitalRecord.getWeight();
+        BigDecimal heightInCentimeters = mostRecentPatientVitalRecord.getHeight();
+        
+        // Convert weight from pounds to kilograms
+        BigDecimal weightInKilograms = poundsToKilograms(weightInPounds);
+        
+        // Calculate BMI
+        BigDecimal bmi = calculateBMI(weightInKilograms, heightInCentimeters);
+        
+        // Calculate account history for the most recent patient vital record (similar to adverse effects and physical assessments)
+        LocalDate createdAt = mostRecentPatientVitalRecord.getCreatedAt().toLocalDate();
+        long accountLengthDays = calculateDaysLocalDateDifference(createdAt, LocalDate.now());
+        long accountLengthYears = calculateLocalDateDifference(createdAt, LocalDate.now());
+        long accountLengthMonths = calculateMonthsLocalDateDifference(createdAt, LocalDate.now());
+
+        String dayFormattedCreatedAt = createdAt.format(DateTimeFormatter.ofPattern("EEE, yyyy"));
+        String formattedCreatedAt = createdAt.format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy"));
+
+        // Convert BMI from BigDecimal to double
+        double bmiDouble = bmi.doubleValue();
+
+        // Determine BMI status with Bootstrap styling
+        String bmiStatusWithBootstrap = determineBMIStatusWithBootstrap(bmiDouble);
+
+        // Add BMI status with Bootstrap styling to the model
+        model.addAttribute("bmiStatusWithBootstrap", bmiStatusWithBootstrap);
+
+
+        // Add account history attributes for the most recent patient vital record to the model
+        model.addAttribute("mostRecentPatientVitalRecord", mostRecentPatientVitalRecord);
+        model.addAttribute("mostRecentPatientVitalRecordCreatedAt", formattedCreatedAt);
+        model.addAttribute("mostRecentPatientVitalRecordDaysCreatedAt", dayFormattedCreatedAt);
+        model.addAttribute("mostRecentPatientVitalRecordAccountDaysHistory", accountLengthDays);
+        model.addAttribute("mostRecentPatientVitalRecordAccountMonthsHistory", accountLengthMonths);
+        model.addAttribute("mostRecentPatientVitalRecordAccountYearsHistory", accountLengthYears);
+        
+        // Add BMI to the model
+        model.addAttribute("bmi", bmi);
+    }
+
+
+	// Helper method to convert pounds to kilograms
+	private BigDecimal poundsToKilograms(BigDecimal weightInPounds) {
+	    // 1 pound is approximately 0.453592 kilograms
+	    BigDecimal conversionFactor = new BigDecimal("0.453592");
+	    return weightInPounds.multiply(conversionFactor);
+	}
+
+	// Helper method to calculate BMI
+	private BigDecimal calculateBMI(BigDecimal weightInKilograms, BigDecimal heightInCentimeters) {
+	    // Convert height from centimeters to meters
+	    BigDecimal heightInMeters = heightInCentimeters.divide(new BigDecimal("100"));
+
+	    // Calculate BMI
+	    BigDecimal bmi = weightInKilograms.divide(heightInMeters.multiply(heightInMeters), 2, RoundingMode.HALF_UP);
+	    return bmi;
+	}
+	// Helper method to determine BMI status with Bootstrap styling
+	private String determineBMIStatusWithBootstrap(double bmi) {
+	    if (bmi <= 18.4) {
+	        return "<div class=\"alert alert-outline-primary\" role=\"alert\">Underweight</div>";
+	    } else if (bmi >= 18.5 && bmi <= 24.9) {
+	        return "<div class=\"alert alert-outline-success\" role=\"alert\">Normal</div>";
+	    } else if (bmi >= 25.0 && bmi <= 39.9) {
+	        return "<div class=\"alert alert-outline-warning\" role=\"alert\">Overweight</div>";
+	    } else {
+	        return "<div class=\"alert alert-outline-danger\" role=\"alert\">Obese</div>";
+	    }
+	}
+
+	// Helper method to sort incident reports by start date
     public void sortMostRecentIncidentReportByStartDate(Model model, Long patientId) {
+        // Fetch the logged-in patient
         Patient loggedInPatient = patientServ.getOne(patientId);
-        List<IncidentReport> incidentReports = loggedInPatient.getIncidentReports();
+        
+        // Get all patient cases for the logged-in patient
+        List<PatientCase> patientCases = loggedInPatient.getPatientCases();
+        
+        // Retrieve the most recent patient case
+        PatientCase mostRecentPatientCase = sortMostRecentPatientCase(patientCases);
+        
+        // If there are no patient cases, return
+        if (mostRecentPatientCase == null) {
+            return;
+        }
+
+        // Get all incident reports for the most recent patient case
+        List<IncidentReport> incidentReports = mostRecentPatientCase.getIncidentReports();
+        
+        // Sort incident reports by creation date in descending order to get the most recent one
         incidentReports.sort(Comparator.comparing(IncidentReport::getCreatedAt).reversed());
+        
+        // Retrieve the most recent incident report
         IncidentReport mostRecentIncidentReport = incidentReports.isEmpty() ? null : incidentReports.get(0);
+
+        // Add the most recent incident report to the model
         model.addAttribute("mostRecentIncidentReport", mostRecentIncidentReport);
+        
+        // Calculate the account history for the most recent incident report
+        populateIncidentReportAccountHistory(model, mostRecentIncidentReport);
+    }
+
+    // Helper method to retrieve the most recent patient case
+    private PatientCase sortMostRecentPatientCase(List<PatientCase> patientCases) {
+        if (patientCases == null || patientCases.isEmpty()) {
+            return null;
+        }
+
+        // Sort patient cases by creation date in descending order to get the most recent one
+        patientCases.sort(Comparator.comparing(PatientCase::getCreatedAt).reversed());
+        return patientCases.get(0);
+    }
+
+    // Helper method to calculate account history for the most recent incident report
+    private void populateIncidentReportAccountHistory(Model model, IncidentReport mostRecentIncidentReport) {
+        if (mostRecentIncidentReport == null) {
+            return;
+        }
+        
+        // Calculate account history for the most recent incident report (similar to adverse effects and physical assessments)
+        LocalDate createdAt = mostRecentIncidentReport.getCreatedAt().toLocalDate();
+        long accountLengthDays = calculateDaysLocalDateDifference(createdAt, LocalDate.now());
+        long accountLengthYears = calculateLocalDateDifference(createdAt, LocalDate.now());
+        long accountLengthMonths = calculateMonthsLocalDateDifference(createdAt, LocalDate.now());
+
+        String dayFormattedCreatedAt = createdAt.format(DateTimeFormatter.ofPattern("EEE, yyyy"));
+        String formattedCreatedAt = createdAt.format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy"));
+
+        // Add account history attributes for the most recent incident report to the model
+        model.addAttribute("mostRecentIncidentReport", mostRecentIncidentReport);
+        model.addAttribute("mostRecentIncidentReportCreatedAt", formattedCreatedAt);
+        model.addAttribute("mostRecentIncidentReportDaysCreatedAt", dayFormattedCreatedAt);
+        model.addAttribute("mostRecentIncidentReportAccountDaysHistory", accountLengthDays);
+        model.addAttribute("mostRecentIncidentReportAccountMonthsHistory", accountLengthMonths);
+        model.addAttribute("mostRecentIncidentReportAccountYearsHistory", accountLengthYears);
     }
 
     public InsuranceInformation setMostRecentInsuranceReportProperty(Model model, Long patientId) {
@@ -288,27 +617,39 @@ public class PatientFilterUtil {
         return mostRecentInsuranceInformation;
     }
 
-    // Most Recent Diagnostic Report
+ // Most Recent Diagnostic Report
     public DiagnosticRecord setMostRecentDiagnosticReportProperty(Model model, Long patientId) {
         // Fetch the logged-in patient
         Patient loggedInPatient = patientServ.getOne(patientId);
+        
+        // Get all patient cases for the logged-in patient
+        List<PatientCase> patientCases = loggedInPatient.getPatientCases();
+        
+        // Retrieve the most recent patient case
+        PatientCase mostRecentPatientCase = getMostRecentPatientCase(patientCases);
+        
+        // If there are no patient cases, return null
+        if (mostRecentPatientCase == null) {
+            return null;
+        }
 
-        // Get the diagnostic records for the logged-in patient
-        List<DiagnosticRecord> diagnosticRecords = loggedInPatient.getDiagnosticRecords();
-
-        // Sort the diagnostic records by start date in descending order
+        // Get the diagnostic records for the most recent patient case
+        List<DiagnosticRecord> diagnosticRecords = mostRecentPatientCase.getDiagnosticRecords();
+        
+        // Sort diagnostic records by creation date in descending order to get the most recent one
         diagnosticRecords.sort(Comparator.comparing(DiagnosticRecord::getCreatedAt).reversed());
-
-        // Get the most recent diagnostic report (if any)
+        
+        // Retrieve the most recent diagnostic report
         DiagnosticRecord mostRecentDiagnosticRecord = diagnosticRecords.isEmpty() ? null : diagnosticRecords.get(0);
 
         if (mostRecentDiagnosticRecord != null) { // Add null check
-            // Date Ranges
-        	LocalDate diagnosticCreatedAt =  mostRecentDiagnosticRecord.getCreatedAt().toLocalDate();
-            int mostRecentDiagnosticHistory = calculateLocalDateDifference(LocalDate.now(), diagnosticCreatedAt);
+            // Calculate the diagnostic history
+            LocalDate diagnosticCreatedAt = mostRecentDiagnosticRecord.getCreatedAt().toLocalDate();
+            int mostRecentDiagnosticHistory = calculateDaysLocalDateDifference(LocalDate.now(), diagnosticCreatedAt);
             String formattedDiagnosticDayCreatedAtDate = diagnosticCreatedAt.format(DateTimeFormatter.ofPattern("EEE, yyyy"));
             String formattedDiagnosticCreatedAtDate = diagnosticCreatedAt.format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy"));
 
+            // Add diagnostic report attributes to the model
             model.addAttribute("mostRecentDiagnosticReport", mostRecentDiagnosticRecord);
             model.addAttribute("mostRecentDiagnosticHistory", mostRecentDiagnosticHistory);
             model.addAttribute("mostRecentDiagnosticRecordCreatedAt", formattedDiagnosticCreatedAtDate);
@@ -357,6 +698,18 @@ public class PatientFilterUtil {
     // Method To Calculate Length Of Local Date Time
     public int calculateDaysLocaleDateTimeDiffference(LocalDateTime startDate, LocalDateTime endDate) {
         int dateDifference = (int) ChronoUnit.DAYS.between(startDate, endDate);
+        return dateDifference;
+    }
+
+    // Method To Calculate Length Of Local Date
+    public int calculateMonthsLocalDateDifference(LocalDate startDate, LocalDate endDate) {  
+        int dateMonthDifference = (int) ChronoUnit.MONTHS.between(startDate, endDate);
+        return dateMonthDifference;
+    }
+
+    // Method To Calculate Length Of Local Date Time
+    public int calculateMonthsLocaleDateTimeDiffference(LocalDateTime startDate, LocalDateTime endDate) {
+        int dateDifference = (int) ChronoUnit.MONTHS.between(startDate, endDate);
         return dateDifference;
     }
 
@@ -452,8 +805,17 @@ public class PatientFilterUtil {
             // Handle the case where loggedInPatient is null
             return;
         }
-
-        List<DoseRegimen> doseRegimenRecords = loggedInPatient.getDoseRegimenRecords();
+        //Get all patient cases for the logged-in patient
+   	    List<PatientCase> patientCases = loggedInPatient.getPatientCases();
+   	    
+   	    // Retrieve the most recent patient case
+   	    PatientCase mostRecentPatientCase = getMostRecentPatientCase(patientCases);
+   	    
+   	    // If there are no patient cases, return null
+   	    if (mostRecentPatientCase == null) {
+   	        return;
+   	    }
+        List<DoseRegimen> doseRegimenRecords = mostRecentPatientCase.getDoseRegimenRecords();
 
         if (doseRegimenRecords == null || doseRegimenRecords.isEmpty()) {
             // Handle the case where doseRegimenRecords is null or empty
@@ -469,9 +831,9 @@ public class PatientFilterUtil {
  
         // Date Ranges
         int regimenHistory = calculateDaysLocalDateDifference(createdAt, LocalDate.now()); 
-        long regimenAccountLengthDays = calculateLocalDateDifference(createdAt, LocalDate.now());  
+        long regimenAccountLengthDays = calculateDaysLocalDateDifference(createdAt, LocalDate.now());  
         long regimenAccountLengthYears = calculateLocalDateDifference(createdAt, LocalDate.now());
-        long regimenAccountLengthMonths = calculateLocalDateDifference(createdAt, LocalDate.now());
+        long regimenAccountLengthMonths = calculateMonthsLocalDateDifference(createdAt, LocalDate.now());
         long searchedPatientAge = calculateLocalDateDifference(searchedPatientBirthDay, LocalDate.now());
 
         // Use PatientFilterUtil to get the most recent PastMedicalHistory
@@ -480,7 +842,7 @@ public class PatientFilterUtil {
         // Calculate length of medical condition
         if (mostRecentPastMedicalRecord != null) {
 	            LocalDate medicalConditionStartDate = mostRecentPastMedicalRecord.getStartDate();
-	            long searchedPatientLengthOfMedicalCondition = calculateLocalDateDifference(medicalConditionStartDate, LocalDate.now());
+	            long searchedPatientLengthOfMedicalCondition = calculateDaysLocalDateDifference(medicalConditionStartDate, LocalDate.now());
 	            String formattedPastMedicalCreatedAtDate = mostRecentPastMedicalRecord.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, yyyy"));
 	            String formattedDayPastMedicalCreatedAtDate = mostRecentPastMedicalRecord.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy"));
 
@@ -515,7 +877,18 @@ public class PatientFilterUtil {
             return;
         }
 
-        List<CurrentMedication> currentMedicationRecords = loggedInPatient.getCurrentMedications();
+        // Get all patient cases for the logged-in patient
+        List<PatientCase> patientCases = loggedInPatient.getPatientCases();
+        
+        // Retrieve the most recent patient case
+        PatientCase mostRecentPatientCase = getMostRecentPatientCase(patientCases);
+        
+        // If there are no patient cases, return null
+        if (mostRecentPatientCase == null) {
+            return;
+        }
+
+        List<CurrentMedication> currentMedicationRecords = mostRecentPatientCase.getCurrentMedications();
 
         if (currentMedicationRecords == null || currentMedicationRecords.isEmpty()) {
             // Handle the case where currentMedicationRecords is null or empty
@@ -534,9 +907,9 @@ public class PatientFilterUtil {
  
         // Date Ranges
         int currentMedicationHistory = calculateDaysLocalDateDifference(createdAt, LocalDate.now()); 
-        long currentMedicationAccountLengthDays = calculateLocalDateDifference(createdAt, LocalDate.now());  
+        long currentMedicationAccountLengthDays = calculateDaysLocalDateDifference(createdAt, LocalDate.now());  
         long currentMedicationAccountLengthYears = calculateLocalDateDifference(createdAt, LocalDate.now());
-        long currentMedicationAccountLengthMonths = calculateLocalDateDifference(createdAt, LocalDate.now());
+        long currentMedicationAccountLengthMonths = calculateMonthsLocalDateDifference(createdAt, LocalDate.now());
         long searchedPatientAge = calculateLocalDateDifference(searchedPatientBirthDay, LocalDate.now());
 
         // Use PatientFilterUtil to get the most recent PastMedicalHistory
@@ -545,7 +918,7 @@ public class PatientFilterUtil {
         // Calculate length of medical condition
         if (mostRecentPastMedicalRecord != null) {
 	            LocalDate medicalConditionStartDate = mostRecentPastMedicalRecord.getStartDate();
-	            long searchedPatientLengthOfMedicalCondition = calculateLocalDateDifference(medicalConditionStartDate, LocalDate.now());
+	            long searchedPatientLengthOfMedicalCondition = calculateDaysLocalDateDifference(medicalConditionStartDate, LocalDate.now());
 
 	            String formattedPastMedicalCreatedAtDate = mostRecentPastMedicalRecord.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, yyyy"));
 	            String formattedDayPastMedicalCreatedAtDate = mostRecentPastMedicalRecord.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy"));
@@ -581,7 +954,18 @@ public class PatientFilterUtil {
             return;
         }
 
-        List<PhysicalAssessment> physicalAssessmentRecords = loggedInPatient.getPhysicalAssessments();
+        // Get all patient cases for the logged-in patient
+        List<PatientCase> patientCases = loggedInPatient.getPatientCases();
+        
+        // Retrieve the most recent patient case
+        PatientCase mostRecentPatientCase = getMostRecentPatientCase(patientCases);
+        
+        // If there are no patient cases, return null
+        if (mostRecentPatientCase == null) {
+            return;
+        }
+        
+        List<PhysicalAssessment> physicalAssessmentRecords = mostRecentPatientCase.getPhysicalAssessments();
 
         if (physicalAssessmentRecords == null || physicalAssessmentRecords.isEmpty()) {
             // Handle the case where physicalAssessmentRecords is null or empty
@@ -597,9 +981,9 @@ public class PatientFilterUtil {
  
         // Date Ranges
         int physicalAssessmentHistory = calculateDaysLocalDateDifference(createdAt, LocalDate.now()); 
-        long physicalAssessmentAccountLengthDays = calculateLocalDateDifference(createdAt, LocalDate.now());  
+        long physicalAssessmentAccountLengthDays = calculateDaysLocalDateDifference(createdAt, LocalDate.now());  
         long physicalAssessmentAccountLengthYears = calculateLocalDateDifference(createdAt, LocalDate.now());
-        long physicalAssessmentAccountLengthMonths = calculateLocalDateDifference(createdAt, LocalDate.now());
+        long physicalAssessmentAccountLengthMonths = calculateMonthsLocalDateDifference(createdAt, LocalDate.now());
         long searchedPatientAge = calculateLocalDateDifference(searchedPatientBirthDay, LocalDate.now());
 
         // Use PatientFilterUtil to get the most recent PastMedicalHistory
@@ -608,7 +992,7 @@ public class PatientFilterUtil {
         // Calculate length of medical condition
         if (mostRecentPastMedicalRecord != null) {
 	            LocalDate medicalConditionStartDate = mostRecentPastMedicalRecord.getStartDate();
-	            long searchedPatientLengthOfMedicalCondition = calculateLocalDateDifference(medicalConditionStartDate, LocalDate.now());
+	            long searchedPatientLengthOfMedicalCondition = calculateDaysLocalDateDifference(medicalConditionStartDate, LocalDate.now());
 	            String formattedPastMedicalCreatedAtDate = mostRecentPastMedicalRecord.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE,  MMM dd, yyyy"));
 	            String formattedDayPastMedicalCreatedAtDate = mostRecentPastMedicalRecord.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, yyyy"));
 
@@ -643,7 +1027,18 @@ public class PatientFilterUtil {
             return;
         }
 
-        List<PainAssessment> painAssessmentRecords = loggedInPatient.getPainAssessments();
+        // Get all patient cases for the logged-in patient
+        List<PatientCase> patientCases = loggedInPatient.getPatientCases();
+        
+        // Retrieve the most recent patient case
+        PatientCase mostRecentPatientCase = getMostRecentPatientCase(patientCases);
+        
+        // If there are no patient cases, return null
+        if (mostRecentPatientCase == null) {
+            return;
+        }
+ 
+        List<PainAssessment> painAssessmentRecords = mostRecentPatientCase.getPainAssessments();
 
         if (painAssessmentRecords == null || painAssessmentRecords.isEmpty()) {
             // Handle the case where painAssessmentRecords is null or empty
@@ -659,9 +1054,9 @@ public class PatientFilterUtil {
  
         // Date Ranges
         int painAssessmentHistory = calculateDaysLocalDateDifference(createdAt, LocalDate.now()); 
-        long painAssessmentAccountLengthDays = calculateLocalDateDifference(createdAt, LocalDate.now());  
+        long painAssessmentAccountLengthDays = calculateDaysLocalDateDifference(createdAt, LocalDate.now());  
         long painAssessmentAccountLengthYears = calculateLocalDateDifference(createdAt, LocalDate.now());
-        long painAssessmentAccountLengthMonths = calculateLocalDateDifference(createdAt, LocalDate.now());
+        long painAssessmentAccountLengthMonths = calculateMonthsLocalDateDifference(createdAt, LocalDate.now());
         long searchedPatientAge = calculateLocalDateDifference(searchedPatientBirthDay, LocalDate.now());
 
         // Use PatientFilterUtil to get the most recent PastMedicalHistory
@@ -670,7 +1065,7 @@ public class PatientFilterUtil {
         // Calculate length of medical condition
         if (mostRecentPastMedicalRecord != null) {
 	            LocalDate medicalConditionStartDate = mostRecentPastMedicalRecord.getStartDate();
-	            long searchedPatientLengthOfMedicalCondition = calculateLocalDateDifference(medicalConditionStartDate, LocalDate.now());
+	            long searchedPatientLengthOfMedicalCondition = calculateDaysLocalDateDifference(medicalConditionStartDate, LocalDate.now());
 	            String formattedPastMedicalCreatedAtDate = mostRecentPastMedicalRecord.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, yyyy"));
 	            String formattedDayPastMedicalCreatedAtDate = mostRecentPastMedicalRecord.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy"));
 
@@ -705,7 +1100,18 @@ public class PatientFilterUtil {
             return;
         }
 
-        List<IncidentReport> incidentReportRecords = loggedInPatient.getIncidentReports();
+        // Get all patient cases for the logged-in patient
+        List<PatientCase> patientCases = loggedInPatient.getPatientCases();
+        
+        // Retrieve the most recent patient case
+        PatientCase mostRecentPatientCase = getMostRecentPatientCase(patientCases);
+        
+        // If there are no patient cases, return null
+        if (mostRecentPatientCase == null) {
+            return;
+        }
+
+        List<IncidentReport> incidentReportRecords = mostRecentPatientCase.getIncidentReports();
 
         if (incidentReportRecords == null || incidentReportRecords.isEmpty()) {
             // Handle the case where incidentReportRecords is null or empty
@@ -721,9 +1127,9 @@ public class PatientFilterUtil {
  
         // Date Ranges
         int incidentReportHistory = calculateDaysLocalDateDifference(createdAt, LocalDate.now()); 
-        long incidentReportAccountLengthDays = calculateLocalDateDifference(createdAt, LocalDate.now());  
+        long incidentReportAccountLengthDays = calculateDaysLocalDateDifference(createdAt, LocalDate.now());  
         long incidentReportAccountLengthYears = calculateLocalDateDifference(createdAt, LocalDate.now());
-        long incidentReportAccountLengthMonths = calculateLocalDateDifference(createdAt, LocalDate.now());
+        long incidentReportAccountLengthMonths = calculateMonthsLocalDateDifference(createdAt, LocalDate.now());
         long searchedPatientAge = calculateLocalDateDifference(searchedPatientBirthDay, LocalDate.now());
 
         // Use PatientFilterUtil to get the most recent PastMedicalHistory
@@ -732,7 +1138,7 @@ public class PatientFilterUtil {
         // Calculate length of medical condition
         if (mostRecentPastMedicalRecord != null) {
 	            LocalDate medicalConditionStartDate = mostRecentPastMedicalRecord.getStartDate();
-	            long searchedPatientLengthOfMedicalCondition = calculateLocalDateDifference(medicalConditionStartDate, LocalDate.now());
+	            long searchedPatientLengthOfMedicalCondition = calculateDaysLocalDateDifference(medicalConditionStartDate, LocalDate.now());
 	            String formattedPastMedicalCreatedAtDate = mostRecentPastMedicalRecord.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, yyyy"));
 	            String formattedDayPastMedicalCreatedAtDate = mostRecentPastMedicalRecord.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy"));
 

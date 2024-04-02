@@ -28,10 +28,11 @@ import com.turuchie.mellowhealthportal.services.PhysicianService;
 import com.turuchie.mellowhealthportal.services.ClinicalOperationsServices.PatientCaseService;
 import com.turuchie.mellowhealthportal.services.DiagnosticProceduresServices.PhysicalAssessmentService;
 import com.turuchie.mellowhealthportal.services.PatientOperationsServices.PatientService;
+import com.turuchie.mellowhealthportal.utils.DiagnosticUtils;
+import com.turuchie.mellowhealthportal.utils.ListConverterUtil;
 import com.turuchie.mellowhealthportal.utils.PatientFilterUtil;
 import com.turuchie.mellowhealthportal.utils.PatientUtils;
 import com.turuchie.mellowhealthportal.utils.SearchUtil;
-import com.turuchie.mellowhealthportal.utils.ListConverterUtil;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -60,15 +61,20 @@ public class PhysicalAssessmentController {
 	
 	@Autowired
 	private SearchUtil searchUtil;
+	
+	@Autowired
+	private DiagnosticUtils diagnosticUtil;
 
 	@Autowired
-	public PhysicalAssessmentController(PhysicalAssessmentService physicalAssessmentServ,PatientService patientServ,
-		   PatientCaseService patientCaseServ,PatientUtils patientUtil,PhysicianService physicianServ, SearchUtil searchUtil) {
-		        this.patientUtil = patientUtil;
-		        this.searchUtil = searchUtil;
-		        this.patientServ = patientServ;
-		        this.patientCaseServ = patientCaseServ;
-		        this.physicalAssessmentServ = physicalAssessmentServ;
+	public PhysicalAssessmentController(PhysicalAssessmentService physicalAssessmentServ,
+		PatientService patientServ,DiagnosticUtils diagnosticUtil,PatientCaseService patientCaseServ,PatientUtils patientUtil,
+		PhysicianService physicianServ, SearchUtil searchUtil) {
+	        this.patientUtil = patientUtil;
+	        this.searchUtil = searchUtil;
+	        this.patientServ = patientServ;
+	        this.patientCaseServ = patientCaseServ;
+	        this.physicalAssessmentServ = physicalAssessmentServ;
+	        this.diagnosticUtil = diagnosticUtil;
     }
 	
 	public PhysicalAssessmentController() {}
@@ -92,24 +98,25 @@ public class PhysicalAssessmentController {
 	    }
 
 	    Patient loggedInPatient = patientServ.getOne(patientId);
+	    String loggedInPatientName = patientServ.getOne(patientId).getPatientFirstName();
 
 	    if (loggedInPatient == null) {
 	        return "redirect:" + PATIENT_LOGIN_PATH;
 	    }
 
-        model.addAttribute("allPatientCasesWithFilter", patientCaseServ.getAll());
-        model.addAttribute("allPhysicalAssessmentsWithFilter", physicalAssessmentServ.getAll());
 	    String trimmedSearchTerm = searchedPatientName != null ? searchedPatientName.trim() : null;
 	    if (trimmedSearchTerm != null && !trimmedSearchTerm.isEmpty()) {
 	        // If a non-empty search value is provided
+	    	List<PatientCase> searchedPatientCase = searchUtil.returnFirstPatientCaseByCharacter(trimmedSearchTerm);
+	        model.addAttribute("searchedPatientCase", searchedPatientCase);
 	    	searchUtil.searchPatientCaseByCharacter(model, trimmedSearchTerm);
-	        model.addAttribute("searchedPhysicalAssessment", searchUtil.returnFirstPatientCaseByCharacter(trimmedSearchTerm));
+	    	diagnosticUtil.setAllSearchTrimmedMethods(model, trimmedSearchTerm);
 	        model.addAttribute("allPatientCasesWithFilter", searchUtil.returnSearchPatientCaseByCharacter(trimmedSearchTerm));
-	        model.addAttribute("allPhysicalAssessmentsWithFilter", searchUtil.returnSearchPatientCaseByCharacter(trimmedSearchTerm));
 	    } else {
-	        // If the search bar is empty, do not display physical assessment. one of the JSP is looping over filtered patient case cases
-	        //model.addAttribute("allPhysicalAssessmentsWithFilter", Collections.emptyList());
-	        model.addAttribute("allPatientCasesWithFilter", Collections.emptyList());
+	       // If the search bar is empty, do not display physical assessment. one of the JSP is looping over filtered patient case cases
+	       model.addAttribute("searchedPatientCase", Collections.emptyList());
+	       model.addAttribute("allPhysicalAssessmentsWithFilter", Collections.emptyList());
+	        
 	    }
 
 	    patientUtil.setPatientAttributes(model);
@@ -123,7 +130,8 @@ public class PhysicalAssessmentController {
 		@PathVariable("id") Long id, Model model, HttpSession session) {
 		Long physicianId = (Long) session.getAttribute("physician_id");
 		Long patientId = (Long) session.getAttribute("patient_id");
-	    if (patientId == null) {
+
+		if (patientId == null) {
 	    	return "redirect:" + PATIENT_LOGIN_PATH;
 	    }
 
@@ -131,30 +139,24 @@ public class PhysicalAssessmentController {
 	    }
 
 	    Patient loggedInPatient = patientServ.getOne(patientId);
+	    String loggedInPatientName = loggedInPatient.getPatientFirstName();
 	    PhysicalAssessment onePhysicalAssessment = physicalAssessmentServ.getOne(id);
 
-	    if (loggedInPatient == null || onePhysicalAssessment == null) {
+	    if (loggedInPatient == null || onePhysicalAssessment == null || loggedInPatientName == null) {
 	        return "redirect:" + PATIENT_LOGIN_PATH;
 	    }	
 
 		// Add formatted dates to the model
-		patientUtil.setPatientAttributes(model);
-        filterUtil.addPhysicalAssessmentInfoToModel(model, physicalAssessmentServ.getOne(id).getPatient().getId());
-        model.addAttribute("allPhysicalAssessmentsWithFilter", searchUtil.returnSearchPatientCaseByCharacter(physicalAssessmentServ.getOne(id).getPatient().getPatientFirstName()));
-	    patientUtil.sortLoggedPatientAttributes(model, patientId);
-
-        model.addAttribute("allPatientCasesWithFilter", patientCaseServ.getAll());
-        model.addAttribute("allPhysicalAssessmentsWithFilter", physicalAssessmentServ.getAll());
+        filterUtil.addPhysicalAssessmentInfoToModel(model, physicalAssessmentServ.getOne(id).getPatient().getId());    
 	    String trimmedSearchTerm = searchedPatientName != null ? searchedPatientName.trim() : null;
 	    if (trimmedSearchTerm != null && !trimmedSearchTerm.isEmpty()) {
 	        // If a non-empty search value is provided
 	    	searchUtil.searchPatientCaseByCharacter(model, trimmedSearchTerm);
-	        model.addAttribute("searchedPhysicalAssessment", searchUtil.returnFirstPatientCaseByCharacter(trimmedSearchTerm));
+	    	diagnosticUtil.setAllSearchTrimmedMethods(model, trimmedSearchTerm);
+	        model.addAttribute("searchedPatientCase", searchUtil.returnFirstPatientCaseByCharacter(trimmedSearchTerm));
 	        model.addAttribute("allPatientCasesWithFilter", searchUtil.returnSearchPatientCaseByCharacter(trimmedSearchTerm));
-	        model.addAttribute("allPhysicalAssessmentsWithFilter", searchUtil.returnSearchPatientCaseByCharacter(trimmedSearchTerm));
 	    } else {
 	        // If the search bar is empty, do not display physical assessment. one of the JSP is looping over filtered patient case cases
-	        //model.addAttribute("allPhysicalAssessmentsWithFilter", Collections.emptyList());
 	        model.addAttribute("allPatientCasesWithFilter", Collections.emptyList());
 	    }
 
@@ -162,7 +164,10 @@ public class PhysicalAssessmentController {
         int assessmentHistory = filterUtil.calculateDaysLocalDateDifference(onePhysicalAssessment.getCreatedAt(), LocalDate.now());
 
         // Date Formatting
+		patientUtil.setPatientAttributes(model);
         model.addAttribute("oneVisitHistory", assessmentHistory);
+        patientUtil.sortLoggedPatientAttributes(model, patientId);
+    	diagnosticUtil.setAllSearchTrimmedMethods(model, loggedInPatientName);
 		model.addAttribute("onePhysicalAssessment", physicalAssessmentServ.getOne(id));
 		model.addAttribute("dayCreatedAt", onePhysicalAssessment.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, yyyy")));
 		model.addAttribute("createdAt", onePhysicalAssessment.getCreatedAt().format(DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy")));	
@@ -190,8 +195,6 @@ public class PhysicalAssessmentController {
 	        // Handle the situation where loggedInPatient or searchedPatientCase is null
 	    }
         // Add attributes related to patient case search
-        model.addAttribute("searchedPatientCase", searchUtil.returnSearchPatientCaseByCharacter(loggedInPatient.getPatientFirstName()));
-        model.addAttribute("allPatientCasesWithFilter", searchUtil.returnSearchPatientCaseByCharacter(loggedInPatient.getPatientFirstName()));
         model.addAttribute("searchedPatientAge", patientUtil.calculateDateDifference(loggedInPatient.getDateOfBirth(), LocalDate.now(), ChronoUnit.YEARS));
         String trimmedSearchTerm = searchedPatientName != null ? searchedPatientName.trim() : null;
         if (trimmedSearchTerm != null && !trimmedSearchTerm.isEmpty()) {
@@ -199,7 +202,8 @@ public class PhysicalAssessmentController {
             model.addAttribute("searchedPatientCase", searchUtil.returnFirstPatientCaseByCharacter(trimmedSearchTerm));
             model.addAttribute("allPatientCasesWithFilter", searchUtil.returnSearchPatientCaseByCharacter(trimmedSearchTerm));
         } else {
-            model.addAttribute("allPatientCasesWithFilter", Collections.emptyList());
+            model.addAttribute("searchedPatientCase", searchUtil.returnFirstPatientCaseByCharacter(loggedInPatient.getPatientFirstName()));
+            model.addAttribute("allPatientCasesWithFilter", searchUtil.returnSearchPatientCaseByCharacter(loggedInPatient.getPatientFirstName()));
         }
 
 	    // Format the LocalDateTime objects

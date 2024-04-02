@@ -79,10 +79,10 @@
 							    <c:forEach items="${allPatientCasesWithFilter}" var="patientCase">  
 				                    <c:choose>
 				                        <c:when test="${allPatientCasesWithFilter.size() < 1}">
-				                        	<form:option value="${matchedPatientCase.physician.id}" label="Dr. ${matchedPatientCase.physician.firstName} ${matchedPatientCase.physician.lastName}"/>
+				                        	<form:option value="${matchedPatientCase.physician.id}" label="Dr. ${matchedPatientCase.physician.firstName} ${matchedPatientCase.physician.lastName} Diagnostic Workup: ${matchedPatientCase.diagnosticRecords[0].diagnosticWorkUp}"/>
 				                        </c:when>
 				                        <c:otherwise>
-				                            <form:option value="${patientCase.physician.id}" label="Dr. ${matchedDiagnosticRecords} ${patientCase.physician.firstName} ${patientCase.physician.lastName} ${patientCase.physician.email}"/>
+				                            <form:option value="${patientCase.physician.id}" label="Dr. ${patientCase.physician.firstName} ${patientCase.physician.lastName} ${patientCase.physician.email} Diagnostic Workup: ${matchedDiagnosticRecords[0].diagnosticWorkUp}"/>
 				                        </c:otherwise>
 				                    </c:choose>
 			                    </c:forEach>
